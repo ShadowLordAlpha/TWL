@@ -1,0 +1,38 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+javadoc.options.tags = ['sla.remarks:a:Remarks:', 'sla.ts:a:Thread Safety:', 'sla.warn:a:Warning:', 'sla.reen:a:Reentrancy:']
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+project.ext.junit_version = "+"
+project.ext.lwjglVersion = "3.+"
+
+dependencies {
+
+	compile fileTree(dir: 'libs', include: '*.jar')
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+	
+	testCompile "junit:junit:${junit_version}"
+	
+    //compile "org.joml:joml:${jomlVersion}"
+    //compile "org.slf4j:slf4j-api:${slf4japiVersion}"
+    //compile "org.slf4j:slf4j-simple:${slf4jlogVersion}"
+}
+
+jar {
+	baseName = 'TWL'
+	version = '0.0.0a'
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.7'
+}

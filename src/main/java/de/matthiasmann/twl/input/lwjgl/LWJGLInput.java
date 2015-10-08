@@ -29,9 +29,11 @@
  */
 package de.matthiasmann.twl.input.lwjgl;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.input.Input;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 
 /**
  * Input handling based on LWJGL's Mouse & Keyboard classes.
@@ -43,7 +45,7 @@ public class LWJGLInput implements Input {
     private boolean wasActive;
 
     public boolean pollInput(GUI gui) {
-        boolean active = Display.isActive();
+        boolean active = ((GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_VISIBLE) == GL11.GL_TRUE) && (GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_FOCUSED) == GL11.GL_TRUE)) ? true : false;
         if(wasActive && !active) {
             wasActive = false;
             return false;

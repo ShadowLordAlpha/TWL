@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL;
 
 import de.matthiasmann.twl.renderer.CacheContext;
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -133,7 +134,7 @@ public class LWJGLCacheContext implements CacheContext {
                 throw new IOException("Texture size too large. Maximum supported texture by this system is " + maxTextureSize);
             }
 
-            if(GLContext.getCapabilities().GL_EXT_abgr) {
+            if(GL.getCapabilities().GL_EXT_abgr) {
                 if(fmt == LWJGLTexture.Format.RGBA) {
                     fmt = LWJGLTexture.Format.ABGR;
                 }

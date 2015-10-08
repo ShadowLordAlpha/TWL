@@ -30,11 +30,14 @@
 package de.matthiasmann.twl.renderer.lwjgl;
 
 import de.matthiasmann.twl.renderer.MouseCursor;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -42,70 +45,67 @@ import org.lwjgl.input.Cursor;
  */
 class LWJGLCursor implements MouseCursor {
 
-    Cursor cursor;
+	long cursor = MemoryUtil.NULL;
 
-    LWJGLCursor(ByteBuffer src, LWJGLTexture.Format srcFmt, int srcStride,
-            int x, int y, int width, int height, int hotSpotX, int hotSpotY) {
-        width = Math.min(Cursor.getMaxCursorSize(), width);
-        height = Math.min(Cursor.getMaxCursorSize(), height);
-        int dstSize = Math.max(Cursor.getMinCursorSize(), Math.max(width, height));
+	LWJGLCursor(ByteBuffer src, LWJGLTexture.Format srcFmt, int srcStride,
+			int x, int y, int width, int height, int hotSpotX, int hotSpotY) {
+		int dstSize = Math.max(width, height);
 
-        IntBuffer buf = BufferUtils.createIntBuffer(dstSize*dstSize);
-        for(int row=height,dstPos=0 ; row-->0 ; dstPos+=dstSize) {
-            int offset = srcStride * (y+row) + x * srcFmt.getPixelSize();
-            buf.position(dstPos);
+		ByteBuffer buffer = BufferUtils.createByteBuffer(dstSize * dstSize * 4);
+		IntBuffer buf = buffer.asIntBuffer();
+		for (int row = height, dstPos = 0; row-- > 0; dstPos += dstSize) {
+			int offset = srcStride * (y + row) + x * srcFmt.getPixelSize();
+			buf.position(dstPos);
 
-            switch(srcFmt) {
-            case RGB:
-                for(int col=0 ; col<width ; col++) {
-                    int r = src.get(offset + col*3 + 0) & 255;
-                    int g = src.get(offset + col*3 + 1) & 255;
-                    int b = src.get(offset + col*3 + 2) & 255;
-                    buf.put(makeColor(r, g, b, 0xFF));
-                }
-                break;
-            case RGBA:
-                for(int col=0 ; col<width ; col++) {
-                    int r = src.get(offset + col*4 + 0) & 255;
-                    int g = src.get(offset + col*4 + 1) & 255;
-                    int b = src.get(offset + col*4 + 2) & 255;
-                    int a = src.get(offset + col*4 + 3) & 255;
-                    buf.put(makeColor(r, g, b, a));
-                }
-                break;
-            case ABGR:
-                for(int col=0 ; col<width ; col++) {
-                    int r = src.get(offset + col*4 + 3) & 255;
-                    int g = src.get(offset + col*4 + 2) & 255;
-                    int b = src.get(offset + col*4 + 1) & 255;
-                    int a = src.get(offset + col*4 + 0) & 255;
-                    buf.put(makeColor(r, g, b, a));
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unsupported color format");
-            }
-        }
-        buf.clear();
+			switch (srcFmt) {
+			case RGB:
+				for (int col = 0; col < width; col++) {
+					int r = src.get(offset + col * 3 + 0) & 255;
+					int g = src.get(offset + col * 3 + 1) & 255;
+					int b = src.get(offset + col * 3 + 2) & 255;
+					buf.put(makeColor(r, g, b, 0xFF));
+				}
+				break;
+			case RGBA:
+				for (int col = 0; col < width; col++) {
+					int r = src.get(offset + col * 4 + 0) & 255;
+					int g = src.get(offset + col * 4 + 1) & 255;
+					int b = src.get(offset + col * 4 + 2) & 255;
+					int a = src.get(offset + col * 4 + 3) & 255;
+					buf.put(makeColor(r, g, b, a));
+				}
+				break;
+			case ABGR:
+				for (int col = 0; col < width; col++) {
+					int r = src.get(offset + col * 4 + 3) & 255;
+					int g = src.get(offset + col * 4 + 2) & 255;
+					int b = src.get(offset + col * 4 + 1) & 255;
+					int a = src.get(offset + col * 4 + 0) & 255;
+					buf.put(makeColor(r, g, b, a));
+				}
+				break;
+			default:
+				throw new IllegalStateException("Unsupported color format");
+			}
+		}
+		// TODO Maybe use flip here instead maybe not needed at all
+		buf.clear();
 
-        try {
-            cursor = new org.lwjgl.input.Cursor(dstSize, dstSize, hotSpotX,
-                    Math.min(dstSize-1, height-hotSpotY-1), 1, buf, null);
-        } catch(LWJGLException ex) {
-            ex.printStackTrace();
-        }
-    }
+		GLFWImage image = new GLFWImage(buffer);
+		cursor = GLFW.glfwCreateCursor(image, 0, 0);
+		// TODO probably need to set it to the window as well
+	}
 
-    private static int makeColor(int r, int g, int b, int a) {
-        a = (a > 222) ? 255 : 0;
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
+	private static int makeColor(int r, int g, int b, int a) {
+		a = (a > 222) ? 255 : 0;
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
 
-    void destroy() {
-        if(cursor != null) {
-            cursor.destroy();
-            cursor = null;
-        }
-    }
+	void destroy() {
+		if (cursor != MemoryUtil.NULL) {
+			GLFW.glfwDestroyCursor(cursor);
+			cursor = MemoryUtil.NULL;
+		}
+	}
 
 }

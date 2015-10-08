@@ -36,10 +36,11 @@ import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
+
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import test.TestUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * A small demo showing how to use keyboard actions
@@ -50,10 +51,18 @@ public class ActionDemo extends Widget {
 
     public static void main(String[] args) {
         try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Action Demo");
-            Display.setVSyncEnabled(true);
+        	if(GLFW.glfwInit() != GL11.GL_TRUE) {
+        		System.err.println("Failed To Initilize GLFW!");
+            	System.exit(-1);
+        	}
+        	long window = GLFW.glfwCreateWindow(800, 600, "TWL Action Demo", MemoryUtil.NULL, MemoryUtil.NULL);
+        	
+            if(window == MemoryUtil.NULL) {
+            	System.err.println("Failed To Create Window!");
+            	System.exit(-1);
+            }
+        	GLFW.glfwMakeContextCurrent(window);
+        	GL.createCapabilities();
 
             LWJGLRenderer renderer = new LWJGLRenderer();
             ActionDemo demo = new ActionDemo();
@@ -65,20 +74,22 @@ public class ActionDemo extends Widget {
                     ActionDemo.class.getResource("actiondemo.xml"), renderer);
             gui.applyTheme(theme);
 
-            while(!Display.isCloseRequested() && !demo.quit) {
+            while(!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE) && !demo.quit) {
+            	GLFW.glfwPollEvents();
                 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
                 gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
+                GLFW.glfwSwapBuffers(window);
+                //TestUtils.reduceInputLag();
             }
 
             gui.destroy();
             theme.destroy();
+            GLFW.glfwDestroyWindow(window);
         } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
+            //TestUtils.showErrMsg(ex);
+        	ex.printStackTrace();
         }
-        Display.destroy();
     }
 
     private final FPSCounter fpsCounter;

@@ -29,12 +29,13 @@
  */
 package keyevents;
 
-import java.awt.DisplayMode;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
-import test.TestUtils;
 import de.matthiasmann.twl.Container;
+import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.ScrollPane;
 import de.matthiasmann.twl.ScrollPane.Fixed;
@@ -42,8 +43,8 @@ import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.input.lwjgl.Keyboard;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.SimpleTextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
+import test.TestUtils;
 
 /**
  *
@@ -53,10 +54,21 @@ public class ListKeyEvents extends Container {
 
 	public static void main(String[] args) {
 		try {
-			Display.setDisplayMode(new DisplayMode(800, 600));
-			Display.create();
-			Display.setTitle("TWL Keyboard Event Debugger");
-			Display.setVSyncEnabled(true);
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Keyboard Event Debugger",
+					MemoryUtil.NULL, MemoryUtil.NULL);
+
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
+
+			GLFW.glfwSwapInterval(1); // vsync
 
 			LWJGLRenderer renderer = new LWJGLRenderer();
 			ListKeyEvents demo = new ListKeyEvents();
@@ -67,20 +79,21 @@ public class ListKeyEvents extends Container {
 					renderer);
 			gui.applyTheme(theme);
 
-			while (!Display.isCloseRequested() && !demo.quit) {
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE) && !demo.quit) {
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 				demo.listKeyEvents();
 				gui.update();
-				Display.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
 			}
 
 			gui.destroy();
 			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
 		} catch (Exception ex) {
 			TestUtils.showErrMsg(ex);
 		}
-		Display.destroy();
 	}
 
 	private final StringBuilder sb;
@@ -106,16 +119,16 @@ public class ListKeyEvents extends Container {
 	public void listKeyEvents() {
 		boolean hadEvents = false;
 		while (Keyboard.next()) {
-			if (Keyboard.getEventCharacter() != Keyboard.CHAR_NONE) {
+			if (Character.toString(Keyboard.getEventCharacter()).equals(Character.toString(Event.CHAR_NONE))) {
 				sb.append(String.format("%s %s (code %d) char %c (%d)\n",
 						Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
-						Keyboard.getKeyName(Keyboard.getEventKey()),
+								Character.toString(Keyboard.getEventCharacter()),
 						Keyboard.getEventKey(), Keyboard.getEventCharacter(),
 						(int) Keyboard.getEventCharacter()));
 			} else {
 				sb.append(String.format("%s %s (code %d)\n",
 						Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
-						Keyboard.getKeyName(Keyboard.getEventKey()),
+						Character.toString(Keyboard.getEventCharacter()),
 						Keyboard.getEventKey()));
 			}
 			hadEvents = true;

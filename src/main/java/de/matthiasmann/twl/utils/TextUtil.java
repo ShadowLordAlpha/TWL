@@ -304,8 +304,8 @@ public final class TextUtil {
 		}
 	}
 
-	private static final String ROMAN_NUMBERS = "â†‚Mâ†‚â†�Mâ†�MCMDCDCXCLXLXIXVIVI";
-	private static final String ROMAN_VALUES = "\u2710\u2328\u1388\u0FA0\u03E8\u0384\u01F4\u0190\144\132\62\50\12\11\5\4\1";
+	private static final String[] ROMAN_NUMBERS = {/*"", "", */"\u2188", "\u2182\u2187", "\u2187", "\u2182", "M\u2181", "\u2181", "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+	private static final int[] ROMAN_VALUES = {/*1000000, 500000, */100000, 90000, 50000, 10000, 9000, 5000, 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
 
 	/**
 	 * The largest number which can be converted into a Roman number.
@@ -314,6 +314,7 @@ public final class TextUtil {
 	 */
 	public static final int MAX_ROMAN_INTEGER = 39999;
 
+	// The other way was probably better but I broke it so meh you can read this one
 	/**
 	 * Creates an upper case Roman number string for the given value.
 	 *
@@ -327,24 +328,20 @@ public final class TextUtil {
 	 * @throws IllegalArgumentException
 	 *             if the value is out of range
 	 */
-	public static String toRomanNumberString(int value)
-			throws IllegalArgumentException {
+	public static String toRomanNumberString(int value) throws IllegalArgumentException {
 		if (value < 1 || value > MAX_ROMAN_INTEGER) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Value is out of range! [1,39999]");
 		}
+		
 		StringBuilder sb = new StringBuilder();
-		int idxValues = 0;
-		int idxNumbers = 0;
-		do {
-			final int romanValue = ROMAN_VALUES.charAt(idxValues);
-			final int romanNumberLen = (idxValues & 1) + 1;
-			while (value >= romanValue) {
-				sb.append(ROMAN_NUMBERS, idxNumbers, idxNumbers
-						+ romanNumberLen);
-				value -= romanValue;
+		
+		for(int i = 0; i < ROMAN_VALUES.length; i++) {
+			while(value >= ROMAN_VALUES[i]) {
+				sb.append(ROMAN_NUMBERS[i]);
+				value -= ROMAN_VALUES[i];
 			}
-			idxNumbers += romanNumberLen;
-		} while (++idxValues < 17);
+		}
+		
 		return sb.toString();
 	}
 

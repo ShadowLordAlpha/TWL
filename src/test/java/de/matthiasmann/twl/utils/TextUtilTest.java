@@ -126,33 +126,26 @@ public class TextUtilTest {
 		assertEquals("MMM", TextUtil.toRomanNumberString(3000));
 		assertEquals("MMMCMXCIX", TextUtil.toRomanNumberString(3999));
 		assertEquals("MMM", TextUtil.toRomanNumberString(3000));
-		assertEquals("Mâ†�", TextUtil.toRomanNumberString(4000));
-		assertEquals("\u2181", TextUtil.toRomanNumberString(5000)); // ensure
-																	// that
-																	// correct
-																	// encoding
-		assertEquals("â†�M", TextUtil.toRomanNumberString(6000));
-		assertEquals("â†�MM", TextUtil.toRomanNumberString(7000));
-		assertEquals("â†�MMM", TextUtil.toRomanNumberString(8000));
-		assertEquals("Mâ†‚", TextUtil.toRomanNumberString(9000));
-		assertEquals("Mâ†‚CM", TextUtil.toRomanNumberString(9900));
-		assertEquals("Mâ†‚CMXC", TextUtil.toRomanNumberString(9990));
-		assertEquals("Mâ†‚CMXCIX", TextUtil.toRomanNumberString(9999));
+		assertEquals("MMMM", TextUtil.toRomanNumberString(4000));
+		assertEquals("\u2181", TextUtil.toRomanNumberString(5000));
+		assertEquals("\u2181M", TextUtil.toRomanNumberString(6000));
+		assertEquals("\u2181MM", TextUtil.toRomanNumberString(7000));
+		assertEquals("\u2181MMM", TextUtil.toRomanNumberString(8000));
+		assertEquals("M\u2181", TextUtil.toRomanNumberString(9000));
+		assertEquals("M\u2181CM", TextUtil.toRomanNumberString(9900));
+		assertEquals("M\u2181CMXC", TextUtil.toRomanNumberString(9990));
+		assertEquals("M\u2181CMXCIX", TextUtil.toRomanNumberString(9999));
 	}
 
 	@Test
 	public void testRomanNumbers7() {
-		assertEquals("\u2182", TextUtil.toRomanNumberString(10000)); // ensure
-																		// that
-																		// correct
-																		// encoding
-		assertEquals("â†‚â†‚", TextUtil.toRomanNumberString(20000));
-		assertEquals("â†‚â†‚â†‚", TextUtil.toRomanNumberString(30000));
-		assertEquals("â†‚â†‚â†‚Mâ†‚", TextUtil.toRomanNumberString(39000));
-		assertEquals("â†‚â†‚â†‚Mâ†‚CM", TextUtil.toRomanNumberString(39900));
-		assertEquals("â†‚â†‚â†‚Mâ†‚CMXC", TextUtil.toRomanNumberString(39990));
-		assertEquals("â†‚â†‚â†‚Mâ†‚CMXCVIII",
-				TextUtil.toRomanNumberString(39998));
-		assertEquals("â†‚â†‚â†‚Mâ†‚CMXCIX", TextUtil.toRomanNumberString(39999));
+		assertEquals("\u2182", TextUtil.toRomanNumberString(10000));
+		assertEquals("\u2182\u2182", TextUtil.toRomanNumberString(20000));
+		assertEquals("\u2182\u2182\u2182", TextUtil.toRomanNumberString(30000));
+		assertEquals("\u2182\u2182\u2182M\u2181", TextUtil.toRomanNumberString(39000));
+		assertEquals("\u2182\u2182\u2182M\u2181CM", TextUtil.toRomanNumberString(39900));
+		assertEquals("\u2182\u2182\u2182M\u2181CMXC", TextUtil.toRomanNumberString(39990));
+		assertEquals("\u2182\u2182\u2182M\u2181CMXCVIII", TextUtil.toRomanNumberString(39998));
+		assertEquals("\u2182\u2182\u2182M\u2181CMXCIX", TextUtil.toRomanNumberString(39999));
 	}
 }

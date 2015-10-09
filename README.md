@@ -22,8 +22,6 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 ## Bugs
 
-Mouse starts in the top left instead of the bottom left like TWL wants
-
 Some tests were messed up
 
 ## Disclaimer

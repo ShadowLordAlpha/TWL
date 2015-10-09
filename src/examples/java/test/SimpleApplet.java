@@ -39,6 +39,7 @@ import org.lwjgl.Sys;
 
 import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 
+// TODO remove this as LWJGL 3 currently does not support embedding into an Applet
 /**
  *
  * @author Matthias Mann

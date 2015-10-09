@@ -452,10 +452,8 @@ public class CSSStyle extends Style {
 		BREAKWORD.put("normal", Boolean.FALSE);
 		BREAKWORD.put("break-word", Boolean.TRUE);
 
-		OrderedListType upper_alpha = new OrderedListType(
-				"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		OrderedListType lower_alpha = new OrderedListType(
-				"abcdefghijklmnopqrstuvwxyz");
+		OrderedListType upper_alpha = new OrderedListType("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		OrderedListType lower_alpha = new OrderedListType("abcdefghijklmnopqrstuvwxyz");
 		OLT.put("decimal", OrderedListType.DECIMAL);
 		OLT.put("upper-alpha", upper_alpha);
 		OLT.put("lower-alpha", lower_alpha);
@@ -463,16 +461,11 @@ public class CSSStyle extends Style {
 		OLT.put("lower-latin", lower_alpha);
 		OLT.put("upper-roman", createRoman(false));
 		OLT.put("lower-roman", createRoman(true));
-		OLT.put("lower-greek", new OrderedListType(
-				"Î±Î²Î³Î´ÎµÎ¶Î·Î¸Î¹ÎºÎ»Î¼Î½Î¾Î¿Ï€Ï�ÏƒÏ„Ï…Ï†Ï‡ÏˆÏ‰"));
-		OLT.put("upper-norwegian", new OrderedListType(
-				"ABCDEFGHIJKLMNOPQRSTUVWXYZÃ†Ã˜Ã…"));
-		OLT.put("lower-norwegian", new OrderedListType(
-				"abcdefghijklmnopqrstuvwxyzÃ¦Ã¸Ã¥"));
-		OLT.put("upper-russian-short", new OrderedListType(
-				"Ð�Ð‘Ð’Ð“Ð”Ð•Ð–Ð—Ð˜ÐšÐ›ÐœÐ�ÐžÐŸÐ Ð¡Ð¢Ð£Ð¤Ð¥Ð¦Ð§Ð¨Ð©Ð­Ð®Ð¯"));
-		OLT.put("lower-russian-short", new OrderedListType(
-				"Ð°Ð±Ð²Ð³Ð´ÐµÐ¶Ð·Ð¸ÐºÐ»Ð¼Ð½Ð¾Ð¿Ñ€Ñ�Ñ‚ÑƒÑ„Ñ…Ñ†Ñ‡ÑˆÑ‰Ñ�ÑŽÑ�"));
+		OLT.put("lower-greek", new OrderedListType("\u03B1\u03B2\u03B3\u03B4\u03B5\u03B6\u03B7\u03B8\u03B9\u03BA\u03BB\u03BC\u03BD\u03BE\u03BF\u03C0\u03C1\u03C3\u03C4\u03C5\u03C6\u03C7\u03C8\u03C9"));
+		OLT.put("upper-norwegian", new OrderedListType("")); // TODO
+		OLT.put("lower-norwegian", new OrderedListType("")); // TODO
+		OLT.put("upper-russian-short", new OrderedListType("\u0410\u0411\u0412\u0413\u0414\u0415\u0416\u0417\u0418\u041A\u041B\u041C\u041D\u041E\u041F\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042D\u042E\u042F"));
+		OLT.put("lower-russian-short", new OrderedListType("\u0430\u0431\u0432\u0433\u0434\u0435\u0436\u0437\u0438\u043A\u043B\u043C\u043D\u043E\u043F\u0440\u0441\u0442\u0443\u0444\u0445\u0446\u0447\u0448\u0449\u044D\u044E\u044F"));
 
 		ITALIC.put("normal", Boolean.FALSE);
 		ITALIC.put("italic", Boolean.TRUE);

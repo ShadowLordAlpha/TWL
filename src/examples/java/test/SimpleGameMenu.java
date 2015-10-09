@@ -29,9 +29,10 @@
  */
 package test;
 
-import java.awt.DisplayMode;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.Event;
@@ -39,7 +40,6 @@ import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -50,10 +50,21 @@ public class SimpleGameMenu extends Widget {
 
 	public static void main(String[] args) {
 		try {
-			Display.setDisplayMode(new DisplayMode(800, 600));
-			Display.create();
-			Display.setTitle("TWL Simple Game Menu Demo");
-			Display.setVSyncEnabled(true);
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Simple Game Menu Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
+
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
+
+			GLFW.glfwSwapInterval(1); // vsync
 
 			LWJGLRenderer renderer = new LWJGLRenderer();
 			SimpleGameMenu gameUI = new SimpleGameMenu();
@@ -64,19 +75,20 @@ public class SimpleGameMenu extends Widget {
 					renderer);
 			gui.applyTheme(theme);
 
-			while (!Display.isCloseRequested() && !gameUI.quit) {
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE) && !gameUI.quit) {
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 				gui.update();
-				Display.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
 			}
 
 			gui.destroy();
 			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
 		} catch (Exception ex) {
 			TestUtils.showErrMsg(ex);
 		}
-		Display.destroy();
 	}
 
 	private final FPSCounter fpsCounter;

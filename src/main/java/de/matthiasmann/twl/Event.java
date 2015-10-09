@@ -613,10 +613,8 @@ public final class Event {
 				if (name.startsWith("KEY_")) {
 					Integer code = (Integer) f.get(null);
 					name = name.substring(4);
-					// KEY_NAMES[code] = name;
+					KEY_NAMES[code] = name;
 					KEY_MAP.put(name, code);
-					// System.out.println("Adding Key: " + name +" Code:" +
-					// code);
 				}
 			}
 		} catch (Throwable ignore) {

@@ -95,7 +95,6 @@ public class Mouse {
 		public void invoke(long window, int button, int action, int mods) {
 			GLFW.glfwGetCursorPos(window, xpos, ypos);
 			if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
-				System.out.println("CLICK!");
 				eventStack.addElement(new Event((int) Math.round(xpos
 						.getDouble(0)), (int) Math.round(ypos.getDouble(0)), 0,
 						button, true));
@@ -122,10 +121,7 @@ public class Mouse {
 		@Override
 		public void invoke(long window, double xoffset, double yoffset) {
 			GLFW.glfwGetCursorPos(window, xpos, ypos);
-			eventStack.addElement(new Event(
-					(int) Math.round(xpos.getDouble(0)), (int) Math.round(ypos
-							.getDouble(0)), (int) Math.round(xoffset), -1,
-					false));
+			eventStack.addElement(new Event((int) Math.round(xpos.getDouble(0)), (int) Math.round(ypos.getDouble(0)), (int) Math.round(xoffset), -1, false));
 
 			if (passMSE != null) {
 				passMSE.invoke(window, xoffset, yoffset);
@@ -141,8 +137,7 @@ public class Mouse {
 		@Override
 		public void invoke(long window, double xpos, double ypos) {
 
-			eventStack.addElement(new Event((int) Math.round(xpos), (int) Math
-					.round(ypos), 0, -1, false));
+			eventStack.addElement(new Event((int) Math.round(xpos), (int) Math.round(ypos), 0, -1, false));
 
 			if (passMME != null) {
 				passMME.invoke(window, xpos, ypos);

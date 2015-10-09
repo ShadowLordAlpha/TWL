@@ -1,8 +1,9 @@
 package test;
 
-import java.awt.DisplayMode;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.DialogLayout;
@@ -14,7 +15,6 @@ import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -72,10 +72,11 @@ public class TwlTest {
 	}
 
 	public void run() {
-		while (!Display.isCloseRequested()) {
+		while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 			gui.update();
-			Display.update();
+			GLFW.glfwPollEvents();
+			GLFW.glfwSwapBuffers(window);
 			TestUtils.reduceInputLag();
 		}
 	}
@@ -125,12 +126,27 @@ public class TwlTest {
 		}
 	}
 
+	private static long window;
+	
 	public static void main(String[] args) throws Exception {
-		Display.setTitle("TWL Examples");
-		Display.setDisplayMode(new DisplayMode(800, 600));
-		Display.setVSyncEnabled(true);
-		Display.create();
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			System.err.println("Failed To Initilize GLFW!");
+			System.exit(-1);
+		}
+		window = GLFW.glfwCreateWindow(800, 600, "TWL Examples",
+				MemoryUtil.NULL, MemoryUtil.NULL);
+
+		if (window == MemoryUtil.NULL) {
+			System.err.println("Failed To Create Window!");
+			System.exit(-1);
+		}
+		GLFW.glfwMakeContextCurrent(window);
+		GL.createCapabilities();
+
+		GLFW.glfwSwapInterval(1); // vsync
+		
 		TwlTest twlTest = new TwlTest();
 		twlTest.run();
+		GLFW.glfwDestroyWindow(window);
 	}
 }

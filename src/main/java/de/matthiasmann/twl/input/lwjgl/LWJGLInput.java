@@ -57,16 +57,12 @@ public class LWJGLInput implements Input {
 
 		if (Keyboard.isCreated()) {
 			while (Keyboard.next()) {
-				gui.handleKey(Keyboard.getEventKey(),
-						Keyboard.getEventCharacter(),
-						Keyboard.getEventKeyState());
+				gui.handleKey(Keyboard.getEventKey(), Keyboard.getEventCharacter(), Keyboard.getEventKeyState());
 			}
 		}
 		if (Mouse.isCreated()) {
 			while (Mouse.next()) {
-				gui.handleMouse(Mouse.getEventX(),
-						gui.getHeight() - Mouse.getEventY() - 1,
-						Mouse.getEventButton(), Mouse.getEventButtonState());
+				gui.handleMouse(Mouse.getEventX(), Mouse.getEventY(), Mouse.getEventButton(), Mouse.getEventButtonState());
 
 				int wheelDelta = Mouse.getEventDWheel();
 				if (wheelDelta != 0) {

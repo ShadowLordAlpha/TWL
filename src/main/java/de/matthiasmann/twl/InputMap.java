@@ -244,8 +244,7 @@ public final class InputMap {
 			serializer.endTag(null, "inputMapDef");
 			serializer.endDocument();
 		} catch (XmlPullParserException ex) {
-			throw (IOException) (new IOException("Can't generate XML")
-					.initCause(ex));
+			throw (IOException) (new IOException("Can't generate XML").initCause(ex));
 		}
 	}
 

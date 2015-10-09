@@ -72,7 +72,7 @@ public class InputMapTest {
 				+ "    <action name=\"openQuestLog\">cmd Q</action>\n"
 				+ "    <action name=\"quit\">meta X</action>\n"
 				+ "    <action name=\"run\">LSHIFT</action>\n"
-				+ "    <action name=\"console\">typed î</action>\n"
+				+ "    <action name=\"console\">typed `</action>\n"
 				+ "</inputMapDef>";
 		InputMap im = parse(input);
 		String result = toString(im);
@@ -117,8 +117,7 @@ public class InputMapTest {
 		assertEquals(expected, result);
 	}
 
-	private static String toString(InputMap imi) throws XmlPullParserException,
-			IOException {
+	private static String toString(InputMap imi) throws XmlPullParserException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		imi.writeXML(baos);
 		return baos.toString("UTF8");
@@ -142,7 +141,6 @@ public class InputMapTest {
 				};
 			}
 		};
-		return InputMap
-				.parse(new URL("test", "localhost", 80, "data", handler));
+		return InputMap.parse(new URL("test", "localhost", 80, "data", handler));
 	}
 }

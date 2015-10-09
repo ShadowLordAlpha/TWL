@@ -29,12 +29,13 @@
  */
 package test;
 
-import java.awt.DisplayMode;
 import java.io.IOException;
 
-import javafx.scene.image.PixelFormat;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.BoxLayout;
 import de.matthiasmann.twl.Button;
@@ -51,7 +52,6 @@ import de.matthiasmann.twl.model.PersistentIntegerModel;
 import de.matthiasmann.twl.model.SimpleBooleanModel;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 import de.matthiasmann.twleffects.lwjgl.LWJGLEffectsRenderer;
 
@@ -83,24 +83,30 @@ public class SimpleTest {
 		}
 	}
 
-	public static void main(String[] arg) throws LWJGLException {
+	public static void main(String[] arg) {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			System.err.println("Failed To Initilize GLFW!");
+			System.exit(-1);
+		}
 		SimpleTest test = new SimpleTest();
-		test.run(new VideoMode(new DisplayMode(WIDTH, HEIGHT), false));
+		// TODO replace default mode with the custom width height one
+		test.run(new VideoMode(GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()), false));
 	}
 
-	private static final String[] THEME_FILES = { "simple_demo.xml",
-			"guiTheme.xml" };
+	private static final String[] THEME_FILES = { "simple_demo.xml", "guiTheme.xml" };
 
-	protected final DisplayMode desktopMode;
+	protected final GLFWVidMode desktopMode;
 	protected boolean closeRequested;
 	protected ThemeManager theme;
 	protected LWJGLRenderer renderer;
 	protected GUI gui;
 	protected VideoSettings.CallbackReason vidDlgCloseReason;
 	protected PersistentIntegerModel curThemeIdx;
+	protected long window;
 
 	public SimpleTest() {
-		desktopMode = Display.getDisplayMode();
+		
+		desktopMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 		curThemeIdx = new PersistentIntegerModel(
 				AppletPreferences.userNodeForPackage(SimpleTest.class),
 				"currentThemeIndex", 0, THEME_FILES.length, 0);
@@ -137,16 +143,25 @@ public class SimpleTest {
 		gui.setBackground(theme.getImageNoWarning("gui.background"));
 	}
 
-	private void createDisplay(VideoMode mode) throws LWJGLException {
-		Display.setTitle("TWL Examples");
-		Display.setFullscreen(mode.fullscreen);
-		Display.setDisplayMode(mode.mode);
-		Display.create(new PixelFormat(0, 0, 0));
-		Display.setVSyncEnabled(true);
+	private void createDisplay(VideoMode mode) {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			System.err.println("Failed To Initilize GLFW!");
+			System.exit(-1);
+		}
+		window = GLFW.glfwCreateWindow(800, 600, "TWL Examples",
+				MemoryUtil.NULL, MemoryUtil.NULL);
+
+		if (window == MemoryUtil.NULL) {
+			System.err.println("Failed To Create Window!");
+			System.exit(-1);
+		}
+		GLFW.glfwMakeContextCurrent(window);
+		GL.createCapabilities();
+
+		GLFW.glfwSwapInterval(1); // vsync
 	}
 
-	@SuppressWarnings("SleepWhileInLoop")
-	public void mainLoop(boolean isApplet) throws LWJGLException, IOException {
+	public void mainLoop(boolean isApplet) throws IOException {
 		final RootPane root = new RootPane();
 		// renderer = new LWJGLRenderer();
 		renderer = new LWJGLEffectsRenderer();
@@ -269,11 +284,12 @@ public class SimpleTest {
 
 		fInfo.requestKeyboardFocus();
 
-		while (!Display.isCloseRequested() && !closeRequested) {
+		while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 			gui.update();
-			Display.update();
+			GLFW.glfwPollEvents();
+			GLFW.glfwSwapBuffers(window);
 
 			if (root.reduceLag) {
 				TestUtils.reduceInputLag();
@@ -285,18 +301,18 @@ public class SimpleTest {
 				VideoMode vm = settings.getSelectedVideoMode();
 				gui.destroy();
 				renderer.getActiveCacheContext().destroy();
-				Display.destroy();
+				GLFW.glfwDestroyWindow(window);
 				createDisplay(vm);
 				loadTheme();
 			}
 			vidDlgCloseReason = null;
 
-			if (!Display.isActive()) {
+			if (!(GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED) == GL11.GL_TRUE)) {
 				gui.clearKeyboardState();
 				gui.clearMouseState();
 			}
 
-			if (!Display.isVisible()) {
+			if (!(GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_VISIBLE) == GL11.GL_TRUE)) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException unused) {
@@ -323,7 +339,7 @@ public class SimpleTest {
 			TestUtils.showErrMsg(ex);
 		}
 
-		Display.destroy();
+		GLFW.glfwDestroyWindow(window);
 		System.exit(0);
 	}
 
@@ -348,7 +364,7 @@ public class SimpleTest {
 			final SimpleBooleanModel vsyncModel = new SimpleBooleanModel(true);
 			vsyncModel.addCallback(new Runnable() {
 				public void run() {
-					Display.setVSyncEnabled(vsyncModel.getValue());
+					GLFW.glfwSwapInterval((vsyncModel.getValue()) ? 1 : 0);
 				}
 			});
 

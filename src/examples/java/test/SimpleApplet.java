@@ -39,17 +39,21 @@ import org.lwjgl.Sys;
 
 import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 
-// TODO remove this as LWJGL 3 currently does not support embedding into an Applet
 /**
- *
+ * 
  * @author Matthias Mann
+ */
+/**
+ * 
+ * Class commented out and does nothing. Temporarily kept as reference
+ *
  */
 public class SimpleApplet extends Applet {
 
 	/** The Canvas where the LWJGL Display is added */
-	Canvas display_parent;
+	//Canvas display_parent;
 	/** Thread which runs the main game loop */
-	Thread gameThread;
+	/*Thread gameThread;
 
 	SimpleTest simpleTest;
 
@@ -76,7 +80,7 @@ public class SimpleApplet extends Applet {
 	 * destoryed. The main thread will wait for the Display.destroy() to
 	 * complete
 	 */
-	private void stopLWJGL() {
+	/*private void stopLWJGL() {
 		if (simpleTest != null) {
 			simpleTest.closeRequested = true;
 		}
@@ -100,7 +104,7 @@ public class SimpleApplet extends Applet {
 	 * it will notify stopLWJGL() to stop main game loop and to destroy the
 	 * Display
 	 */
-	@Override
+	/*@Override
 	public void destroy() {
 		remove(display_parent);
 		super.destroy();
@@ -112,7 +116,7 @@ public class SimpleApplet extends Applet {
 	 * LWJGL Display and game loop in another thread. It will also stop the game
 	 * loop and destroy the display on canvas removal when applet is destroyed.
 	 */
-	@Override
+	/*@Override
 	public void init() {
 		setLayout(new BorderLayout());
 		try {
@@ -153,5 +157,5 @@ public class SimpleApplet extends Applet {
 			pw.flush();
 			Sys.alert("Error", sw.toString());
 		}
-	}
+	}*/
 }

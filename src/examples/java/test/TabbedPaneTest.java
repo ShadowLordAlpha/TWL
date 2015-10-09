@@ -29,12 +29,12 @@
  */
 package test;
 
-import java.awt.DisplayMode;
 import java.io.IOException;
 
-import javafx.scene.image.PixelFormat;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.ScrollPane;
@@ -43,7 +43,6 @@ import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -52,11 +51,21 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class TabbedPaneTest {
 
-	public static void main(String[] arg) throws LWJGLException, IOException {
-		Display.setTitle("TWL TabbedPane Example");
-		Display.setDisplayMode(new DisplayMode(800, 600));
-		Display.create(new PixelFormat(0, 0, 0));
-		Display.setVSyncEnabled(true);
+	public static void main(String[] arg) throws IOException {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			System.err.println("Failed To Initilize GLFW!");
+			System.exit(-1);
+		}
+		long window = GLFW.glfwCreateWindow(800, 600, "TWL TabbedPane Example", MemoryUtil.NULL, MemoryUtil.NULL);
+
+		if (window == MemoryUtil.NULL) {
+			System.err.println("Failed To Create Window!");
+			System.exit(-1);
+		}
+		GLFW.glfwMakeContextCurrent(window);
+		GL.createCapabilities();
+
+		GLFW.glfwSwapInterval(1); // vsync
 
 		final TabbedPane tabbedPane = new TabbedPane();
 
@@ -72,14 +81,15 @@ public class TabbedPaneTest {
 		tabbedPane.addTab("Image", createScrollPane());
 		tabbedPane.addTab("Empty", null);
 
-		while (!Display.isCloseRequested()) {
+		while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)) {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 			gui.update();
-			Display.update();
+			GLFW.glfwPollEvents();
+			GLFW.glfwSwapBuffers(window);
 		}
 
-		Display.destroy();
+		GLFW.glfwDestroyWindow(window);
 	}
 
 	private static Widget createInfoPane() {

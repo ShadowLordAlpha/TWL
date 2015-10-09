@@ -79,7 +79,7 @@ public class NodeDemo {
 			Node nodeSource = nodeArea.addNode("Source");
 			nodeSource.setPosition(50, 50);
 			Pad nodeSourceColor = nodeSource.addPad("Color", false);
-			Pad nodeSourceAlpha = nodeSource.addPad("Alpha", false);
+			//Pad nodeSourceAlpha = nodeSource.addPad("Alpha", false);
 
 			Node nodeSink = nodeArea.addNode("Sink");
 			nodeSink.setPosition(350, 200);

@@ -29,16 +29,18 @@
  */
 package test;
 
-import java.awt.DisplayMode;
-
 import org.lwjgl.Sys;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWVidMode.Buffer;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.CallbackWithReason;
 import de.matthiasmann.twl.Container;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -48,6 +50,10 @@ import de.matthiasmann.twl.theme.ThemeManager;
 public class ModeSelectTest {
 
 	public static void main(String... args) {
+		if (GLFW.glfwInit() != GL11.GL_TRUE) {
+			System.err.println("Failed To Initilize GLFW!");
+			System.exit(-1);
+		}
 		ModeSelectTest modeSel = new ModeSelectTest();
 		VideoMode mode = modeSel.selectMode();
 		if (mode != null) {
@@ -56,28 +62,39 @@ public class ModeSelectTest {
 		}
 	}
 
-	protected DisplayMode desktopMode;
+	protected GLFWVidMode desktopMode;
 	protected VideoSettings.CallbackReason reason;
 
 	public ModeSelectTest() {
 		System.out.println("LWJGL Version: " + Sys.getVersion());
-		desktopMode = Display.getDisplayMode();
+		desktopMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 		System.out.println("Desktop mode: " + desktopMode);
 
-		try {
-			for (DisplayMode mode : Display.getAvailableDisplayModes()) {
-				System.out.println("Available mode: " + mode);
-			}
-		} catch (LWJGLException ex) {
-			TestUtils.showErrMsg(ex);
+		Buffer buffer = GLFW.glfwGetVideoModes(GLFW.glfwGetPrimaryMonitor());
+		for (int i = 0; i < buffer.remaining(); i++) {
+			System.out.println("Available mode: " + buffer.get(i).getWidth() + "x" + buffer.get(i).getHeight() + " " + buffer.get(i).getRefreshRate() +"Hz");
 		}
 	}
 
+	private long window;
+	
 	public VideoMode selectMode() {
 		try {
-			Display.setDisplayMode(new DisplayMode(400, 300));
-			Display.create();
-			Display.setVSyncEnabled(true);
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			window = GLFW.glfwCreateWindow(400, 300, "TWL",
+					MemoryUtil.NULL, MemoryUtil.NULL);
+
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
+
+			GLFW.glfwSwapInterval(1); // vsync
 
 			LWJGLRenderer renderer = new LWJGLRenderer();
 			renderer.setUseSWMouseCursors(true);
@@ -87,9 +104,7 @@ public class ModeSelectTest {
 					SimpleTest.class.getResource("guiTheme.xml"), renderer);
 			gui.applyTheme(theme);
 
-			final VideoSettings settings = new VideoSettings(
-					AppletPreferences.userNodeForPackage(VideoSettings.class),
-					desktopMode);
+			final VideoSettings settings = new VideoSettings(AppletPreferences.userNodeForPackage(VideoSettings.class),desktopMode);
 			settings.setTheme("settings");
 			settings.addCallback(new CallbackWithReason<VideoSettings.CallbackReason>() {
 				public void callback(VideoSettings.CallbackReason aReason) {
@@ -107,17 +122,18 @@ public class ModeSelectTest {
 			frame.setPosition((gui.getWidth() - frame.getWidth()) / 2,
 					(gui.getHeight() - frame.getHeight()) / 2);
 
-			while (!Display.isCloseRequested() && reason == null) {
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE) && reason == null) {
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 				gui.update();
-				Display.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
 				TestUtils.reduceInputLag();
 			}
 
 			gui.destroy();
 			theme.destroy();
-			Display.destroy();
+			GLFW.glfwDestroyWindow(window);
 
 			if (reason == VideoSettings.CallbackReason.ACCEPT) {
 				settings.storeSettings();
@@ -127,10 +143,10 @@ public class ModeSelectTest {
 			TestUtils.showErrMsg(ex);
 		}
 
-		Display.destroy();
+		GLFW.glfwDestroyWindow(window);
 		try {
-			Display.setDisplayMode(desktopMode);
-		} catch (LWJGLException ex) {
+			//Display.setDisplayMode(desktopMode);
+		} catch (Exception ex) {
 			TestUtils.showErrMsg(ex);
 		}
 

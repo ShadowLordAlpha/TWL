@@ -142,6 +142,8 @@ public class SimpleGameMenu extends Widget {
 				quit = true;
 				return true;
 			}
+		default:
+			break;
 		}
 		return false;
 	}

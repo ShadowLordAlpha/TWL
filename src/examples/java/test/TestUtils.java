@@ -44,7 +44,6 @@ public final class TestUtils {
 	private TestUtils() {
 	}
 
-	@SuppressWarnings("CallToThreadDumpStack")
 	public static void showErrMsg(Throwable ex) {
 		ex.printStackTrace();
 		StringWriter sw = new StringWriter();

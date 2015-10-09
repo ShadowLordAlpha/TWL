@@ -242,6 +242,8 @@ public final class MineWidget extends Widget {
 					}
 				}
 				break;
+			default:
+				break;
 			}
 
 			if (mineField.isGameOver()) {

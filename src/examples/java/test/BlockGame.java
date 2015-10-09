@@ -287,6 +287,8 @@ public class BlockGame extends DialogLayout {
 				return true;
 			}
 			break;
+		default:
+			break;
 		}
 
 		return false;

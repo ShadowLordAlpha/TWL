@@ -44,7 +44,7 @@ public class LWJGLEffectsRenderer extends LWJGLRenderer {
 
 	private final LWJGLOffscreenRenderer offscreenRenderer;
 
-	public LWJGLEffectsRenderer() throws Exception {
+	public LWJGLEffectsRenderer() {
 
 		GLCapabilities caps = GL.getCapabilities();
 		if (caps.GL_EXT_framebuffer_object && caps.OpenGL14) {

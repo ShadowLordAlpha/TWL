@@ -151,6 +151,8 @@ public class TextAreaDemo extends DesktopArea {
 				quit = true;
 				return true;
 			}
+		default:
+			break;
 		}
 		return false;
 	}

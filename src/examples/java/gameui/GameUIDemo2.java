@@ -180,6 +180,8 @@ public class GameUIDemo2 extends DialogLayout {
 				return createRadialMenu().openPopup(evt);
 			}
 			break;
+		default:
+			break;
 		}
 		return evt.isMouseEventNoWheel();
 	}

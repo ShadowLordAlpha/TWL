@@ -29,7 +29,6 @@
  */
 package sourceviewer.demo;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,9 +40,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
-import sourceviewer.JavaTextAreaModel;
-import sourceviewer.StringSyntaxHighlighter;
-import test.TestUtils;
 import de.matthiasmann.twl.DesktopArea;
 import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.Event;
@@ -59,6 +55,9 @@ import de.matthiasmann.twl.model.EditFieldModel;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.StyleSheet;
 import de.matthiasmann.twl.theme.ThemeManager;
+import sourceviewer.JavaTextAreaModel;
+import sourceviewer.StringSyntaxHighlighter;
+import test.TestUtils;
 
 /**
  *
@@ -221,9 +220,6 @@ public final class Demo extends DesktopArea {
 	public void addSourceFile(String path) throws IOException {
 		URL ref = Demo.class.getResource("demo.xml");
 		URL url = new URL(ref, "../../sourceviewer/".concat(path));
-		if (url == null) {
-			throw new FileNotFoundException(path);
-		}
 
 		JavaTextAreaModel jtam = new JavaTextAreaModel();
 		entrys.add(new TabEntry(jtam, url));
@@ -271,6 +267,8 @@ public final class Demo extends DesktopArea {
 				quit = true;
 				return true;
 			}
+		default:
+			break;
 		}
 		return false;
 	}

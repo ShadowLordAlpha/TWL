@@ -93,6 +93,8 @@ public class StringSyntaxHighlighter {
 			case STRING:
 				attributes.setAnimationState(STATE_STRING, start, pos, true);
 				break;
+			default:
+				break;
 			}
 			start = pos;
 		}

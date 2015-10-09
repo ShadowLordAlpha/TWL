@@ -99,7 +99,6 @@ public class ActionDemo extends Widget {
 	private final Label result;
 	public boolean quit;
 
-	@SuppressWarnings("LeakingThisInConstructor")
 	public ActionDemo() {
 		fpsCounter = new FPSCounter();
 		add(fpsCounter);

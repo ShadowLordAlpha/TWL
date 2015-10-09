@@ -122,7 +122,7 @@ public class LWJGLRenderer implements Renderer, LineRenderer {
 	protected final ClipStack clipStack;
 	protected final Rect clipRectTemp;
 
-	public LWJGLRenderer() throws Exception {
+	public LWJGLRenderer() {
 		this.ib16 = BufferUtils.createIntBuffer(16);
 		this.textureAreas = new ArrayList<TextureArea>();
 		this.rotatedTextureAreas = new ArrayList<TextureAreaRotated>();
@@ -141,7 +141,7 @@ public class LWJGLRenderer implements Renderer, LineRenderer {
 			// IntBuffer tmp = BufferUtils.createIntBuffer(minCursorSize *
 			// minCursorSize);
 			// TODO change this to blank maybe
-			emptyCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR);
+			emptyCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_CROSSHAIR_CURSOR);
 		} else {
 			emptyCursor = 0;
 		}

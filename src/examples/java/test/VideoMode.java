@@ -29,7 +29,7 @@
  */
 package test;
 
-import java.awt.DisplayMode;
+import org.lwjgl.glfw.GLFWVidMode;
 
 /**
  *
@@ -37,10 +37,10 @@ import java.awt.DisplayMode;
  */
 public class VideoMode {
 
-	public final DisplayMode mode;
+	public final GLFWVidMode mode;
 	public final boolean fullscreen;
 
-	public VideoMode(DisplayMode mode, boolean fullscreen) {
+	public VideoMode(GLFWVidMode mode, boolean fullscreen) {
 		this.mode = mode;
 		this.fullscreen = fullscreen;
 	}

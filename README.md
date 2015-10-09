@@ -12,9 +12,9 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 [x] Allow use with LWJGL 3
 
-[ ] Fix all examples - (mostly done just a few left)
+[x] Fix all examples ... mostly ... they don't crash on start up but some are still a bit bugged
 
-[ ] Fix the test that broke when formatting and removing unneeded imports
+[x] Fix the test that broke when formatting and removing unneeded imports ... mostly done just need to fix some character sets and will be done
 
 [ ] create renderer that uses 3.2+ OpenGL
 
@@ -22,7 +22,7 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 ## Bugs
 
-Some tests were messed up
+only types in caps because reasons and I have not gotten around to fixing it (also prints strange characters when you press mod keys :D)
 
 ## Disclaimer
 

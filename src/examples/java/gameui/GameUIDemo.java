@@ -210,6 +210,8 @@ public class GameUIDemo extends Widget {
 				return createRadialMenu().openPopup(evt);
 			}
 			break;
+		default:
+			break;
 		}
 		return evt.isMouseEventNoWheel();
 	}

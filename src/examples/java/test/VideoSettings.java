@@ -29,10 +29,15 @@
  */
 package test;
 
-import java.awt.DisplayMode;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.prefs.Preferences;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWVidMode.Buffer;
 
 import de.matthiasmann.twl.Alignment;
 import de.matthiasmann.twl.Button;
@@ -45,7 +50,6 @@ import de.matthiasmann.twl.model.BooleanModel;
 import de.matthiasmann.twl.model.ListModel;
 import de.matthiasmann.twl.model.SimpleBooleanModel;
 import de.matthiasmann.twl.model.SimpleChangableListModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.utils.CallbackSupport;
 
 /**
@@ -74,17 +78,22 @@ public class VideoSettings extends DialogLayout {
 	private static int[] WINDOWED_MODES = { 640, 480, 800, 600, 1024, 768,
 			1280, 1024, 1600, 1200 };
 
-	public VideoSettings(Preferences prefs, DisplayMode desktopMode) {
+	public VideoSettings(Preferences prefs, GLFWVidMode desktopMode) {
 		this.prefs = prefs;
 
 		ArrayList<ModeEntry> modes = new ArrayList<ModeEntry>();
-		try {
-			for (DisplayMode dm : Display.getAvailableDisplayModes()) {
-				if (dm.getBitsPerPixel() == desktopMode.getBitsPerPixel()) {
-					addModeToList(modes, dm);
+		
+		Buffer buffer = GLFW.glfwGetVideoModes(GLFW.glfwGetPrimaryMonitor());
+		for (int i = 0; i < buffer.remaining(); i++) {
+			// I think this is generally the same
+			GLFWVidMode dm = buffer.get(i);
+			if (dm.getBlueBits() == desktopMode.getBlueBits()) {
+				if(dm.getRedBits() == desktopMode.getRedBits()) {
+					if(dm.getGreenBits() == desktopMode.getGreenBits()) {
+						addModeToList(modes, dm);
+					}
 				}
 			}
-		} catch (LWJGLException ex) {
 		}
 
 		Collections.sort(modes);
@@ -95,8 +104,15 @@ public class VideoSettings extends DialogLayout {
 			int w = WINDOWED_MODES[i + 0];
 			int h = WINDOWED_MODES[i + 1];
 			if (w <= desktopMode.getWidth() && h <= desktopMode.getHeight()) {
-				mResolutionWindowed.addElement(new ModeEntry(new DisplayMode(w,
-						h)));
+				ByteBuffer data = BufferUtils.createByteBuffer(24);
+				data.putInt(w); // width
+				data.putInt(h); // height
+				data.putInt(desktopMode.getRedBits()); // red bits
+				data.putInt(desktopMode.getGreenBits()); // green bits
+				data.putInt(desktopMode.getBlueBits()); // blue bits
+				data.putInt(desktopMode.getRefreshRate()); // refresh rate
+				data.flip();
+				mResolutionWindowed.addElement(new ModeEntry(new GLFWVidMode(data)));
 			}
 		}
 
@@ -173,7 +189,7 @@ public class VideoSettings extends DialogLayout {
 	}
 
 	public boolean storeSettings() {
-		DisplayMode mode = getSelectedMode();
+		GLFWVidMode mode = getSelectedMode();
 		if (mode != null) {
 			prefs.putBoolean("fullscreen", mFullscreen.getValue());
 			prefs.putInt("resX", mode.getWidth());
@@ -184,14 +200,14 @@ public class VideoSettings extends DialogLayout {
 	}
 
 	public VideoMode getSelectedVideoMode() {
-		DisplayMode mode = getSelectedMode();
+		GLFWVidMode mode = getSelectedMode();
 		if (mode != null) {
 			return new VideoMode(mode, mFullscreen.getValue());
 		}
 		return null;
 	}
 
-	private DisplayMode getSelectedMode() {
+	private GLFWVidMode getSelectedMode() {
 		int selectedMode = cResolution.getSelected();
 		if (selectedMode >= 0) {
 			return ((ModeEntry) cResolution.getModel().getEntry(selectedMode)).mode;
@@ -203,7 +219,7 @@ public class VideoSettings extends DialogLayout {
 		ListModel<ModeEntry> model = getListModel();
 		int matchedMode = -1;
 		for (int i = 0; i < model.getNumEntries(); i++) {
-			DisplayMode mode = model.getEntry(i).mode;
+			GLFWVidMode mode = model.getEntry(i).mode;
 			if (mode.getWidth() == width && mode.getHeight() == height) {
 				matchedMode = i;
 				break;
@@ -222,7 +238,7 @@ public class VideoSettings extends DialogLayout {
 	}
 
 	void setModeList() {
-		DisplayMode current = getSelectedMode();
+		GLFWVidMode current = getSelectedMode();
 		cResolution.setModel(getListModel());
 		if (current != null) {
 			selectMode(current.getWidth(), current.getHeight());
@@ -233,13 +249,13 @@ public class VideoSettings extends DialogLayout {
 		bAccept.setEnabled(cResolution.getSelected() >= 0);
 	}
 
-	private void addModeToList(ArrayList<ModeEntry> modes, DisplayMode dm) {
+	private void addModeToList(ArrayList<ModeEntry> modes, GLFWVidMode dm) {
 		int entryToReplace = -1;
 		for (int idx = 0; idx < modes.size(); idx++) {
-			DisplayMode mode = modes.get(idx).mode;
+			GLFWVidMode mode = modes.get(idx).mode;
 			if (mode.getWidth() == dm.getWidth()
 					&& mode.getHeight() == dm.getHeight()) {
-				if (mode.getFrequency() > dm.getFrequency()) {
+				if (mode.getRefreshRate() > dm.getRefreshRate()) {
 					entryToReplace = idx;
 					break;
 				} else {
@@ -262,10 +278,10 @@ public class VideoSettings extends DialogLayout {
 	}
 
 	static class ModeEntry implements Comparable<ModeEntry> {
-		final DisplayMode mode;
+		final GLFWVidMode mode;
 
-		ModeEntry(DisplayMode mode) {
-			this.mode = mode;
+		ModeEntry(GLFWVidMode dm) {
+			this.mode = dm;
 		}
 
 		@Override

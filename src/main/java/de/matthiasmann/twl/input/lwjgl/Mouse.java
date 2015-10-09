@@ -16,7 +16,8 @@ public class Mouse {
 	// values
 	private static Vector<Event> eventStack = new Vector<Event>();
 	private static Event proccessing;
-
+	private static long setupWin;
+	
 	public static boolean getEventButtonState() {
 		return proccessing.action;
 	}

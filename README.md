@@ -10,10 +10,24 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 ## TODO
 
-Allow use with LWJGL 3
+[x] Allow use with LWJGL 3
 
-create renderer that uses 3.2+ OpenGL
+[ ] Fix all examples - (mostly done just a few left)
+
+[ ] Fix the test that broke when formatting and removing unneeded imports
+
+[ ] create renderer that uses 3.2+ OpenGL
+
+[ ] recode 90% of what was done to be better
+
+## Bugs
+
+Mouse starts in the top left instead of the bottom left like TWL wants
+
+Some tests were messed up
 
 ## Disclaimer
 
-TWL was not created by me, ShadowLordAlpha, it was created by Matthias Mann and other contributers. This is just my attempt at updating TWL so don't expect anything from it.
+TWL was not created by me, ShadowLordAlpha, it was created by Matthias Mann and other contributers. This is just my attempt at updating TWL. 
+
+Currently it works by simply taking control of the callbacks it needs and emulating the old LWJGL 2 way of doing input and then passing the callback data onto the old callback. This is not perfect and will break if the user attempts to rebind or remove a callback that is set by TWL. The whole system needs to be updated but it works this way for now.

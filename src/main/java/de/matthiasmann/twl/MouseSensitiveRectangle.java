@@ -36,13 +36,14 @@ package de.matthiasmann.twl;
  */
 public abstract class MouseSensitiveRectangle extends Rect {
 
-    public MouseSensitiveRectangle() {
-    }
+	public MouseSensitiveRectangle() {
+	}
 
-    /**
-     * Test if the mouse is over this area
-     * @return true if the mouse is over this area.
-     */
-    public abstract boolean isMouseOver();
-    
+	/**
+	 * Test if the mouse is over this area
+	 * 
+	 * @return true if the mouse is over this area.
+	 */
+	public abstract boolean isMouseOver();
+
 }

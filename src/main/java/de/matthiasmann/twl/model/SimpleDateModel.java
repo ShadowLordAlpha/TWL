@@ -36,28 +36,29 @@ package de.matthiasmann.twl.model;
  */
 public class SimpleDateModel extends HasCallback implements DateModel {
 
-    private long date;
+	private long date;
 
-    /**
-     * Initializes the date to the current system date
-     * @see System#currentTimeMillis() 
-     */
-    public SimpleDateModel() {
-        this.date = System.currentTimeMillis();
-    }
+	/**
+	 * Initializes the date to the current system date
+	 * 
+	 * @see System#currentTimeMillis()
+	 */
+	public SimpleDateModel() {
+		this.date = System.currentTimeMillis();
+	}
 
-    public SimpleDateModel(long date) {
-        this.date = date;
-    }
-    
-    public long getValue() {
-        return date;
-    }
+	public SimpleDateModel(long date) {
+		this.date = date;
+	}
 
-    public void setValue(long date) {
-        if(this.date != date) {
-            this.date = date;
-            doCallback();
-        }
-    }
+	public long getValue() {
+		return date;
+	}
+
+	public void setValue(long date) {
+		if (this.date != date) {
+			this.date = date;
+			doCallback();
+		}
+	}
 }

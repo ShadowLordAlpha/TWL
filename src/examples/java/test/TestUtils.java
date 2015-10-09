@@ -32,39 +32,36 @@ package test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.lwjgl.Sys;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 
 /**
  *
  * @author Matthias Mann
  */
 public final class TestUtils {
-    
-    private TestUtils() {
-    }
 
-    @SuppressWarnings("CallToThreadDumpStack")
-    public static void showErrMsg(Throwable ex) {
-        ex.printStackTrace();
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        ex.printStackTrace(pw);
-        pw.flush();
-        Sys.alert("Error!", sw.toString());
-    }
+	private TestUtils() {
+	}
 
-    /**
-     * reduce input lag by polling input devices after waiting for vsync
-     * 
-     * Call after Display.update()
-     */
-    public static void reduceInputLag() {
-        GL11.glGetError();          // this call will burn the time between vsyncs
-        Display.processMessages();  // process new native messages since Display.update();
-        Mouse.poll();               // now update Mouse events
-        Keyboard.poll();            // and Keyboard too
-    }
+	@SuppressWarnings("CallToThreadDumpStack")
+	public static void showErrMsg(Throwable ex) {
+		ex.printStackTrace();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace(pw);
+		pw.flush();
+		System.err.println("Error! " + sw.toString());
+	}
+
+	/**
+	 * reduce input lag by polling input devices after waiting for vsync
+	 * 
+	 * Call after Display.update()
+	 */
+	public static void reduceInputLag() {
+		GL11.glGetError(); // this call will burn the time between vsyncs
+		GLFW.glfwPollEvents(); // process new native messages since
+								// Display.update();
+	}
 }

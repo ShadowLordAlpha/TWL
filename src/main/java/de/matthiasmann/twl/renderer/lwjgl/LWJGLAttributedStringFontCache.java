@@ -29,120 +29,118 @@
  */
 package de.matthiasmann.twl.renderer.lwjgl;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.opengl.GL11;
+
 import de.matthiasmann.twl.renderer.AttributedStringFontCache;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLFont.FontState;
-import java.nio.FloatBuffer;
-import org.lwjgl.opengl.GL11;
 
 /**
  *
  * @author Matthias Mann
  */
-class LWJGLAttributedStringFontCache extends VertexArray implements AttributedStringFontCache {
+class LWJGLAttributedStringFontCache extends VertexArray implements
+		AttributedStringFontCache {
 
-    final LWJGLRenderer renderer;
-    final BitmapFont font;
-    int width;
-    int height;
-    private Run[] runs;
-    private int numRuns;
+	final LWJGLRenderer renderer;
+	final BitmapFont font;
+	int width;
+	int height;
+	private Run[] runs;
+	private int numRuns;
 
-    LWJGLAttributedStringFontCache(LWJGLRenderer renderer, BitmapFont font) {
-        this.renderer = renderer;
-        this.font = font;
-        this.runs = new Run[8];
-    }
-    
-    @Override
-    public FloatBuffer allocate(int maxGlyphs) {
-        numRuns = 0;
-        return super.allocate(maxGlyphs);
-    }
-    
-    Run addRun() {
-        if(runs.length == numRuns) {
-            grow();
-        }
-        Run run = runs[numRuns];
-        if(run == null) {
-            run = new Run();
-            runs[numRuns] = run;
-        }
-        numRuns++;
-        return run;
-    }
-    
-    private void grow() {
-        Run[] newRuns = new Run[numRuns * 2];
-        System.arraycopy(runs, 0, newRuns, 0, numRuns);
-        runs = newRuns;
-    }
-    
-    public void destroy() {
-    }
+	LWJGLAttributedStringFontCache(LWJGLRenderer renderer, BitmapFont font) {
+		this.renderer = renderer;
+		this.font = font;
+		this.runs = new Run[8];
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	@Override
+	public FloatBuffer allocate(int maxGlyphs) {
+		numRuns = 0;
+		return super.allocate(maxGlyphs);
+	}
 
-    public int getHeight() {
-        return height;
-    }
-    
-    public void draw(int x, int y) {
-        if(font.bind()) {
-            bind();
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x, y, 0f);
-            final TintStack tintStack = renderer.tintStack;
-            
-            try {
-                int idx = 0;
-                for(int i=0 ; i<numRuns ; i++) {
-                    final Run run = runs[i];
-                    final FontState state = run.state;
-                    final int numVertices = run.numVertices;
-                    
-                    tintStack.setColor(state.color);
-                    
-                    if(numVertices > 0) {
-                        drawVertices(idx, numVertices);
-                        idx += numVertices;
-                    }
-                    
-                    if(state.style != 0) {
-                        drawLines(run);
-                    }
-                }
-            } finally {
-                GL11.glPopMatrix();
-                unbind();
-            }
-        }
-    }
-    
-    private void drawLines(Run run) {
-        final FontState state = run.state;
-        
-        if((state.style & LWJGLFont.STYLE_UNDERLINE) != 0) {
-            font.drawLine(
-                    run.x,
-                    run.y + font.getBaseLine() + state.underlineOffset,
-                    run.xend);
-        }
-        if((state.style & LWJGLFont.STYLE_LINETHROUGH) != 0) {
-            font.drawLine(
-                    run.x,
-                    run.y + font.getLineHeight()/2,
-                    run.xend);
-        }
-    }
-    
-    static class Run {
-        LWJGLFont.FontState state;
-        int numVertices;
-        int x;
-        int xend;
-        int y;
-    }
+	Run addRun() {
+		if (runs.length == numRuns) {
+			grow();
+		}
+		Run run = runs[numRuns];
+		if (run == null) {
+			run = new Run();
+			runs[numRuns] = run;
+		}
+		numRuns++;
+		return run;
+	}
+
+	private void grow() {
+		Run[] newRuns = new Run[numRuns * 2];
+		System.arraycopy(runs, 0, newRuns, 0, numRuns);
+		runs = newRuns;
+	}
+
+	public void destroy() {
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void draw(int x, int y) {
+		if (font.bind()) {
+			bind();
+			GL11.glPushMatrix();
+			GL11.glTranslatef(x, y, 0f);
+			final TintStack tintStack = renderer.tintStack;
+
+			try {
+				int idx = 0;
+				for (int i = 0; i < numRuns; i++) {
+					final Run run = runs[i];
+					final FontState state = run.state;
+					final int numVertices = run.numVertices;
+
+					tintStack.setColor(state.color);
+
+					if (numVertices > 0) {
+						drawVertices(idx, numVertices);
+						idx += numVertices;
+					}
+
+					if (state.style != 0) {
+						drawLines(run);
+					}
+				}
+			} finally {
+				GL11.glPopMatrix();
+				unbind();
+			}
+		}
+	}
+
+	private void drawLines(Run run) {
+		final FontState state = run.state;
+
+		if ((state.style & LWJGLFont.STYLE_UNDERLINE) != 0) {
+			font.drawLine(run.x, run.y + font.getBaseLine()
+					+ state.underlineOffset, run.xend);
+		}
+		if ((state.style & LWJGLFont.STYLE_LINETHROUGH) != 0) {
+			font.drawLine(run.x, run.y + font.getLineHeight() / 2, run.xend);
+		}
+	}
+
+	static class Run {
+		LWJGLFont.FontState state;
+		int numVertices;
+		int x;
+		int xend;
+		int y;
+	}
 }

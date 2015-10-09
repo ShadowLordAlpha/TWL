@@ -39,31 +39,31 @@ import de.matthiasmann.twl.renderer.Image;
  * @author Matthias Mann
  */
 public class EmptyImage implements Image {
-    
-    private final int width;
-    private final int height;
 
-    public EmptyImage(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
+	private final int width;
+	private final int height;
 
-    public void draw(AnimationState as, int x, int y) {
-    }
+	public EmptyImage(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
 
-    public void draw(AnimationState as, int x, int y, int width, int height) {
-    }
+	public void draw(AnimationState as, int x, int y) {
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public void draw(AnimationState as, int x, int y, int width, int height) {
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public int getWidth() {
+		return width;
+	}
 
-    public Image createTintedVersion(Color color) {
-        return this;
-    }
+	public int getHeight() {
+		return height;
+	}
+
+	public Image createTintedVersion(Color color) {
+		return this;
+	}
 
 }

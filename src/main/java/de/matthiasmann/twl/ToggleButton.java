@@ -39,43 +39,50 @@ import de.matthiasmann.twl.model.ToggleButtonModel;
 /**
  * A toggle button.
  * 
- * <p>This class extends Button with the ablity to bind the selected state
- * to a {@link BooleanModel}.</p>
+ * <p>
+ * This class extends Button with the ablity to bind the selected state to a
+ * {@link BooleanModel}.
+ * </p>
  * 
- * <p>The prefert way to use this class is by using the callback on the
- * {@code BooleanModel}.</p>
+ * <p>
+ * The prefert way to use this class is by using the callback on the
+ * {@code BooleanModel}.
+ * </p>
  * 
- * <p>To implement radio buttons one of the option models can be used:<ul>
+ * <p>
+ * To implement radio buttons one of the option models can be used:
+ * <ul>
  * <li>{@link OptionBooleanModel} which is backed by an {@link IntegerModel}</li>
  * <li>{@link OptionEnumModel} which is backed by an {@link EnumModel}</li>
- * </ul></p>
+ * </ul>
+ * </p>
  *
  * @author Matthias Mann
  */
 public class ToggleButton extends Button {
 
-    public ToggleButton() {
-        super(new ToggleButtonModel());
-    }
+	public ToggleButton() {
+		super(new ToggleButtonModel());
+	}
 
-    public ToggleButton(BooleanModel model) {
-        super(new ToggleButtonModel(model));
-    }
-    
-    public ToggleButton(String text) {
-        this();
-        setText(text);
-    }
+	public ToggleButton(BooleanModel model) {
+		super(new ToggleButtonModel(model));
+	}
 
-    public void setModel(BooleanModel model) {
-        ((ToggleButtonModel)getModel()).setModel(model);
-    }
-    
-    public boolean isActive() {
-        return getModel().isSelected();
-    }
-    
-    public void setActive(boolean  active) {
-        getModel().setSelected(active);
-    }
+	public ToggleButton(String text) {
+		this();
+		setText(text);
+	}
+
+	public void setModel(BooleanModel model) {
+		((ToggleButtonModel) getModel()).setModel(model);
+	}
+
+	public boolean isActive() {
+		return getModel().isSelected();
+	}
+
+	public void setActive(boolean active) {
+		getModel().setSelected(active);
+	}
 }

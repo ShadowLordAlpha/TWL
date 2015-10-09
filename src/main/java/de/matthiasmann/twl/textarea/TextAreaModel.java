@@ -39,343 +39,344 @@ import java.util.Iterator;
  */
 public interface TextAreaModel extends Iterable<TextAreaModel.Element> {
 
-    public enum HAlignment {
-        LEFT,
-        RIGHT,
-        CENTER,
-        JUSTIFY
-    }
+	public enum HAlignment {
+		LEFT, RIGHT, CENTER, JUSTIFY
+	}
 
-    public enum Display {
-        INLINE,
-        BLOCK
-    }
-    
-    public enum VAlignment {
-        TOP,
-        MIDDLE,
-        BOTTOM,
-        FILL
-    }
+	public enum Display {
+		INLINE, BLOCK
+	}
 
-    public enum Clear {
-        NONE,
-        LEFT,
-        RIGHT,
-        BOTH
-    }
+	public enum VAlignment {
+		TOP, MIDDLE, BOTTOM, FILL
+	}
 
-    public enum FloatPosition {
-        NONE,
-        LEFT,
-        RIGHT
-    }
+	public enum Clear {
+		NONE, LEFT, RIGHT, BOTH
+	}
 
-    public abstract class Element {
-        private Style style;
+	public enum FloatPosition {
+		NONE, LEFT, RIGHT
+	}
 
-        protected Element(Style style) {
-            notNull(style, "style");
-            this.style = style;
-        }
+	public abstract class Element {
+		private Style style;
 
-        /**
-         * Returns the style associated with this element
-         * @return the style associated with this element
-         */
-        public Style getStyle() {
-            return style;
-        }
+		protected Element(Style style) {
+			notNull(style, "style");
+			this.style = style;
+		}
 
-        /**
-         * Replaces the style associated with this element.
-         * This method does not cause the model callback to be fired.
-         *
-         * @param style the new style. Must not be null.
-         */
-        public void setStyle(Style style) {
-            notNull(style, "style");
-            this.style = style;
-        }
+		/**
+		 * Returns the style associated with this element
+		 * 
+		 * @return the style associated with this element
+		 */
+		public Style getStyle() {
+			return style;
+		}
 
-        static void notNull(Object o, String name) {
-            if(o == null) {
-                throw new NullPointerException(name);
-            }
-        }
-    }
+		/**
+		 * Replaces the style associated with this element. This method does not
+		 * cause the model callback to be fired.
+		 *
+		 * @param style
+		 *            the new style. Must not be null.
+		 */
+		public void setStyle(Style style) {
+			notNull(style, "style");
+			this.style = style;
+		}
 
-    public class LineBreakElement extends Element {
-        public LineBreakElement(Style style) {
-            super(style);
-        }
-    };
-    
-    public class TextElement extends Element {
-        private String text;
+		static void notNull(Object o, String name) {
+			if (o == null) {
+				throw new NullPointerException(name);
+			}
+		}
+	}
 
-        public TextElement(Style style, String text) {
-            super(style);
-            notNull(text, "text");
-            this.text = text;
-        }
+	public class LineBreakElement extends Element {
+		public LineBreakElement(Style style) {
+			super(style);
+		}
+	};
 
-        /**
-         * Returns ths text.
-         * @return the text.
-         */
-        public String getText() {
-            return text;
-        }
+	public class TextElement extends Element {
+		private String text;
 
-        /**
-         * Replaces the text of this element.
-         * This method does not cause the model callback to be fired.
-         *
-         * @param text the new text. Must not be null.
-         */
-        public void setText(String text) {
-            notNull(text, "text");
-            this.text = text;
-        }
-    }
+		public TextElement(Style style, String text) {
+			super(style);
+			notNull(text, "text");
+			this.text = text;
+		}
 
-    public class ImageElement extends Element {
-        private final String imageName;
-        private final String tooltip;
+		/**
+		 * Returns ths text.
+		 * 
+		 * @return the text.
+		 */
+		public String getText() {
+			return text;
+		}
 
-        public ImageElement(Style style, String imageName, String tooltip) {
-            super(style);
-            this.imageName = imageName;
-            this.tooltip = tooltip;
-        }
+		/**
+		 * Replaces the text of this element. This method does not cause the
+		 * model callback to be fired.
+		 *
+		 * @param text
+		 *            the new text. Must not be null.
+		 */
+		public void setText(String text) {
+			notNull(text, "text");
+			this.text = text;
+		}
+	}
 
-        public ImageElement(Style style, String imageName) {
-            this(style, imageName, null);
-        }
+	public class ImageElement extends Element {
+		private final String imageName;
+		private final String tooltip;
 
-        /**
-         * Returns the image name for this image element.
-         * @return the image name for this image element.
-         */
-        public String getImageName() {
-            return imageName;
-        }
+		public ImageElement(Style style, String imageName, String tooltip) {
+			super(style);
+			this.imageName = imageName;
+			this.tooltip = tooltip;
+		}
 
-        /**
-         * Returns the tooltip or null for this image.
-         * @return the tooltip or null for this image. Can be null.
-         */
-        public String getToolTip() {
-            return tooltip;
-        }
-    }
+		public ImageElement(Style style, String imageName) {
+			this(style, imageName, null);
+		}
 
-    public class WidgetElement extends Element {
-        private final String widgetName;
-        private final String widgetParam;
+		/**
+		 * Returns the image name for this image element.
+		 * 
+		 * @return the image name for this image element.
+		 */
+		public String getImageName() {
+			return imageName;
+		}
 
-        public WidgetElement(Style style, String widgetName, String widgetParam) {
-            super(style);
-            this.widgetName = widgetName;
-            this.widgetParam = widgetParam;
-        }
+		/**
+		 * Returns the tooltip or null for this image.
+		 * 
+		 * @return the tooltip or null for this image. Can be null.
+		 */
+		public String getToolTip() {
+			return tooltip;
+		}
+	}
 
-        public String getWidgetName() {
-            return widgetName;
-        }
+	public class WidgetElement extends Element {
+		private final String widgetName;
+		private final String widgetParam;
 
-        public String getWidgetParam() {
-            return widgetParam;
-        }
-    }
+		public WidgetElement(Style style, String widgetName, String widgetParam) {
+			super(style);
+			this.widgetName = widgetName;
+			this.widgetParam = widgetParam;
+		}
 
-    public class ContainerElement extends Element implements Iterable<Element> {
-        protected final ArrayList<Element> children;
+		public String getWidgetName() {
+			return widgetName;
+		}
 
-        public ContainerElement(Style style) {
-            super(style);
-            this.children = new ArrayList<Element>();
-        }
+		public String getWidgetParam() {
+			return widgetParam;
+		}
+	}
 
-        public Iterator<Element> iterator() {
-            return children.iterator();
-        }
+	public class ContainerElement extends Element implements Iterable<Element> {
+		protected final ArrayList<Element> children;
 
-        public Element getElement(int index) {
-            return children.get(index);
-        }
-        
-        public int getNumElements() {
-            return children.size();
-        }
+		public ContainerElement(Style style) {
+			super(style);
+			this.children = new ArrayList<Element>();
+		}
 
-        public void add(Element element) {
-            this.children.add(element);
-        }
-    }
+		public Iterator<Element> iterator() {
+			return children.iterator();
+		}
 
-    public class ParagraphElement extends ContainerElement {
-        public ParagraphElement(Style style) {
-            super(style);
-        }
-    }
+		public Element getElement(int index) {
+			return children.get(index);
+		}
 
-    public class LinkElement extends ContainerElement {
-        private String href;
+		public int getNumElements() {
+			return children.size();
+		}
 
-        public LinkElement(Style style, String href) {
-            super(style);
-            this.href = href;
-        }
+		public void add(Element element) {
+			this.children.add(element);
+		}
+	}
 
-        /**
-         * Returns the href of the link.
-         * @return the href of the link. Can be null.
-         */
-        public String getHREF() {
-            return href;
-        }
+	public class ParagraphElement extends ContainerElement {
+		public ParagraphElement(Style style) {
+			super(style);
+		}
+	}
 
-        /**
-         * Replaces the href of this link.
-         * This method does not cause the model callback to be fired.
-         *
-         * @param href the new href of the link, can be null.
-         */
-        public void setHREF(String href) {
-            this.href = href;
-        }
-    }
-    
-    /**
-     * A list item in an unordered list
-     */
-    public class ListElement extends ContainerElement {
-        public ListElement(Style style) {
-            super(style);
-        }
-    }
+	public class LinkElement extends ContainerElement {
+		private String href;
 
-    /**
-     * An ordered list. All contained elements are treated as list items.
-     */
-    public class OrderedListElement extends ContainerElement {
-        private final int start;
+		public LinkElement(Style style, String href) {
+			super(style);
+			this.href = href;
+		}
 
-        public OrderedListElement(Style style, int start) {
-            super(style);
-            this.start = start;
-        }
+		/**
+		 * Returns the href of the link.
+		 * 
+		 * @return the href of the link. Can be null.
+		 */
+		public String getHREF() {
+			return href;
+		}
 
-        public int getStart() {
-            return start;
-        }
-    }
+		/**
+		 * Replaces the href of this link. This method does not cause the model
+		 * callback to be fired.
+		 *
+		 * @param href
+		 *            the new href of the link, can be null.
+		 */
+		public void setHREF(String href) {
+			this.href = href;
+		}
+	}
 
-    public class BlockElement extends ContainerElement {
-        public BlockElement(Style style) {
-            super(style);
-        }
-    }
+	/**
+	 * A list item in an unordered list
+	 */
+	public class ListElement extends ContainerElement {
+		public ListElement(Style style) {
+			super(style);
+		}
+	}
 
-    public class TableCellElement extends ContainerElement {
-        private final int colspan;
+	/**
+	 * An ordered list. All contained elements are treated as list items.
+	 */
+	public class OrderedListElement extends ContainerElement {
+		private final int start;
 
-        public TableCellElement(Style style) {
-            this(style, 1);
-        }
+		public OrderedListElement(Style style, int start) {
+			super(style);
+			this.start = start;
+		}
 
-        public TableCellElement(Style style, int colspan) {
-            super(style);
-            this.colspan = colspan;
-        }
+		public int getStart() {
+			return start;
+		}
+	}
 
-        public int getColspan() {
-            return colspan;
-        }
-    }
-    
-    public class TableElement extends Element {
-        private final int numColumns;
-        private final int numRows;
-        private final int cellSpacing;
-        private final int cellPadding;
-        private final TableCellElement[] cells;
-        private final Style[] rowStyles;
+	public class BlockElement extends ContainerElement {
+		public BlockElement(Style style) {
+			super(style);
+		}
+	}
 
-        public TableElement(Style style, int numColumns, int numRows, int cellSpacing, int cellPadding) {
-            super(style);
-            if(numColumns < 0 ) {
-                throw new IllegalArgumentException("numColumns");
-            }
-            if(numRows < 0) {
-                throw new IllegalArgumentException("numRows");
-            }
+	public class TableCellElement extends ContainerElement {
+		private final int colspan;
 
-            this.numColumns = numColumns;
-            this.numRows = numRows;
-            this.cellSpacing = cellSpacing;
-            this.cellPadding = cellPadding;
-            this.cells = new TableCellElement[numRows * numColumns];
-            this.rowStyles = new Style[numRows];
-        }
+		public TableCellElement(Style style) {
+			this(style, 1);
+		}
 
-        public int getNumColumns() {
-            return numColumns;
-        }
+		public TableCellElement(Style style, int colspan) {
+			super(style);
+			this.colspan = colspan;
+		}
 
-        public int getNumRows() {
-            return numRows;
-        }
+		public int getColspan() {
+			return colspan;
+		}
+	}
 
-        public int getCellPadding() {
-            return cellPadding;
-        }
+	public class TableElement extends Element {
+		private final int numColumns;
+		private final int numRows;
+		private final int cellSpacing;
+		private final int cellPadding;
+		private final TableCellElement[] cells;
+		private final Style[] rowStyles;
 
-        public int getCellSpacing() {
-            return cellSpacing;
-        }
+		public TableElement(Style style, int numColumns, int numRows,
+				int cellSpacing, int cellPadding) {
+			super(style);
+			if (numColumns < 0) {
+				throw new IllegalArgumentException("numColumns");
+			}
+			if (numRows < 0) {
+				throw new IllegalArgumentException("numRows");
+			}
 
-        public TableCellElement getCell(int row, int column) {
-            if(column < 0 || column >= numColumns) {
-                throw new IndexOutOfBoundsException("column");
-            }
-            if(row < 0 || row >= numRows) {
-                throw new IndexOutOfBoundsException("row");
-            }
-            return cells[row * numColumns + column];
-        }
+			this.numColumns = numColumns;
+			this.numRows = numRows;
+			this.cellSpacing = cellSpacing;
+			this.cellPadding = cellPadding;
+			this.cells = new TableCellElement[numRows * numColumns];
+			this.rowStyles = new Style[numRows];
+		}
 
-        public Style getRowStyle(int row) {
-            return rowStyles[row];
-        }
+		public int getNumColumns() {
+			return numColumns;
+		}
 
-        public void setCell(int row, int column, TableCellElement cell) {
-            if(column < 0 || column >= numColumns) {
-                throw new IndexOutOfBoundsException("column");
-            }
-            if(row < 0 || row >= numRows) {
-                throw new IndexOutOfBoundsException("row");
-            }
-            cells[row * numColumns + column] = cell;
-        }
+		public int getNumRows() {
+			return numRows;
+		}
 
-        public void setRowStyle(int row, Style style) {
-            rowStyles[row] = style;
-        }
-    }
+		public int getCellPadding() {
+			return cellPadding;
+		}
 
-    /**
-     * Adds a model change callback which is called when the model is modified.
-     * @param cb the callback - must not be null.
-     */
-    public void addCallback(Runnable cb);
+		public int getCellSpacing() {
+			return cellSpacing;
+		}
 
-    /**
-     * Removes the specific callback.
-     * @param cb the callback that should be removed.
-     */
-    public void removeCallback(Runnable cb);
-    
+		public TableCellElement getCell(int row, int column) {
+			if (column < 0 || column >= numColumns) {
+				throw new IndexOutOfBoundsException("column");
+			}
+			if (row < 0 || row >= numRows) {
+				throw new IndexOutOfBoundsException("row");
+			}
+			return cells[row * numColumns + column];
+		}
+
+		public Style getRowStyle(int row) {
+			return rowStyles[row];
+		}
+
+		public void setCell(int row, int column, TableCellElement cell) {
+			if (column < 0 || column >= numColumns) {
+				throw new IndexOutOfBoundsException("column");
+			}
+			if (row < 0 || row >= numRows) {
+				throw new IndexOutOfBoundsException("row");
+			}
+			cells[row * numColumns + column] = cell;
+		}
+
+		public void setRowStyle(int row, Style style) {
+			rowStyles[row] = style;
+		}
+	}
+
+	/**
+	 * Adds a model change callback which is called when the model is modified.
+	 * 
+	 * @param cb
+	 *            the callback - must not be null.
+	 */
+	public void addCallback(Runnable cb);
+
+	/**
+	 * Removes the specific callback.
+	 * 
+	 * @param cb
+	 *            the callback that should be removed.
+	 */
+	public void removeCallback(Runnable cb);
+
 }

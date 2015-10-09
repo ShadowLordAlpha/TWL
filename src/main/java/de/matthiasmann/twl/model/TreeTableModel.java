@@ -35,15 +35,15 @@ package de.matthiasmann.twl.model;
  */
 public interface TreeTableModel extends TableColumnHeaderModel, TreeTableNode {
 
-    public interface ChangeListener extends ColumnHeaderChangeListener {
-        public void nodesAdded(TreeTableNode parent, int idx, int count);
+	public interface ChangeListener extends ColumnHeaderChangeListener {
+		public void nodesAdded(TreeTableNode parent, int idx, int count);
 
-        public void nodesRemoved(TreeTableNode parent, int idx, int count);
+		public void nodesRemoved(TreeTableNode parent, int idx, int count);
 
-        public void nodesChanged(TreeTableNode parent, int idx, int count);
-    }
-    
-    public void addChangeListener(ChangeListener listener);
+		public void nodesChanged(TreeTableNode parent, int idx, int count);
+	}
 
-    public void removeChangeListener(ChangeListener listener);
+	public void addChangeListener(ChangeListener listener);
+
+	public void removeChangeListener(ChangeListener listener);
 }

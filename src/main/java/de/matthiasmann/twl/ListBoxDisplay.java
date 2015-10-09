@@ -30,29 +30,30 @@
 package de.matthiasmann.twl;
 
 /**
- * A interface which needs to be implemented by Widget subclasses to be
- * used as cells in a Listbox
+ * A interface which needs to be implemented by Widget subclasses to be used as
+ * cells in a Listbox
  *
  * @author Matthias Mann
  */
 public interface ListBoxDisplay {
 
-    public boolean isSelected();
+	public boolean isSelected();
 
-    public void setSelected(boolean selected);
+	public void setSelected(boolean selected);
 
-    public boolean isFocused();
+	public boolean isFocused();
 
-    public void setFocused(boolean focused);
-    
-    public void setData(Object data);
+	public void setFocused(boolean focused);
 
-    public void setTooltipContent(Object content);
+	public void setData(Object data);
 
-    public Widget getWidget();
-    
-    public void addListBoxCallback(CallbackWithReason<ListBox.CallbackReason> cb);
-    
-    public void removeListBoxCallback(CallbackWithReason<ListBox.CallbackReason> cb);
-    
+	public void setTooltipContent(Object content);
+
+	public Widget getWidget();
+
+	public void addListBoxCallback(CallbackWithReason<ListBox.CallbackReason> cb);
+
+	public void removeListBoxCallback(
+			CallbackWithReason<ListBox.CallbackReason> cb);
+
 }

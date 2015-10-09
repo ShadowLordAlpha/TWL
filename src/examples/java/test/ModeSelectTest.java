@@ -47,94 +47,93 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class ModeSelectTest {
 
-    public static void main(String ... args) {
-        ModeSelectTest modeSel = new ModeSelectTest();
-        VideoMode mode = modeSel.selectMode();
-        if(mode != null) {
-            SimpleTest test = new SimpleTest();
-            test.run(mode);
-        }
-    }
+	public static void main(String... args) {
+		ModeSelectTest modeSel = new ModeSelectTest();
+		VideoMode mode = modeSel.selectMode();
+		if (mode != null) {
+			SimpleTest test = new SimpleTest();
+			test.run(mode);
+		}
+	}
 
-    protected DisplayMode desktopMode;
-    protected VideoSettings.CallbackReason reason;
+	protected DisplayMode desktopMode;
+	protected VideoSettings.CallbackReason reason;
 
-    public  ModeSelectTest() {
-        System.out.println("LWJGL Version: " + Sys.getVersion());
-        desktopMode = Display.getDisplayMode();
-        System.out.println("Desktop mode: " + desktopMode);
+	public ModeSelectTest() {
+		System.out.println("LWJGL Version: " + Sys.getVersion());
+		desktopMode = Display.getDisplayMode();
+		System.out.println("Desktop mode: " + desktopMode);
 
-        try {
-            for(DisplayMode mode : Display.getAvailableDisplayModes()) {
-                System.out.println("Available mode: " + mode);
-            }
-        } catch(LWJGLException ex) {
-            TestUtils.showErrMsg(ex);
-        }
-    }
+		try {
+			for (DisplayMode mode : Display.getAvailableDisplayModes()) {
+				System.out.println("Available mode: " + mode);
+			}
+		} catch (LWJGLException ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
-    public VideoMode selectMode() {
-        try {
-            Display.setDisplayMode(new DisplayMode(400, 300));
-            Display.create();
-            Display.setVSyncEnabled(true);
+	public VideoMode selectMode() {
+		try {
+			Display.setDisplayMode(new DisplayMode(400, 300));
+			Display.create();
+			Display.setVSyncEnabled(true);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            renderer.setUseSWMouseCursors(true);
-            GUI gui = new GUI(renderer);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			renderer.setUseSWMouseCursors(true);
+			GUI gui = new GUI(renderer);
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    SimpleTest.class.getResource("guiTheme.xml"), renderer);
-            gui.applyTheme(theme);
+			ThemeManager theme = ThemeManager.createThemeManager(
+					SimpleTest.class.getResource("guiTheme.xml"), renderer);
+			gui.applyTheme(theme);
 
-            final VideoSettings settings = new VideoSettings(
-                    AppletPreferences.userNodeForPackage(VideoSettings.class),
-                    desktopMode);
-            settings.setTheme("settings");
-            settings.addCallback(new CallbackWithReason<VideoSettings.CallbackReason>() {
-                public void callback(VideoSettings.CallbackReason aReason) {
-                    reason = aReason;
-                }
-            });
-            settings.readSettings();
+			final VideoSettings settings = new VideoSettings(
+					AppletPreferences.userNodeForPackage(VideoSettings.class),
+					desktopMode);
+			settings.setTheme("settings");
+			settings.addCallback(new CallbackWithReason<VideoSettings.CallbackReason>() {
+				public void callback(VideoSettings.CallbackReason aReason) {
+					reason = aReason;
+				}
+			});
+			settings.readSettings();
 
-            Container frame = new Container();
-            frame.add(settings);
-            frame.setTheme("settingdialog");
+			Container frame = new Container();
+			frame.add(settings);
+			frame.setTheme("settingdialog");
 
-            gui.getRootPane().add(frame);
-            frame.adjustSize();
-            frame.setPosition(
-                    (gui.getWidth()-frame.getWidth())/2,
-                    (gui.getHeight()-frame.getHeight())/2);
+			gui.getRootPane().add(frame);
+			frame.adjustSize();
+			frame.setPosition((gui.getWidth() - frame.getWidth()) / 2,
+					(gui.getHeight() - frame.getHeight()) / 2);
 
-            while(!Display.isCloseRequested() && reason == null) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			while (!Display.isCloseRequested() && reason == null) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-                gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
-            }
+				gui.update();
+				Display.update();
+				TestUtils.reduceInputLag();
+			}
 
-            gui.destroy();
-            theme.destroy();
-            Display.destroy();
-            
-            if(reason == VideoSettings.CallbackReason.ACCEPT) {
-                settings.storeSettings();
-                return settings.getSelectedVideoMode();
-            }
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
+			gui.destroy();
+			theme.destroy();
+			Display.destroy();
 
-        Display.destroy();
-        try {
-            Display.setDisplayMode(desktopMode);
-        } catch(LWJGLException ex) {
-            TestUtils.showErrMsg(ex);
-        }
+			if (reason == VideoSettings.CallbackReason.ACCEPT) {
+				settings.storeSettings();
+				return settings.getSelectedVideoMode();
+			}
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
 
-        return null;
-    }
+		Display.destroy();
+		try {
+			Display.setDisplayMode(desktopMode);
+		} catch (LWJGLException ex) {
+			TestUtils.showErrMsg(ex);
+		}
+
+		return null;
+	}
 }

@@ -40,101 +40,96 @@ import de.matthiasmann.twl.Color;
  */
 public class TintStack {
 
-    private static final float ONE_OVER_255 = 1f / 255f;
+	private static final float ONE_OVER_255 = 1f / 255f;
 
-    final TintStack prev;
-    TintStack next;
-    float r,g,b,a;
+	final TintStack prev;
+	TintStack next;
+	float r, g, b, a;
 
-    @SuppressWarnings("LeakingThisInConstructor")
-    public TintStack() {
-        this.prev = this;
-        this.r = ONE_OVER_255;
-        this.g = ONE_OVER_255;
-        this.b = ONE_OVER_255;
-        this.a = ONE_OVER_255;
-    }
+	@SuppressWarnings("LeakingThisInConstructor")
+	public TintStack() {
+		this.prev = this;
+		this.r = ONE_OVER_255;
+		this.g = ONE_OVER_255;
+		this.b = ONE_OVER_255;
+		this.a = ONE_OVER_255;
+	}
 
-    private TintStack(TintStack prev) {
-        this.prev = prev;
-    }
-    
-    public TintStack pushReset() {
-        if(next == null) {
-            next = new TintStack(this);
-        }
-        next.r = ONE_OVER_255;
-        next.g = ONE_OVER_255;
-        next.b = ONE_OVER_255;
-        next.a = ONE_OVER_255;
-        return next;
-    }
-    
-    public TintStack push(float r, float g, float b, float a) {
-        if(next == null) {
-            next = new TintStack(this);
-        }
-        next.r = this.r * r;
-        next.g = this.g * g;
-        next.b = this.b * b;
-        next.a = this.a * a;
-        return next;
-    }
-    
-    public TintStack push(Color color) {
-        return push(
-                color.getRedFloat(),
-                color.getGreenFloat(),
-                color.getBlueFloat(),
-                color.getAlphaFloat());
-    }
-    
-    public TintStack pop() {
-        return prev;
-    }
+	private TintStack(TintStack prev) {
+		this.prev = prev;
+	}
 
-    public float getR() {
-        return r;
-    }
+	public TintStack pushReset() {
+		if (next == null) {
+			next = new TintStack(this);
+		}
+		next.r = ONE_OVER_255;
+		next.g = ONE_OVER_255;
+		next.b = ONE_OVER_255;
+		next.a = ONE_OVER_255;
+		return next;
+	}
 
-    public float getG() {
-        return g;
-    }
+	public TintStack push(float r, float g, float b, float a) {
+		if (next == null) {
+			next = new TintStack(this);
+		}
+		next.r = this.r * r;
+		next.g = this.g * g;
+		next.b = this.b * b;
+		next.a = this.a * a;
+		return next;
+	}
 
-    public float getB() {
-        return b;
-    }
+	public TintStack push(Color color) {
+		return push(color.getRedFloat(), color.getGreenFloat(),
+				color.getBlueFloat(), color.getAlphaFloat());
+	}
 
-    public float getA() {
-        return a;
-    }
+	public TintStack pop() {
+		return prev;
+	}
 
-    /**
-     * GL11.glColor4f(color * tint);
-     *
-     * @param color the desired color. Will be tinted.
-     */
-    public void setColor(Color color) {
-        GL11.glColor4f(
-                r*color.getRed(),
-                g*color.getGreen(),
-                b*color.getBlue(),
-                a*color.getAlpha());
-    }
-    
-    /**
-     * GL11.glColor4f(color * tint);
-     *
-     * @param r the red component 0..255
-     * @param g the green component 0..255
-     * @param b the blue component 0..255
-     * @param a the alpha component 0..255
-     */
-    public void setColor(float r, float g, float b, float a) {
-        GL11.glColor4f(
-                this.r * r,
-                this.g * g,
-                this.b * b,
-                this.a * a);
-    }
+	public float getR() {
+		return r;
+	}
+
+	public float getG() {
+		return g;
+	}
+
+	public float getB() {
+		return b;
+	}
+
+	public float getA() {
+		return a;
+	}
+
+	/**
+	 * GL11.glColor4f(color * tint);
+	 *
+	 * @param color
+	 *            the desired color. Will be tinted.
+	 */
+	public void setColor(Color color) {
+		GL11.glColor4f(r * color.getRed(), g * color.getGreen(),
+				b * color.getBlue(), a * color.getAlpha());
+	}
+
+	/**
+	 * GL11.glColor4f(color * tint);
+	 *
+	 * @param r
+	 *            the red component 0..255
+	 * @param g
+	 *            the green component 0..255
+	 * @param b
+	 *            the blue component 0..255
+	 * @param a
+	 *            the alpha component 0..255
+	 */
+	public void setColor(float r, float g, float b, float a) {
+		GL11.glColor4f(this.r * r, this.g * g, this.b * b, this.a * a);
+	}
 }

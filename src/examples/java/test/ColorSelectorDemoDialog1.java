@@ -42,124 +42,160 @@ import de.matthiasmann.twl.utils.TintAnimator;
  */
 public class ColorSelectorDemoDialog1 extends FadeFrame {
 
-    public ColorSelectorDemoDialog1()  {
-        final ColorSelector cs = new ColorSelector(new ColorSpaceHSL());
+	public ColorSelectorDemoDialog1() {
+		final ColorSelector cs = new ColorSelector(new ColorSpaceHSL());
 
-        final ToggleButton btnUse2D = new ToggleButton();
-        btnUse2D.setActive(cs.isUseColorArea2D());
-        btnUse2D.addCallback(new Runnable() {
-            public void run() {
-                cs.setUseColorArea2D(btnUse2D.isActive());
-            }
-        });
-        Label labelUse2D = new Label("Use 2D color area");
-        labelUse2D.setLabelFor(btnUse2D);
+		final ToggleButton btnUse2D = new ToggleButton();
+		btnUse2D.setActive(cs.isUseColorArea2D());
+		btnUse2D.addCallback(new Runnable() {
+			public void run() {
+				cs.setUseColorArea2D(btnUse2D.isActive());
+			}
+		});
+		Label labelUse2D = new Label("Use 2D color area");
+		labelUse2D.setLabelFor(btnUse2D);
 
-        final ToggleButton btnUseLabels = new ToggleButton();
-        btnUseLabels.setActive(cs.isUseColorArea2D());
-        btnUseLabels.addCallback(new Runnable() {
-            public void run() {
-                cs.setUseLabels(btnUseLabels.isActive());
-            }
-        });
-        Label labelUseLabels = new Label("show labels for adjusters");
-        labelUseLabels.setLabelFor(btnUseLabels);
+		final ToggleButton btnUseLabels = new ToggleButton();
+		btnUseLabels.setActive(cs.isUseColorArea2D());
+		btnUseLabels.addCallback(new Runnable() {
+			public void run() {
+				cs.setUseLabels(btnUseLabels.isActive());
+			}
+		});
+		Label labelUseLabels = new Label("show labels for adjusters");
+		labelUseLabels.setLabelFor(btnUseLabels);
 
-        final ToggleButton btnShowPreview = new ToggleButton();
-        btnShowPreview.setActive(cs.isShowPreview());
-        btnShowPreview.addCallback(new Runnable() {
-            public void run() {
-                cs.setShowPreview(btnShowPreview.isActive());
-            }
-        });
-        Label labelShowPreview = new Label("show color preview");
-        labelShowPreview.setLabelFor(btnShowPreview);
+		final ToggleButton btnShowPreview = new ToggleButton();
+		btnShowPreview.setActive(cs.isShowPreview());
+		btnShowPreview.addCallback(new Runnable() {
+			public void run() {
+				cs.setShowPreview(btnShowPreview.isActive());
+			}
+		});
+		Label labelShowPreview = new Label("show color preview");
+		labelShowPreview.setLabelFor(btnShowPreview);
 
-        final ToggleButton btnShowHexEditField = new ToggleButton();
-        btnShowHexEditField.setActive(cs.isShowHexEditField());
-        btnShowHexEditField.addCallback(new Runnable() {
-            public void run() {
-                cs.setShowHexEditField(btnShowHexEditField.isActive());
-            }
-        });
-        Label labelShowHexEditField = new Label("show hex edit field");
-        labelShowHexEditField.setLabelFor(btnShowHexEditField);
+		final ToggleButton btnShowHexEditField = new ToggleButton();
+		btnShowHexEditField.setActive(cs.isShowHexEditField());
+		btnShowHexEditField.addCallback(new Runnable() {
+			public void run() {
+				cs.setShowHexEditField(btnShowHexEditField.isActive());
+			}
+		});
+		Label labelShowHexEditField = new Label("show hex edit field");
+		labelShowHexEditField.setLabelFor(btnShowHexEditField);
 
-        final ToggleButton btnShowNativeAdjuster = new ToggleButton();
-        btnShowNativeAdjuster.setActive(cs.isShowNativeAdjuster());
-        btnShowNativeAdjuster.addCallback(new Runnable() {
-            public void run() {
-                cs.setShowNativeAdjuster(btnShowNativeAdjuster.isActive());
-            }
-        });
-        Label labelShowNativeAdjuster = new Label("show native (HSL) adjuster");
-        labelShowNativeAdjuster.setLabelFor(btnShowNativeAdjuster);
+		final ToggleButton btnShowNativeAdjuster = new ToggleButton();
+		btnShowNativeAdjuster.setActive(cs.isShowNativeAdjuster());
+		btnShowNativeAdjuster.addCallback(new Runnable() {
+			public void run() {
+				cs.setShowNativeAdjuster(btnShowNativeAdjuster.isActive());
+			}
+		});
+		Label labelShowNativeAdjuster = new Label("show native (HSL) adjuster");
+		labelShowNativeAdjuster.setLabelFor(btnShowNativeAdjuster);
 
-        final ToggleButton btnShowRGBAdjuster = new ToggleButton();
-        btnShowRGBAdjuster.setActive(cs.isShowRGBAdjuster());
-        btnShowRGBAdjuster.addCallback(new Runnable() {
-            public void run() {
-                cs.setShowRGBAdjuster(btnShowRGBAdjuster.isActive());
-            }
-        });
-        Label labelShowRGBAdjuster = new Label("show RGB adjuster");
-        labelShowRGBAdjuster.setLabelFor(btnShowRGBAdjuster);
+		final ToggleButton btnShowRGBAdjuster = new ToggleButton();
+		btnShowRGBAdjuster.setActive(cs.isShowRGBAdjuster());
+		btnShowRGBAdjuster.addCallback(new Runnable() {
+			public void run() {
+				cs.setShowRGBAdjuster(btnShowRGBAdjuster.isActive());
+			}
+		});
+		Label labelShowRGBAdjuster = new Label("show RGB adjuster");
+		labelShowRGBAdjuster.setLabelFor(btnShowRGBAdjuster);
 
-        final ToggleButton btnShowAlphaAdjuster = new ToggleButton();
-        btnShowAlphaAdjuster.setActive(cs.isShowAlphaAdjuster());
-        btnShowAlphaAdjuster.addCallback(new Runnable() {
-            public void run() {
-                cs.setShowAlphaAdjuster(btnShowAlphaAdjuster.isActive());
-            }
-        });
-        Label labelShowAlphaAdjuster = new Label("show alpha adjuster");
-        labelShowAlphaAdjuster.setLabelFor(btnShowAlphaAdjuster);
+		final ToggleButton btnShowAlphaAdjuster = new ToggleButton();
+		btnShowAlphaAdjuster.setActive(cs.isShowAlphaAdjuster());
+		btnShowAlphaAdjuster.addCallback(new Runnable() {
+			public void run() {
+				cs.setShowAlphaAdjuster(btnShowAlphaAdjuster.isActive());
+			}
+		});
+		Label labelShowAlphaAdjuster = new Label("show alpha adjuster");
+		labelShowAlphaAdjuster.setLabelFor(btnShowAlphaAdjuster);
 
-        final TintAnimator tintAnimator = new TintAnimator(new TintAnimator.GUITimeSource(this));
+		final TintAnimator tintAnimator = new TintAnimator(
+				new TintAnimator.GUITimeSource(this));
 
-        Label testDisplay = new Label("This is a test display");
-        testDisplay.setTheme("testDisplay");
-        testDisplay.setTintAnimator(tintAnimator);
+		Label testDisplay = new Label("This is a test display");
+		testDisplay.setTheme("testDisplay");
+		testDisplay.setTintAnimator(tintAnimator);
 
-        Label testDisplay2 = new Label("This is a test display");
-        testDisplay2.setTheme("testDisplay2");
-        testDisplay2.setTintAnimator(tintAnimator);
+		Label testDisplay2 = new Label("This is a test display");
+		testDisplay2.setTheme("testDisplay2");
+		testDisplay2.setTintAnimator(tintAnimator);
 
-        Runnable colorChangedCB = new Runnable() {
-            public void run() {
-                tintAnimator.setColor(cs.getColor());
-            }
-        };
+		Runnable colorChangedCB = new Runnable() {
+			public void run() {
+				tintAnimator.setColor(cs.getColor());
+			}
+		};
 
-        cs.addCallback(colorChangedCB);
-        colorChangedCB.run();   // make sure the preview has the right color
-        
-        DialogLayout dl = new DialogLayout();
-        dl.setHorizontalGroup(dl.createParallelGroup()
-                .addWidgets(cs, testDisplay, testDisplay2)
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelUse2D, btnUse2D))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelUseLabels, btnUseLabels))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelShowPreview, btnShowPreview))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelShowHexEditField, btnShowHexEditField))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelShowNativeAdjuster, btnShowNativeAdjuster))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelShowRGBAdjuster, btnShowRGBAdjuster))
-                .addGroup(dl.createSequentialGroup().addGap().addWidgets(labelShowAlphaAdjuster, btnShowAlphaAdjuster)));
-        dl.setVerticalGroup(dl.createSequentialGroup()
-                .addWidget(cs)
-                .addGap(DialogLayout.MEDIUM_GAP)
-                .addWidget(testDisplay).addGap(0).addWidget(testDisplay2)
-                .addGap(DialogLayout.MEDIUM_GAP)
-                .addGroup(dl.createParallelGroup(labelUse2D, btnUse2D))
-                .addGroup(dl.createParallelGroup(labelUseLabels, btnUseLabels))
-                .addGroup(dl.createParallelGroup(labelShowPreview, btnShowPreview))
-                .addGroup(dl.createParallelGroup(labelShowHexEditField, btnShowHexEditField))
-                .addGroup(dl.createParallelGroup(labelShowNativeAdjuster, btnShowNativeAdjuster))
-                .addGroup(dl.createParallelGroup(labelShowRGBAdjuster, btnShowRGBAdjuster))
-                .addGroup(dl.createParallelGroup(labelShowAlphaAdjuster, btnShowAlphaAdjuster)));
+		cs.addCallback(colorChangedCB);
+		colorChangedCB.run(); // make sure the preview has the right color
 
-        setTheme("colorSelectorDemoFrame");
-        setTitle("Color Selector Demo");
-        add(dl);
-    }
-    
+		DialogLayout dl = new DialogLayout();
+		dl.setHorizontalGroup(dl
+				.createParallelGroup()
+				.addWidgets(cs, testDisplay, testDisplay2)
+				.addGroup(
+						dl.createSequentialGroup().addGap()
+								.addWidgets(labelUse2D, btnUse2D))
+				.addGroup(
+						dl.createSequentialGroup().addGap()
+								.addWidgets(labelUseLabels, btnUseLabels))
+				.addGroup(
+						dl.createSequentialGroup().addGap()
+								.addWidgets(labelShowPreview, btnShowPreview))
+				.addGroup(
+						dl.createSequentialGroup()
+								.addGap()
+								.addWidgets(labelShowHexEditField,
+										btnShowHexEditField))
+				.addGroup(
+						dl.createSequentialGroup()
+								.addGap()
+								.addWidgets(labelShowNativeAdjuster,
+										btnShowNativeAdjuster))
+				.addGroup(
+						dl.createSequentialGroup()
+								.addGap()
+								.addWidgets(labelShowRGBAdjuster,
+										btnShowRGBAdjuster))
+				.addGroup(
+						dl.createSequentialGroup()
+								.addGap()
+								.addWidgets(labelShowAlphaAdjuster,
+										btnShowAlphaAdjuster)));
+		dl.setVerticalGroup(dl
+				.createSequentialGroup()
+				.addWidget(cs)
+				.addGap(DialogLayout.MEDIUM_GAP)
+				.addWidget(testDisplay)
+				.addGap(0)
+				.addWidget(testDisplay2)
+				.addGap(DialogLayout.MEDIUM_GAP)
+				.addGroup(dl.createParallelGroup(labelUse2D, btnUse2D))
+				.addGroup(dl.createParallelGroup(labelUseLabels, btnUseLabels))
+				.addGroup(
+						dl.createParallelGroup(labelShowPreview, btnShowPreview))
+				.addGroup(
+						dl.createParallelGroup(labelShowHexEditField,
+								btnShowHexEditField))
+				.addGroup(
+						dl.createParallelGroup(labelShowNativeAdjuster,
+								btnShowNativeAdjuster))
+				.addGroup(
+						dl.createParallelGroup(labelShowRGBAdjuster,
+								btnShowRGBAdjuster))
+				.addGroup(
+						dl.createParallelGroup(labelShowAlphaAdjuster,
+								btnShowAlphaAdjuster)));
+
+		setTheme("colorSelectorDemoFrame");
+		setTitle("Color Selector Demo");
+		add(dl);
+	}
+
 }

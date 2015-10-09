@@ -41,171 +41,148 @@ import org.junit.Test;
  */
 public class SimpleMathParserTest {
 
-    public SimpleMathParserTest() {
-    }
+	public SimpleMathParserTest() {
+	}
 
-    @Test
-    public void test1() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("0", ti);
-        assertEquals("loadConst 0\n", ti.toString());
-    }
+	@Test
+	public void test1() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("0", ti);
+		assertEquals("loadConst 0\n", ti.toString());
+	}
 
-    @Test
-    public void test2() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("font.lineHeight + 4", ti);
-        assertEquals(
-                "accessVariable font\n" +
-                "accessField lineHeight\n" +
-                "loadConst 4\n" +
-                "add\n", ti.toString());
-    }
+	@Test
+	public void test2() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("font.lineHeight + 4", ti);
+		assertEquals("accessVariable font\n" + "accessField lineHeight\n"
+				+ "loadConst 4\n" + "add\n", ti.toString());
+	}
 
-    @Test
-    public void test3() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("7 + 3 * 2 - 1", ti);
-        assertEquals(
-                "loadConst 7\n" +
-                "loadConst 3\n" +
-                "loadConst 2\n" +
-                "mul\n" +
-                "add\n" +
-                "loadConst 1\n" +
-                "sub\n", ti.toString());
-    }
+	@Test
+	public void test3() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("7 + 3 * 2 - 1", ti);
+		assertEquals("loadConst 7\n" + "loadConst 3\n" + "loadConst 2\n"
+				+ "mul\n" + "add\n" + "loadConst 1\n" + "sub\n", ti.toString());
+	}
 
-    @Test
-    public void test4() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("3 + max(9, 5)", ti);
-        assertEquals(
-                "loadConst 3\n" +
-                "loadConst 9\n" +
-                "loadConst 5\n" +
-                "callFunction max 2\n" +
-                "add\n", ti.toString());
-    }
+	@Test
+	public void test4() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("3 + max(9, 5)", ti);
+		assertEquals("loadConst 3\n" + "loadConst 9\n" + "loadConst 5\n"
+				+ "callFunction max 2\n" + "add\n", ti.toString());
+	}
 
-    @Test
-    public void test5() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("-3 / 2", ti);
-        assertEquals(
-                "loadConst 3\n" +
-                "negate\n" +
-                "loadConst 2\n" +
-                "div\n", ti.toString());
-    }
+	@Test
+	public void test5() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("-3 / 2", ti);
+		assertEquals("loadConst 3\n" + "negate\n" + "loadConst 2\n" + "div\n",
+				ti.toString());
+	}
 
-    @Test
-    public void test6() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("(7 + 3) * 2 - 1", ti);
-        assertEquals(
-                "loadConst 7\n" +
-                "loadConst 3\n" +
-                "add\n" +
-                "loadConst 2\n" +
-                "mul\n" +
-                "loadConst 1\n" +
-                "sub\n", ti.toString());
-    }
+	@Test
+	public void test6() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("(7 + 3) * 2 - 1", ti);
+		assertEquals("loadConst 7\n" + "loadConst 3\n" + "add\n"
+				+ "loadConst 2\n" + "mul\n" + "loadConst 1\n" + "sub\n",
+				ti.toString());
+	}
 
-    @Test
-    public void test7() throws ParseException {
-        TestInterpreter ti = new TestInterpreter();
-        SimpleMathParser.interpret("9 - -1", ti);
-        assertEquals(
-                "loadConst 9\n" +
-                "loadConst 1\n" +
-                "negate\n" +
-                "sub\n", ti.toString());
-    }
-    
-    @Test
-    public void test8() {
-        try {
-            TestInterpreter ti = new TestInterpreter();
-            SimpleMathParser.interpret("0x 9", ti);
-            throw new AssertionError("Should have thrown an exception");
-        } catch(ParseException ex) {
-            assertEquals("Unexpected character ' ' at 2", ex.getMessage());
-            assertEquals(2, ex.getErrorOffset());
-        }
-    }
-    
-    @Test
-    public void test9() {
-        try {
-            TestInterpreter ti = new TestInterpreter();
-            SimpleMathParser.interpret("0x123456789", ti);
-            throw new AssertionError("Should have thrown an exception");
-        } catch(ParseException ex) {
-            assertEquals("Number to large at 11", ex.getMessage());
-            assertEquals(11, ex.getErrorOffset());
-        }
-    }
-    
-    @Test
-    public void test10() {
-        try {
-            TestInterpreter ti = new TestInterpreter();
-            SimpleMathParser.interpret("0x", ti);
-            throw new AssertionError("Should have thrown an exception");
-        } catch(ParseException ex) {
-            assertEquals("Unexpected end of string", ex.getMessage());
-            assertEquals(2, ex.getErrorOffset());
-        }
-    }
+	@Test
+	public void test7() throws ParseException {
+		TestInterpreter ti = new TestInterpreter();
+		SimpleMathParser.interpret("9 - -1", ti);
+		assertEquals("loadConst 9\n" + "loadConst 1\n" + "negate\n" + "sub\n",
+				ti.toString());
+	}
 
-    static class TestInterpreter implements SimpleMathParser.Interpreter {
-        final StringBuilder sb = new StringBuilder();
+	@Test
+	public void test8() {
+		try {
+			TestInterpreter ti = new TestInterpreter();
+			SimpleMathParser.interpret("0x 9", ti);
+			throw new AssertionError("Should have thrown an exception");
+		} catch (ParseException ex) {
+			assertEquals("Unexpected character ' ' at 2", ex.getMessage());
+			assertEquals(2, ex.getErrorOffset());
+		}
+	}
 
-        @Override
-        public String toString() {
-            return sb.toString();
-        }
+	@Test
+	public void test9() {
+		try {
+			TestInterpreter ti = new TestInterpreter();
+			SimpleMathParser.interpret("0x123456789", ti);
+			throw new AssertionError("Should have thrown an exception");
+		} catch (ParseException ex) {
+			assertEquals("Number to large at 11", ex.getMessage());
+			assertEquals(11, ex.getErrorOffset());
+		}
+	}
 
-        public void accessVariable(String name) {
-            sb.append("accessVariable ").append(name).append('\n');
-        }
+	@Test
+	public void test10() {
+		try {
+			TestInterpreter ti = new TestInterpreter();
+			SimpleMathParser.interpret("0x", ti);
+			throw new AssertionError("Should have thrown an exception");
+		} catch (ParseException ex) {
+			assertEquals("Unexpected end of string", ex.getMessage());
+			assertEquals(2, ex.getErrorOffset());
+		}
+	}
 
-        public void accessField(String field) {
-            sb.append("accessField ").append(field).append('\n');
-        }
+	static class TestInterpreter implements SimpleMathParser.Interpreter {
+		final StringBuilder sb = new StringBuilder();
 
-        public void accessArray() {
-            sb.append("accessArray\n");
-        }
+		@Override
+		public String toString() {
+			return sb.toString();
+		}
 
-        public void loadConst(Number n) {
-            sb.append("loadConst ").append(n).append('\n');
-        }
+		public void accessVariable(String name) {
+			sb.append("accessVariable ").append(name).append('\n');
+		}
 
-        public void add() {
-            sb.append("add\n");
-        }
+		public void accessField(String field) {
+			sb.append("accessField ").append(field).append('\n');
+		}
 
-        public void sub() {
-            sb.append("sub\n");
-        }
+		public void accessArray() {
+			sb.append("accessArray\n");
+		}
 
-        public void mul() {
-            sb.append("mul\n");
-        }
+		public void loadConst(Number n) {
+			sb.append("loadConst ").append(n).append('\n');
+		}
 
-        public void div() {
-            sb.append("div\n");
-        }
+		public void add() {
+			sb.append("add\n");
+		}
 
-        public void callFunction(String name, int args) {
-            sb.append("callFunction ").append(name).append(' ').append(args).append('\n');
-        }
+		public void sub() {
+			sb.append("sub\n");
+		}
 
-        public void negate() {
-            sb.append("negate\n");
-        }
-    }
+		public void mul() {
+			sb.append("mul\n");
+		}
+
+		public void div() {
+			sb.append("div\n");
+		}
+
+		public void callFunction(String name, int args) {
+			sb.append("callFunction ").append(name).append(' ').append(args)
+					.append('\n');
+		}
+
+		public void negate() {
+			sb.append("negate\n");
+		}
+	}
 }

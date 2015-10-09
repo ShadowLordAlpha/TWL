@@ -35,68 +35,76 @@ package de.matthiasmann.twl.model;
  */
 public interface TableSelectionModel {
 
-    public void rowsInserted(int index, int count);
+	public void rowsInserted(int index, int count);
 
-    public void rowsDeleted(int index, int count);
-    
-    public void clearSelection();
+	public void rowsDeleted(int index, int count);
 
-    /**
-     * Sets the selection to the given interval (both indices inclusive).
-     * Single selection should use index1.
-     *
-     * @param index0 the start index of the interval.
-     * @param index1 the end index of the interval.
-     */
-    public void setSelection(int index0, int index1);
-    
-    /**
-     * Adds the given interval (both indices inclusive) to the selection.
-     * Single selection should use index1.
-     *
-     * @param index0 the start index of the interval.
-     * @param index1 the end index of the interval.
-     */
-    public void addSelection(int index0, int index1);
+	public void clearSelection();
 
-    /**
-     * Inverts the given interval (both indices inclusive) in the selection.
-     * Single selection should use index1.
-     *
-     * @param index0 the start index of the interval.
-     * @param index1 the end index of the interval.
-     */
-    public void invertSelection(int index0, int index1);
+	/**
+	 * Sets the selection to the given interval (both indices inclusive). Single
+	 * selection should use index1.
+	 *
+	 * @param index0
+	 *            the start index of the interval.
+	 * @param index1
+	 *            the end index of the interval.
+	 */
+	public void setSelection(int index0, int index1);
 
-    /**
-     * Removes the given interval (both indices inclusive) from the selection.
-     * Single selection should clear the selection.
-     *
-     * @param index0 the start index of the interval.
-     * @param index1 the end index of the interval.
-     */
-    public void removeSelection(int index0, int index1);
+	/**
+	 * Adds the given interval (both indices inclusive) to the selection. Single
+	 * selection should use index1.
+	 *
+	 * @param index0
+	 *            the start index of the interval.
+	 * @param index1
+	 *            the end index of the interval.
+	 */
+	public void addSelection(int index0, int index1);
 
-    public int getLeadIndex();
+	/**
+	 * Inverts the given interval (both indices inclusive) in the selection.
+	 * Single selection should use index1.
+	 *
+	 * @param index0
+	 *            the start index of the interval.
+	 * @param index1
+	 *            the end index of the interval.
+	 */
+	public void invertSelection(int index0, int index1);
 
-    public int getAnchorIndex();
+	/**
+	 * Removes the given interval (both indices inclusive) from the selection.
+	 * Single selection should clear the selection.
+	 *
+	 * @param index0
+	 *            the start index of the interval.
+	 * @param index1
+	 *            the end index of the interval.
+	 */
+	public void removeSelection(int index0, int index1);
 
-    public void setLeadIndex(int index);
+	public int getLeadIndex();
 
-    public void setAnchorIndex(int index);
+	public int getAnchorIndex();
 
-    public boolean isSelected(int index);
+	public void setLeadIndex(int index);
 
-    public boolean hasSelection();
-    
-    public int getFirstSelected();
+	public void setAnchorIndex(int index);
 
-    public int getLastSelected();
-    
-    public int[] getSelection();
+	public boolean isSelected(int index);
 
-    public void addSelectionChangeListener(Runnable cb);
+	public boolean hasSelection();
 
-    public void removeSelectionChangeListener(Runnable cb);
-    
+	public int getFirstSelected();
+
+	public int getLastSelected();
+
+	public int[] getSelection();
+
+	public void addSelectionChangeListener(Runnable cb);
+
+	public void removeSelectionChangeListener(Runnable cb);
+
 }

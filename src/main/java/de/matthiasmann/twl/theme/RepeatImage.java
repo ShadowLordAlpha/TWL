@@ -41,68 +41,69 @@ import de.matthiasmann.twl.renderer.SupportsDrawRepeat;
  */
 class RepeatImage implements Image, HasBorder, SupportsDrawRepeat {
 
-    private final Image base;
-    private final Border border;
-    private final boolean repeatX;
-    private final boolean repeatY;
-    private final SupportsDrawRepeat sdr;
+	private final Image base;
+	private final Border border;
+	private final boolean repeatX;
+	private final boolean repeatY;
+	private final SupportsDrawRepeat sdr;
 
-    RepeatImage(Image base, Border border, boolean repeatX, boolean repeatY) {
-        assert repeatX || repeatY;
-        this.base = base;
-        this.border = border;
-        this.repeatX = repeatX;
-        this.repeatY = repeatY;
+	RepeatImage(Image base, Border border, boolean repeatX, boolean repeatY) {
+		assert repeatX || repeatY;
+		this.base = base;
+		this.border = border;
+		this.repeatX = repeatX;
+		this.repeatY = repeatY;
 
-        if(base instanceof SupportsDrawRepeat) {
-            sdr = (SupportsDrawRepeat)base;
-        } else {
-            sdr = this;
-        }
-    }
+		if (base instanceof SupportsDrawRepeat) {
+			sdr = (SupportsDrawRepeat) base;
+		} else {
+			sdr = this;
+		}
+	}
 
-    public int getWidth() {
-        return base.getWidth();
-    }
+	public int getWidth() {
+		return base.getWidth();
+	}
 
-    public int getHeight() {
-        return base.getHeight();
-    }
+	public int getHeight() {
+		return base.getHeight();
+	}
 
-    public void draw(AnimationState as, int x, int y) {
-        base.draw(as, x, y);
-    }
+	public void draw(AnimationState as, int x, int y) {
+		base.draw(as, x, y);
+	}
 
-    public void draw(AnimationState as, int x, int y, int width, int height) {
-        int countX = repeatX ? Math.max(1, width / base.getWidth()) : 1;
-        int countY = repeatY ? Math.max(1, height / base.getHeight()) : 1;
-        sdr.draw(as, x, y, width, height, countX, countY);
-    }
+	public void draw(AnimationState as, int x, int y, int width, int height) {
+		int countX = repeatX ? Math.max(1, width / base.getWidth()) : 1;
+		int countY = repeatY ? Math.max(1, height / base.getHeight()) : 1;
+		sdr.draw(as, x, y, width, height, countX, countY);
+	}
 
-    public void draw(AnimationState as, int x, int y, int width, int height, int repeatCountX, int repeatCountY) {
-        while(repeatCountY > 0) {
-            int rowHeight = height / repeatCountY;
+	public void draw(AnimationState as, int x, int y, int width, int height,
+			int repeatCountX, int repeatCountY) {
+		while (repeatCountY > 0) {
+			int rowHeight = height / repeatCountY;
 
-            int cx = 0;
-            for(int xi=0 ; xi<repeatCountX ;) {
-                int nx = ++xi * width / repeatCountX;
-                base.draw(as, x+cx, y, nx-cx, rowHeight);
-                cx = nx;
-            }
+			int cx = 0;
+			for (int xi = 0; xi < repeatCountX;) {
+				int nx = ++xi * width / repeatCountX;
+				base.draw(as, x + cx, y, nx - cx, rowHeight);
+				cx = nx;
+			}
 
-            y += rowHeight;
-            height -= rowHeight;
-            repeatCountY--;
-        }
-    }
+			y += rowHeight;
+			height -= rowHeight;
+			repeatCountY--;
+		}
+	}
 
+	public Border getBorder() {
+		return border;
+	}
 
-    public Border getBorder() {
-        return border;
-    }
-
-    public Image createTintedVersion(Color color) {
-        return new RepeatImage(base.createTintedVersion(color), border, repeatX, repeatY);
-    }
+	public Image createTintedVersion(Color color) {
+		return new RepeatImage(base.createTintedVersion(color), border,
+				repeatX, repeatY);
+	}
 
 }

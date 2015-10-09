@@ -35,21 +35,29 @@ package de.matthiasmann.twl.renderer;
  * @author Matthias Mann
  */
 public interface Font2 extends Font {
-    
-    int drawText(int x, int y, AttributedString attributedString);
 
-    int drawText(int x, int y, AttributedString attributedString, int start, int end);
-    
-    void drawMultiLineText(int x, int y, AttributedString attributedString);
-    
-    void drawMultiLineText(int x, int y, AttributedString attributedString, int start, int end);
+	int drawText(int x, int y, AttributedString attributedString);
 
-    AttributedStringFontCache cacheText(AttributedStringFontCache prevCache, AttributedString attributedString);
+	int drawText(int x, int y, AttributedString attributedString, int start,
+			int end);
 
-    AttributedStringFontCache cacheText(AttributedStringFontCache prevCache, AttributedString attributedString, int start, int end);
-    
-    AttributedStringFontCache cacheMultiLineText(AttributedStringFontCache prevCache, AttributedString attributedString);
-    
-    AttributedStringFontCache cacheMultiLineText(AttributedStringFontCache prevCache, AttributedString attributedString, int start, int end);
-    
+	void drawMultiLineText(int x, int y, AttributedString attributedString);
+
+	void drawMultiLineText(int x, int y, AttributedString attributedString,
+			int start, int end);
+
+	AttributedStringFontCache cacheText(AttributedStringFontCache prevCache,
+			AttributedString attributedString);
+
+	AttributedStringFontCache cacheText(AttributedStringFontCache prevCache,
+			AttributedString attributedString, int start, int end);
+
+	AttributedStringFontCache cacheMultiLineText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString);
+
+	AttributedStringFontCache cacheMultiLineText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString, int start, int end);
+
 }

@@ -39,36 +39,37 @@ import java.util.prefs.Preferences;
  */
 public class PersistentBooleanModel extends HasCallback implements BooleanModel {
 
-    private final Preferences prefs;
-    private final String prefKey;
+	private final Preferences prefs;
+	private final String prefKey;
 
-    private boolean value;
-    
-    public PersistentBooleanModel(Preferences prefs, String prefKey, boolean defaultValue) {
-        if(prefs == null) {
-            throw new NullPointerException("prefs");
-        }
-        if(prefKey == null) {
-            throw new NullPointerException("prefKey");
-        }
-        this.prefs = prefs;
-        this.prefKey = prefKey;
-        value = prefs.getBoolean(prefKey, defaultValue);
-    }
+	private boolean value;
 
-    public boolean getValue() {
-        return value;
-    }
+	public PersistentBooleanModel(Preferences prefs, String prefKey,
+			boolean defaultValue) {
+		if (prefs == null) {
+			throw new NullPointerException("prefs");
+		}
+		if (prefKey == null) {
+			throw new NullPointerException("prefKey");
+		}
+		this.prefs = prefs;
+		this.prefKey = prefKey;
+		value = prefs.getBoolean(prefKey, defaultValue);
+	}
 
-    public void setValue(boolean value) {
-        if(this.value != value) {
-            this.value = value;
-            storeSettings();
-            doCallback();
-        }
-    }
+	public boolean getValue() {
+		return value;
+	}
 
-    private void storeSettings() {
-        prefs.putBoolean(prefKey, value);
-    }
+	public void setValue(boolean value) {
+		if (this.value != value) {
+			this.value = value;
+			storeSettings();
+			doCallback();
+		}
+	}
+
+	private void storeSettings() {
+		prefs.putBoolean(prefKey, value);
+	}
 }

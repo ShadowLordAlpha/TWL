@@ -34,9 +34,10 @@ package de.matthiasmann.twl.model;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractFloatModel extends HasCallback implements FloatModel {
+public abstract class AbstractFloatModel extends HasCallback implements
+		FloatModel {
 
-    protected AbstractFloatModel() {
-    }
+	protected AbstractFloatModel() {
+	}
 
 }

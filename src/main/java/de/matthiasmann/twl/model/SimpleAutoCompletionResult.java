@@ -37,25 +37,27 @@ import java.util.Collection;
  * @author Matthias Mann
  */
 public class SimpleAutoCompletionResult extends AutoCompletionResult {
-    private final String[] results;
+	private final String[] results;
 
-    public SimpleAutoCompletionResult(String text, int prefixLength, Collection<String> results) {
-        super(text, prefixLength);
-        this.results = results.toArray(new String[results.size()]);
-    }
+	public SimpleAutoCompletionResult(String text, int prefixLength,
+			Collection<String> results) {
+		super(text, prefixLength);
+		this.results = results.toArray(new String[results.size()]);
+	}
 
-    public SimpleAutoCompletionResult(String text, int prefixLength, String ... results) {
-        super(text, prefixLength);
-        this.results = results.clone();
-    }
+	public SimpleAutoCompletionResult(String text, int prefixLength,
+			String... results) {
+		super(text, prefixLength);
+		this.results = results.clone();
+	}
 
-    @Override
-    public int getNumResults() {
-        return results.length;
-    }
+	@Override
+	public int getNumResults() {
+		return results.length;
+	}
 
-    @Override
-    public String getResult(int idx) {
-        return results[idx];
-    }
+	@Override
+	public String getResult(int idx) {
+		return results[idx];
+	}
 }

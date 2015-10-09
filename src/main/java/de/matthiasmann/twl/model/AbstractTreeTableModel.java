@@ -37,121 +37,123 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractTreeTableModel extends AbstractTableColumnHeaderModel implements TreeTableModel {
+public abstract class AbstractTreeTableModel extends
+		AbstractTableColumnHeaderModel implements TreeTableModel {
 
-    private final ArrayList<TreeTableNode> children;
-    private ChangeListener[] callbacks;
+	private final ArrayList<TreeTableNode> children;
+	private ChangeListener[] callbacks;
 
-    public AbstractTreeTableModel() {
-        this.children = new ArrayList<TreeTableNode>();
-    }
+	public AbstractTreeTableModel() {
+		this.children = new ArrayList<TreeTableNode>();
+	}
 
-    public void addChangeListener(ChangeListener listener) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, listener, ChangeListener.class);
-    }
+	public void addChangeListener(ChangeListener listener) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, listener,
+				ChangeListener.class);
+	}
 
-    public void removeChangeListener(ChangeListener listener) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, listener);
-    }
+	public void removeChangeListener(ChangeListener listener) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, listener);
+	}
 
-    public Object getData(int column) {
-        return null;
-    }
+	public Object getData(int column) {
+		return null;
+	}
 
-    public Object getTooltipContent(int column) {
-        return null;
-    }
+	public Object getTooltipContent(int column) {
+		return null;
+	}
 
-    public final TreeTableNode getParent() {
-        return null;
-    }
+	public final TreeTableNode getParent() {
+		return null;
+	}
 
-    public boolean isLeaf() {
-        return false;
-    }
+	public boolean isLeaf() {
+		return false;
+	}
 
-    public int getNumChildren() {
-        return children.size();
-    }
+	public int getNumChildren() {
+		return children.size();
+	}
 
-    public TreeTableNode getChild(int idx) {
-        return children.get(idx);
-    }
+	public TreeTableNode getChild(int idx) {
+		return children.get(idx);
+	}
 
-    public int getChildIndex(TreeTableNode child) {
-        for(int i=0,n=children.size() ; i<n ; i++) {
-            if(children.get(i) == child) {
-                return i;
-            }
-        }
-        return -1;
-    }
+	public int getChildIndex(TreeTableNode child) {
+		for (int i = 0, n = children.size(); i < n; i++) {
+			if (children.get(i) == child) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
-    protected void insertChild(TreeTableNode node, int idx) {
-        assert getChildIndex(node) < 0;
-        assert node.getParent() == this;
-        children.add(idx, node);
-        fireNodesAdded(this, idx, 1);
-    }
-    
-    protected void removeChild(int idx) {
-        children.remove(idx);
-        fireNodesRemoved(this, idx, 1);
-    }
+	protected void insertChild(TreeTableNode node, int idx) {
+		assert getChildIndex(node) < 0;
+		assert node.getParent() == this;
+		children.add(idx, node);
+		fireNodesAdded(this, idx, 1);
+	}
 
-    protected void removeAllChildren() {
-        int count = children.size();
-        if(count > 0) {
-            children.clear();
-            fireNodesRemoved(this, 0, count);
-        }
-    }
+	protected void removeChild(int idx) {
+		children.remove(idx);
+		fireNodesRemoved(this, idx, 1);
+	}
 
-    protected void fireNodesAdded(TreeTableNode parent, int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.nodesAdded(parent, idx, count);
-            }
-        }
-    }
+	protected void removeAllChildren() {
+		int count = children.size();
+		if (count > 0) {
+			children.clear();
+			fireNodesRemoved(this, 0, count);
+		}
+	}
 
-    protected void fireNodesRemoved(TreeTableNode parent, int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.nodesRemoved(parent, idx, count);
-            }
-        }
-    }
+	protected void fireNodesAdded(TreeTableNode parent, int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.nodesAdded(parent, idx, count);
+			}
+		}
+	}
 
-    protected void fireNodesChanged(TreeTableNode parent, int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.nodesChanged(parent, idx, count);
-            }
-        }
-    }
+	protected void fireNodesRemoved(TreeTableNode parent, int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.nodesRemoved(parent, idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnInserted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnInserted(idx, count);
-            }
-        }
-    }
+	protected void fireNodesChanged(TreeTableNode parent, int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.nodesChanged(parent, idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnDeleted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnDeleted(idx, count);
-            }
-        }
-    }
+	protected void fireColumnInserted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnInserted(idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnHeaderChanged(int column) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnHeaderChanged(column);
-            }
-        }
-    }
+	protected void fireColumnDeleted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnDeleted(idx, count);
+			}
+		}
+	}
+
+	protected void fireColumnHeaderChanged(int column) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnHeaderChanged(column);
+			}
+		}
+	}
 }

@@ -32,122 +32,125 @@ package de.matthiasmann.twl.model;
 import de.matthiasmann.twl.utils.CallbackSupport;
 
 /**
- * A simple button model.
- * Supported state bit: hover, armed, pressed.
+ * A simple button model. Supported state bit: hover, armed, pressed.
  * 
  * @author Matthias Mann
  */
 public class SimpleButtonModel implements ButtonModel {
 
-    protected static final int STATE_MASK_HOVER    = 1;
-    protected static final int STATE_MASK_PRESSED  = 2;
-    protected static final int STATE_MASK_ARMED    = 4;
-    protected static final int STATE_MASK_DISABLED = 8;
-    
-    protected Runnable[] actionCallbacks;
-    protected Runnable[] stateCallbacks;
-    protected int state;
-    
-    public boolean isSelected() {
-        return false;
-    }
+	protected static final int STATE_MASK_HOVER = 1;
+	protected static final int STATE_MASK_PRESSED = 2;
+	protected static final int STATE_MASK_ARMED = 4;
+	protected static final int STATE_MASK_DISABLED = 8;
 
-    public boolean isPressed() {
-        return (state & STATE_MASK_PRESSED) != 0;
-    }
+	protected Runnable[] actionCallbacks;
+	protected Runnable[] stateCallbacks;
+	protected int state;
 
-    public boolean isArmed() {
-        return (state & STATE_MASK_ARMED) != 0;
-    }
+	public boolean isSelected() {
+		return false;
+	}
 
-    public boolean isHover() {
-        return (state & STATE_MASK_HOVER) != 0;
-    }
+	public boolean isPressed() {
+		return (state & STATE_MASK_PRESSED) != 0;
+	}
 
-    public boolean isEnabled() {
-        // !Caution! negated logic
-        return (state & STATE_MASK_DISABLED) == 0;
-    }
+	public boolean isArmed() {
+		return (state & STATE_MASK_ARMED) != 0;
+	}
 
-    public void setSelected(boolean selected) {
-    }
+	public boolean isHover() {
+		return (state & STATE_MASK_HOVER) != 0;
+	}
 
-    public void setPressed(boolean pressed) {
-        if(pressed != isPressed()) {
-            boolean fireAction = !pressed && isArmed() && isEnabled();
-            setStateBit(STATE_MASK_PRESSED, pressed);
-            fireStateCallback();
-            if(fireAction) {
-                buttonAction();
-            }
-        }
-    }
+	public boolean isEnabled() {
+		// !Caution! negated logic
+		return (state & STATE_MASK_DISABLED) == 0;
+	}
 
-    public void setArmed(boolean armed) {
-        if(armed != isArmed()) {
-            setStateBit(STATE_MASK_ARMED, armed);
-            fireStateCallback();
-        }
-    }
+	public void setSelected(boolean selected) {
+	}
 
-    public void setHover(boolean hover) {
-        if(hover != isHover()) {
-            setStateBit(STATE_MASK_HOVER, hover);
-            fireStateCallback();
-        }
-    }
+	public void setPressed(boolean pressed) {
+		if (pressed != isPressed()) {
+			boolean fireAction = !pressed && isArmed() && isEnabled();
+			setStateBit(STATE_MASK_PRESSED, pressed);
+			fireStateCallback();
+			if (fireAction) {
+				buttonAction();
+			}
+		}
+	}
 
-    public void setEnabled(boolean enabled) {
-        if(enabled != isEnabled()) {
-            setStateBit(STATE_MASK_DISABLED, !enabled);
-            fireStateCallback();
-        }
-    }
+	public void setArmed(boolean armed) {
+		if (armed != isArmed()) {
+			setStateBit(STATE_MASK_ARMED, armed);
+			fireStateCallback();
+		}
+	}
 
-    protected void buttonAction() {
-        fireActionCallback();
-    }
+	public void setHover(boolean hover) {
+		if (hover != isHover()) {
+			setStateBit(STATE_MASK_HOVER, hover);
+			fireStateCallback();
+		}
+	}
 
-    protected void setStateBit(int mask, boolean set) {
-        if(set) {
-            state |= mask;
-        } else {
-            state &= ~mask;
-        }
-    }
+	public void setEnabled(boolean enabled) {
+		if (enabled != isEnabled()) {
+			setStateBit(STATE_MASK_DISABLED, !enabled);
+			fireStateCallback();
+		}
+	}
 
-    protected void fireStateCallback() {
-        CallbackSupport.fireCallbacks(stateCallbacks);
-    }
+	protected void buttonAction() {
+		fireActionCallback();
+	}
 
-    public void fireActionCallback() {
-        CallbackSupport.fireCallbacks(actionCallbacks);
-    }
+	protected void setStateBit(int mask, boolean set) {
+		if (set) {
+			state |= mask;
+		} else {
+			state &= ~mask;
+		}
+	}
 
-    public void addActionCallback(Runnable callback) {
-        actionCallbacks = CallbackSupport.addCallbackToList(actionCallbacks, callback, Runnable.class);
-    }
+	protected void fireStateCallback() {
+		CallbackSupport.fireCallbacks(stateCallbacks);
+	}
 
-    public void removeActionCallback(Runnable callback) {
-        actionCallbacks = CallbackSupport.removeCallbackFromList(actionCallbacks, callback);
-    }
+	public void fireActionCallback() {
+		CallbackSupport.fireCallbacks(actionCallbacks);
+	}
 
-    public boolean hasActionCallbacks() {
-        return actionCallbacks != null;
-    }
+	public void addActionCallback(Runnable callback) {
+		actionCallbacks = CallbackSupport.addCallbackToList(actionCallbacks,
+				callback, Runnable.class);
+	}
 
-    public void addStateCallback(Runnable callback) {
-        stateCallbacks = CallbackSupport.addCallbackToList(stateCallbacks, callback, Runnable.class);
-    }
+	public void removeActionCallback(Runnable callback) {
+		actionCallbacks = CallbackSupport.removeCallbackFromList(
+				actionCallbacks, callback);
+	}
 
-    public void removeStateCallback(Runnable callback) {
-        stateCallbacks = CallbackSupport.removeCallbackFromList(stateCallbacks, callback);
-    }
+	public boolean hasActionCallbacks() {
+		return actionCallbacks != null;
+	}
 
-    public void connect() {
-    }
+	public void addStateCallback(Runnable callback) {
+		stateCallbacks = CallbackSupport.addCallbackToList(stateCallbacks,
+				callback, Runnable.class);
+	}
 
-    public void disconnect() {
-    }
-    
+	public void removeStateCallback(Runnable callback) {
+		stateCallbacks = CallbackSupport.removeCallbackFromList(stateCallbacks,
+				callback);
+	}
+
+	public void connect() {
+	}
+
+	public void disconnect() {
+	}
+
 }

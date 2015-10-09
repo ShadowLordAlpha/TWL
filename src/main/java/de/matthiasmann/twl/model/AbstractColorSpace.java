@@ -36,28 +36,28 @@ package de.matthiasmann.twl.model;
  */
 public abstract class AbstractColorSpace implements ColorSpace {
 
-    private final String colorSpaceName;
-    private final String[] names;
+	private final String colorSpaceName;
+	private final String[] names;
 
-    public AbstractColorSpace(String colorSpaceName, String ... names) {
-        this.colorSpaceName = colorSpaceName;
-        this.names = names;
-    }
+	public AbstractColorSpace(String colorSpaceName, String... names) {
+		this.colorSpaceName = colorSpaceName;
+		this.names = names;
+	}
 
-    public String getComponentName(int component) {
-        return names[component];
-    }
+	public String getComponentName(int component) {
+		return names[component];
+	}
 
-    public String getColorSpaceName() {
-        return colorSpaceName;
-    }
+	public String getColorSpaceName() {
+		return colorSpaceName;
+	}
 
-    public int getNumComponents() {
-        return names.length;
-    }
+	public int getNumComponents() {
+		return names.length;
+	}
 
-    public float getMinValue(int component) {
-        return 0f;
-    }
+	public float getMinValue(int component) {
+		return 0f;
+	}
 
 }

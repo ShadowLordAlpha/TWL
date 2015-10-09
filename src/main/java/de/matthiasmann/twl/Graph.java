@@ -42,216 +42,221 @@ import de.matthiasmann.twl.utils.TextUtil;
  */
 public class Graph extends Widget {
 
-    private final GraphArea area;
+	private final GraphArea area;
 
-    GraphModel model;
-    private ParameterMap themeLineStyles;
-    private int sizeMultipleX = 1;
-    private int sizeMultipleY = 1;
+	GraphModel model;
+	private ParameterMap themeLineStyles;
+	private int sizeMultipleX = 1;
+	private int sizeMultipleY = 1;
 
-    LineStyle[] lineStyles = new LineStyle[8];
-    private float[] renderXYBuffer = new float[128];
+	LineStyle[] lineStyles = new LineStyle[8];
+	private float[] renderXYBuffer = new float[128];
 
-    public Graph() {
-        area = new GraphArea();
-        area.setClip(true);
-        add(area);
-    }
+	public Graph() {
+		area = new GraphArea();
+		area.setClip(true);
+		add(area);
+	}
 
-    public Graph(GraphModel model) {
-        this();
-        setModel(model);
-    }
-    
-    public GraphModel getModel() {
-        return model;
-    }
+	public Graph(GraphModel model) {
+		this();
+		setModel(model);
+	}
 
-    public void setModel(GraphModel model) {
-        this.model = model;
-        invalidateLineStyles();
-    }
+	public GraphModel getModel() {
+		return model;
+	}
 
-    public int getSizeMultipleX() {
-        return sizeMultipleX;
-    }
+	public void setModel(GraphModel model) {
+		this.model = model;
+		invalidateLineStyles();
+	}
 
-    public void setSizeMultipleX(int sizeMultipleX) {
-        if(sizeMultipleX < 1) {
-            throw new IllegalArgumentException("sizeMultipleX must be >= 1");
-        }
-        this.sizeMultipleX = sizeMultipleX;
-    }
+	public int getSizeMultipleX() {
+		return sizeMultipleX;
+	}
 
-    public int getSizeMultipleY() {
-        return sizeMultipleY;
-    }
+	public void setSizeMultipleX(int sizeMultipleX) {
+		if (sizeMultipleX < 1) {
+			throw new IllegalArgumentException("sizeMultipleX must be >= 1");
+		}
+		this.sizeMultipleX = sizeMultipleX;
+	}
 
-    public void setSizeMultipleY(int sizeMultipleY) {
-        if(sizeMultipleY < 1) {
-            throw new IllegalArgumentException("sizeMultipleX must be >= 1");
-        }
-        this.sizeMultipleY = sizeMultipleY;
-    }
+	public int getSizeMultipleY() {
+		return sizeMultipleY;
+	}
 
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        applyThemeGraph(themeInfo);
-    }
+	public void setSizeMultipleY(int sizeMultipleY) {
+		if (sizeMultipleY < 1) {
+			throw new IllegalArgumentException("sizeMultipleX must be >= 1");
+		}
+		this.sizeMultipleY = sizeMultipleY;
+	}
 
-    protected void applyThemeGraph(ThemeInfo themeInfo) {
-        this.themeLineStyles = themeInfo.getParameterMap("lineStyles");
-        setSizeMultipleX(themeInfo.getParameter("sizeMultipleX", 1));
-        setSizeMultipleY(themeInfo.getParameter("sizeMultipleY", 1));
-        invalidateLineStyles();
-    }
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		applyThemeGraph(themeInfo);
+	}
 
-    protected void invalidateLineStyles() {
-        Arrays.fill(lineStyles, null);
-    }
+	protected void applyThemeGraph(ThemeInfo themeInfo) {
+		this.themeLineStyles = themeInfo.getParameterMap("lineStyles");
+		setSizeMultipleX(themeInfo.getParameter("sizeMultipleX", 1));
+		setSizeMultipleY(themeInfo.getParameter("sizeMultipleY", 1));
+		invalidateLineStyles();
+	}
 
-    void syncLineStyles() {
-        int numLines = model.getNumLines();
-        if(lineStyles.length < numLines) {
-            LineStyle[] newLineStyles = new LineStyle[numLines];
-            System.arraycopy(lineStyles, 0, newLineStyles, 0, lineStyles.length);
-            this.lineStyles = newLineStyles;
-        }
+	protected void invalidateLineStyles() {
+		Arrays.fill(lineStyles, null);
+	}
 
-        for(int i=0 ; i<numLines ; i++) {
-            GraphLineModel line = model.getLine(i);
-            LineStyle style = lineStyles[i];
-            if(style == null) {
-                style = new LineStyle();
-                lineStyles[i] = style;
-            }
-            String visualStyle = TextUtil.notNull(line.getVisualStyleName());
-            if(!style.name.equals(visualStyle)) {
-                ParameterMap lineStyle = null;
-                if(themeLineStyles != null) {
-                    lineStyle = themeLineStyles.getParameterMap(visualStyle);
-                }
-                style.setStyleName(visualStyle, lineStyle);
-            }
-        }
-    }
+	void syncLineStyles() {
+		int numLines = model.getNumLines();
+		if (lineStyles.length < numLines) {
+			LineStyle[] newLineStyles = new LineStyle[numLines];
+			System.arraycopy(lineStyles, 0, newLineStyles, 0, lineStyles.length);
+			this.lineStyles = newLineStyles;
+		}
 
-    private static final float EPSILON = 1e-4f;
+		for (int i = 0; i < numLines; i++) {
+			GraphLineModel line = model.getLine(i);
+			LineStyle style = lineStyles[i];
+			if (style == null) {
+				style = new LineStyle();
+				lineStyles[i] = style;
+			}
+			String visualStyle = TextUtil.notNull(line.getVisualStyleName());
+			if (!style.name.equals(visualStyle)) {
+				ParameterMap lineStyle = null;
+				if (themeLineStyles != null) {
+					lineStyle = themeLineStyles.getParameterMap(visualStyle);
+				}
+				style.setStyleName(visualStyle, lineStyle);
+			}
+		}
+	}
 
-    void renderLine(LineRenderer lineRenderer, GraphLineModel line,
-            float minValue, float maxValue, LineStyle style) {
-        int numPoints = line.getNumPoints();
-        if(numPoints <= 0) {
-            // nothing to render
-            return;
-        }
+	private static final float EPSILON = 1e-4f;
 
-        if(renderXYBuffer.length < numPoints*2) {
-            // no need to copy - we generate new values anyway
-            renderXYBuffer = new float[numPoints*2];
-        }
+	void renderLine(LineRenderer lineRenderer, GraphLineModel line,
+			float minValue, float maxValue, LineStyle style) {
+		int numPoints = line.getNumPoints();
+		if (numPoints <= 0) {
+			// nothing to render
+			return;
+		}
 
-        float[] xy = this.renderXYBuffer;
+		if (renderXYBuffer.length < numPoints * 2) {
+			// no need to copy - we generate new values anyway
+			renderXYBuffer = new float[numPoints * 2];
+		}
 
-        float delta = maxValue - minValue;
-        if(Math.abs(delta) < EPSILON) {
-            // Math.copySign is Java 1.6+
-            delta = copySign(EPSILON, delta);
-        }
+		float[] xy = this.renderXYBuffer;
 
-        float yscale = (float)-getInnerHeight() / delta;
-        float yoff = getInnerBottom();
-        float xscale = (float)getInnerWidth() / (float)Math.max(1, numPoints-1);
-        float xoff = getInnerX();
+		float delta = maxValue - minValue;
+		if (Math.abs(delta) < EPSILON) {
+			// Math.copySign is Java 1.6+
+			delta = copySign(EPSILON, delta);
+		}
 
-        for(int i=0 ; i<numPoints ; i++) {
-            float value = line.getPoint(i);
-            xy[i*2 + 0] = i * xscale + xoff;
-            xy[i*2 + 1] = (value - minValue) * yscale + yoff;
-        }
+		float yscale = (float) -getInnerHeight() / delta;
+		float yoff = getInnerBottom();
+		float xscale = (float) getInnerWidth()
+				/ (float) Math.max(1, numPoints - 1);
+		float xoff = getInnerX();
 
-        if(numPoints == 1) {
-            // a single point will be rendered as horizontal line
-            // as we never shrink the xy array and the initial size is >= 4 we have enough room left
-            xy[2] = xoff + xscale;
-            xy[3] = xy[1];
-            numPoints = 2;
-        }
+		for (int i = 0; i < numPoints; i++) {
+			float value = line.getPoint(i);
+			xy[i * 2 + 0] = i * xscale + xoff;
+			xy[i * 2 + 1] = (value - minValue) * yscale + yoff;
+		}
 
-        lineRenderer.drawLine(xy, numPoints, style.lineWidth, style.color, false);
-    }
+		if (numPoints == 1) {
+			// a single point will be rendered as horizontal line
+			// as we never shrink the xy array and the initial size is >= 4 we
+			// have enough room left
+			xy[2] = xoff + xscale;
+			xy[3] = xy[1];
+			numPoints = 2;
+		}
 
-    private static float copySign(float magnitude, float sign) {
-        // this copies the sign bit from sign to magnitude
-        // it assumes the magnitude is positive
-        int rawMagnitude = Float.floatToRawIntBits(magnitude);
-        int rawSign = Float.floatToRawIntBits(sign);
-        int rawResult = rawMagnitude | (rawSign & (1 << 31));
-        return Float.intBitsToFloat(rawResult);
-    }
+		lineRenderer.drawLine(xy, numPoints, style.lineWidth, style.color,
+				false);
+	}
 
-    @Override
-    public boolean setSize(int width, int height) {
-        return super.setSize(
-                round(width, sizeMultipleX),
-                round(height, sizeMultipleY));
-    }
+	private static float copySign(float magnitude, float sign) {
+		// this copies the sign bit from sign to magnitude
+		// it assumes the magnitude is positive
+		int rawMagnitude = Float.floatToRawIntBits(magnitude);
+		int rawSign = Float.floatToRawIntBits(sign);
+		int rawResult = rawMagnitude | (rawSign & (1 << 31));
+		return Float.intBitsToFloat(rawResult);
+	}
 
-    private static int round(int value, int grid) {
-        return value - (value % grid);
-    }
+	@Override
+	public boolean setSize(int width, int height) {
+		return super.setSize(round(width, sizeMultipleX),
+				round(height, sizeMultipleY));
+	}
 
-    @Override
-    protected void layout() {
-        layoutChildFullInnerArea(area);
-    }
-    
-    static class LineStyle {
-        String name = "";
-        Color color = Color.WHITE;
-        float lineWidth = 1.0f;
+	private static int round(int value, int grid) {
+		return value - (value % grid);
+	}
 
-        void setStyleName(String name, ParameterMap lineStyle) {
-            this.name = name;
-            if(lineStyle != null) {
-                this.color = lineStyle.getParameter("color", Color.WHITE);
-                this.lineWidth = Math.max(EPSILON, lineStyle.getParameter("width", 1.0f));
-            }
-        }
-    }
+	@Override
+	protected void layout() {
+		layoutChildFullInnerArea(area);
+	}
 
-    class GraphArea extends Widget {
+	static class LineStyle {
+		String name = "";
+		Color color = Color.WHITE;
+		float lineWidth = 1.0f;
 
-        @Override
-        protected void paintWidget(GUI gui) {
-            if(model != null) {
-                syncLineStyles();
-                LineRenderer lineRenderer = gui.getRenderer().getLineRenderer();
+		void setStyleName(String name, ParameterMap lineStyle) {
+			this.name = name;
+			if (lineStyle != null) {
+				this.color = lineStyle.getParameter("color", Color.WHITE);
+				this.lineWidth = Math.max(EPSILON,
+						lineStyle.getParameter("width", 1.0f));
+			}
+		}
+	}
 
-                int numLines = model.getNumLines();
-                boolean independantScale = model.getScaleLinesIndependant();
-                float minValue = Float.MAX_VALUE;
-                float maxValue = -Float.MAX_VALUE;
-                if(independantScale) {
-                    for(int i=0 ; i<numLines ; i++) {
-                        GraphLineModel line = model.getLine(i);
-                        minValue = Math.min(minValue, line.getMinValue());
-                        maxValue = Math.max(maxValue, line.getMaxValue());
-                    }
-                }
+	class GraphArea extends Widget {
 
-                for(int i=0 ; i<numLines ; i++) {
-                    GraphLineModel line = model.getLine(i);
-                    LineStyle style = lineStyles[i];
-                    if(independantScale) {
-                        renderLine(lineRenderer, line, minValue, maxValue, style);
-                    } else {
-                        renderLine(lineRenderer, line, line.getMinValue(), line.getMaxValue(), style);
-                    }
-                }
-            }
-        }
+		@Override
+		protected void paintWidget(GUI gui) {
+			if (model != null) {
+				syncLineStyles();
+				LineRenderer lineRenderer = gui.getRenderer().getLineRenderer();
 
-    }
+				int numLines = model.getNumLines();
+				boolean independantScale = model.getScaleLinesIndependant();
+				float minValue = Float.MAX_VALUE;
+				float maxValue = -Float.MAX_VALUE;
+				if (independantScale) {
+					for (int i = 0; i < numLines; i++) {
+						GraphLineModel line = model.getLine(i);
+						minValue = Math.min(minValue, line.getMinValue());
+						maxValue = Math.max(maxValue, line.getMaxValue());
+					}
+				}
+
+				for (int i = 0; i < numLines; i++) {
+					GraphLineModel line = model.getLine(i);
+					LineStyle style = lineStyles[i];
+					if (independantScale) {
+						renderLine(lineRenderer, line, minValue, maxValue,
+								style);
+					} else {
+						renderLine(lineRenderer, line, line.getMinValue(),
+								line.getMaxValue(), style);
+					}
+				}
+			}
+		}
+
+	}
 }

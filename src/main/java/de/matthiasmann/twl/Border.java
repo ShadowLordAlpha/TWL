@@ -35,69 +35,70 @@ package de.matthiasmann.twl;
  */
 public class Border {
 
-    public static final Border ZERO = new Border(0);
-    
-    private final int top;
-    private final int left;
-    private final int bottom;
-    private final int right;
+	public static final Border ZERO = new Border(0);
 
-    public Border(int all) {
-        this.top = all;
-        this.left = all;
-        this.bottom = all;
-        this.right = all;
-    }
-    
-    public Border(int horz, int vert) {
-        this.top = vert;
-        this.left = horz;
-        this.bottom = vert;
-        this.right = horz;
-    }
-    
-    public Border(int top, int left, int bottom, int right) {
-        this.top = top;
-        this.left = left;
-        this.bottom = bottom;
-        this.right = right;
-    }
-    
-    public int getBorderBottom() {
-        return bottom;
-    }
+	private final int top;
+	private final int left;
+	private final int bottom;
+	private final int right;
 
-    public int getBorderLeft() {
-        return left;
-    }
+	public Border(int all) {
+		this.top = all;
+		this.left = all;
+		this.bottom = all;
+		this.right = all;
+	}
 
-    public int getBorderRight() {
-        return right;
-    }
+	public Border(int horz, int vert) {
+		this.top = vert;
+		this.left = horz;
+		this.bottom = vert;
+		this.right = horz;
+	}
 
-    public int getBorderTop() {
-        return top;
-    }
+	public Border(int top, int left, int bottom, int right) {
+		this.top = top;
+		this.left = left;
+		this.bottom = bottom;
+		this.right = right;
+	}
 
-    public int getBottom() {
-        return bottom;
-    }
+	public int getBorderBottom() {
+		return bottom;
+	}
 
-    public int getLeft() {
-        return left;
-    }
+	public int getBorderLeft() {
+		return left;
+	}
 
-    public int getRight() {
-        return right;
-    }
+	public int getBorderRight() {
+		return right;
+	}
 
-    public int getTop() {
-        return top;
-    }
+	public int getBorderTop() {
+		return top;
+	}
 
-    @Override
-    public String toString() {
-        return "[Border top="+top+" left="+left+" bottom="+bottom+" right="+right+"]";
-    }
+	public int getBottom() {
+		return bottom;
+	}
+
+	public int getLeft() {
+		return left;
+	}
+
+	public int getRight() {
+		return right;
+	}
+
+	public int getTop() {
+		return top;
+	}
+
+	@Override
+	public String toString() {
+		return "[Border top=" + top + " left=" + left + " bottom=" + bottom
+				+ " right=" + right + "]";
+	}
 
 }

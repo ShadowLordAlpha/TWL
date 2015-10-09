@@ -38,34 +38,34 @@ import java.io.Reader;
  * @author Matthias Mann
  */
 public class MultiStringReader extends Reader {
-    private final String[] strings;
-    private String cur;
-    private int nr;
-    private int pos;
+	private final String[] strings;
+	private String cur;
+	private int nr;
+	private int pos;
 
-    public MultiStringReader(String ... strings) {
-        this.strings = strings;
-    }
+	public MultiStringReader(String... strings) {
+		this.strings = strings;
+	}
 
-    @Override
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        while(cur == null || pos == cur.length()) {
-            if(nr == strings.length) {
-                return -1;
-            }
-            cur = strings[nr++];
-            pos = 0;
-        }
+	@Override
+	public int read(char[] cbuf, int off, int len) throws IOException {
+		while (cur == null || pos == cur.length()) {
+			if (nr == strings.length) {
+				return -1;
+			}
+			cur = strings[nr++];
+			pos = 0;
+		}
 
-        int remain = cur.length() - pos;
-        if(len > remain) {
-            len = remain;
-        }
-        cur.getChars(pos, pos += len, cbuf, off);
-        return len;
-    }
+		int remain = cur.length() - pos;
+		if (len > remain) {
+			len = remain;
+		}
+		cur.getChars(pos, pos += len, cbuf, off);
+		return len;
+	}
 
-    @Override
-    public void close() {
-    }
+	@Override
+	public void close() {
+	}
 }

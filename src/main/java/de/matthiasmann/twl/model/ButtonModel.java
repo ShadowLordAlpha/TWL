@@ -30,8 +30,8 @@
 package de.matthiasmann.twl.model;
 
 /**
- * A generic button model.
- * Allows to separate button behavior from the button Widget.
+ * A generic button model. Allows to separate button behavior from the button
+ * Widget.
  *
  * A ButtonModel should not be shared between Button instances.
  * 
@@ -39,47 +39,47 @@ package de.matthiasmann.twl.model;
  */
 public interface ButtonModel {
 
-    public boolean isSelected();
-    
-    public boolean isPressed();
-    
-    public boolean isArmed();
-    
-    public boolean isHover();
+	public boolean isSelected();
 
-    public boolean isEnabled();
-    
-    public void setSelected(boolean selected);
-    
-    public void setPressed(boolean pressed);
-    
-    public void setArmed(boolean armed);
-    
-    public void setHover(boolean hover);
+	public boolean isPressed();
 
-    public void setEnabled(boolean enabled);
+	public boolean isArmed();
 
-    public void addActionCallback(Runnable callback);
-    
-    public void removeActionCallback(Runnable callback);
+	public boolean isHover();
 
-    public void fireActionCallback();
+	public boolean isEnabled();
 
-    public boolean hasActionCallbacks();
-    
-    public void addStateCallback(Runnable callback);
-    
-    public void removeStateCallback(Runnable callback);
+	public void setSelected(boolean selected);
 
-    /**
-     * Called when the Button is placed in the GUI tree.
-     * Callbacks to other models should only be installed after this call.
-     */
-    public void connect();
+	public void setPressed(boolean pressed);
 
-    /**
-     * Called when the Button is no longer part of the GUI tree.
-     * Callbacks to other models should be removed.
-     */
-    public void disconnect();
+	public void setArmed(boolean armed);
+
+	public void setHover(boolean hover);
+
+	public void setEnabled(boolean enabled);
+
+	public void addActionCallback(Runnable callback);
+
+	public void removeActionCallback(Runnable callback);
+
+	public void fireActionCallback();
+
+	public boolean hasActionCallbacks();
+
+	public void addStateCallback(Runnable callback);
+
+	public void removeStateCallback(Runnable callback);
+
+	/**
+	 * Called when the Button is placed in the GUI tree. Callbacks to other
+	 * models should only be installed after this call.
+	 */
+	public void connect();
+
+	/**
+	 * Called when the Button is no longer part of the GUI tree. Callbacks to
+	 * other models should be removed.
+	 */
+	public void disconnect();
 }

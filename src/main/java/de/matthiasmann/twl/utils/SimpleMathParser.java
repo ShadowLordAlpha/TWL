@@ -37,259 +37,275 @@ import java.text.ParseException;
  */
 public class SimpleMathParser {
 
-    public interface Interpreter {
-        public void accessVariable(String name);
-        public void accessField(String field);
-        public void accessArray();
-        public void loadConst(Number n);
-        public void add();
-        public void sub();
-        public void mul();
-        public void div();
-        public void callFunction(String name, int args);
-        public void negate();
-    }
+	public interface Interpreter {
+		public void accessVariable(String name);
 
-    final String str;
-    final Interpreter interpreter;
-    int pos;
+		public void accessField(String field);
 
-    private SimpleMathParser(String str, Interpreter interpreter) {
-        this.str = str;
-        this.interpreter = interpreter;
-    }
+		public void accessArray();
 
-    public static void interpret(String str, Interpreter interpreter) throws ParseException {
-        new SimpleMathParser(str, interpreter).parse(false);
-    }
+		public void loadConst(Number n);
 
-    public static int interpretArray(String str, Interpreter interpreter) throws ParseException {
-        return new SimpleMathParser(str, interpreter).parse(true);
-    }
+		public void add();
 
-    private int parse(boolean allowArray) throws ParseException {
-        try {
-            if(peek() == -1) {
-                if(allowArray) {
-                    return 0;
-                }
-                unexpected(-1);
-            }
-            int count = 0;
-            for(;;) {
-                count++;
-                parseAddSub();
-                int ch = peek();
-                if(ch == -1) {
-                    return count;
-                }
-                if(ch != ',' || !allowArray) {
-                    unexpected(ch);
-                }
-                pos++;
-            }
-        } catch (ParseException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw (ParseException)(new ParseException("Unable to execute", pos).initCause(ex));
-        }
-    }
-    
-    private void parseAddSub() throws ParseException {
-        parseMulDiv();
-        for(;;) {
-            int ch = peek();
-            switch (ch) {
-                case '+':
-                    pos++;
-                    parseMulDiv();
-                    interpreter.add();
-                    break;
-                case '-':
-                    pos++;
-                    parseMulDiv();
-                    interpreter.sub();
-                    break;
-                default:
-                    return;
-            }
-        }
-    }
+		public void sub();
 
-    private void parseMulDiv() throws ParseException {
-        parseIdentOrConst();
-        for(;;) {
-            int ch = peek();
-            switch (ch) {
-                case '*':
-                    pos++;
-                    parseIdentOrConst();
-                    interpreter.mul();
-                    break;
-                case '/':
-                    pos++;
-                    parseIdentOrConst();
-                    interpreter.div();
-                    break;
-                default:
-                    return;
-            }
-        }
-    }
+		public void mul();
 
-    private void parseIdentOrConst() throws ParseException {
-        int ch = peek();
-        if(ch == '\'' || Character.isJavaIdentifierStart((char)ch)) {
-            String ident = parseIdent();
-            ch = peek();
-            if(ch == '(') {
-                pos++;
-                parseCall(ident);
-                return;
-            }
-            interpreter.accessVariable(ident);
-            while(ch == '.' || ch == '[') {
-                pos++;
-                if(ch == '.') {
-                    String field = parseIdent();
-                    interpreter.accessField(field);
-                } else {
-                    parseIdentOrConst();
-                    expect(']');
-                    interpreter.accessArray();
-                }
-                ch = peek();
-            }
-        } else if(ch == '-') {
-            pos++;
-            parseIdentOrConst();
-            interpreter.negate();
-        } else if(ch == '.' || ch == '+' || Character.isDigit((char)ch)) {
-            parseConst();
-        } else if(ch == '(') {
-            pos++;
-            parseAddSub();
-            expect(')');
-        }
-    }
+		public void div();
 
-    private void parseCall(String name) throws ParseException {
-        int count = 1;
-        parseAddSub();
-        for(;;) {
-            int ch = peek();
-            if(ch == ')') {
-                pos++;
-                interpreter.callFunction(name, count);
-                return;
-            }
-            if(ch == ',') {
-                pos++;
-                count++;
-                parseAddSub();
-            } else {
-                unexpected(ch);
-            }
-        }
-    }
+		public void callFunction(String name, int args);
 
-    private void parseConst() throws ParseException {
-        final int len = str.length();
-        int start = pos;
-        Number n;
-        switch(str.charAt(pos)) {
-        case '+':
-            // skip
-            start = ++pos;
-            break;
-        case '0':
-            if(pos+1 < len && str.charAt(pos+1) == 'x') {
-                pos += 2;
-                parseHexInt();
-                return;
-            }
-            break;
-        }
-        while(pos < len && Character.isDigit(str.charAt(pos))) {
-            pos++;
-        }
-        if(pos < len && str.charAt(pos) == '.') {
-            pos++;
-            while(pos < len && Character.isDigit(str.charAt(pos))) {
-                pos++;
-            }
-            if(pos - start <= 1) {
-                unexpected(-1);
-            }
-            n = Float.valueOf(str.substring(start, pos));
-        } else {
-            n = Integer.valueOf(str.substring(start, pos));
-        }
-        interpreter.loadConst(n);
-    }
+		public void negate();
+	}
 
-    private void parseHexInt() throws ParseException {
-        final int len = str.length();
-        int start = pos;
-        while(pos < len && "0123456789abcdefABCDEF".indexOf(str.charAt(pos)) >= 0) {
-            pos++;
-        }
-        if(pos - start > 8) {
-            throw new ParseException("Number to large at " + pos, pos);
-        }
-        if(pos == start) {
-            unexpected((pos < len) ? str.charAt(pos) : -1);
-        }
-        interpreter.loadConst((int)Long.parseLong(str.substring(start, pos), 16));
-    }
-    
-    private boolean skipSpaces() {
-        for(;;) {
-            if(pos == str.length()) {
-                return false;
-            }
-            if(!Character.isWhitespace(str.charAt(pos))) {
-                return true;
-            }
-            pos++;
-        }
-    }
+	final String str;
+	final Interpreter interpreter;
+	int pos;
 
-    private int peek() {
-        if(skipSpaces()) {
-            return str.charAt(pos);
-        }
-        return -1;
-    }
+	private SimpleMathParser(String str, Interpreter interpreter) {
+		this.str = str;
+		this.interpreter = interpreter;
+	}
 
-    private String parseIdent() throws ParseException {
-        if(str.charAt(pos) == '\'') {
-            int start = ++pos;
-            pos = TextUtil.indexOf(str, '\'', pos);
-            String ident = str.substring(start, pos);
-            expect('\'');
-            return ident;
-        }
-        int start = pos;
-        while(pos < str.length() && Character.isJavaIdentifierPart(str.charAt(pos))) {
-            pos++;
-        }
-        return str.substring(start, pos);
-    }
+	public static void interpret(String str, Interpreter interpreter)
+			throws ParseException {
+		new SimpleMathParser(str, interpreter).parse(false);
+	}
 
-    private void expect(int what) throws ParseException {
-        int ch = peek();
-        if(ch != what) {
-            unexpected(ch);
-        } else {
-            pos++;
-        }
-    }
-    
-    private void unexpected(int ch) throws ParseException {
-        if(ch < 0) {
-            throw new ParseException("Unexpected end of string", pos);
-        }
-        throw new ParseException("Unexpected character '"+(char)ch+"' at " + pos, pos);
-    }
+	public static int interpretArray(String str, Interpreter interpreter)
+			throws ParseException {
+		return new SimpleMathParser(str, interpreter).parse(true);
+	}
+
+	private int parse(boolean allowArray) throws ParseException {
+		try {
+			if (peek() == -1) {
+				if (allowArray) {
+					return 0;
+				}
+				unexpected(-1);
+			}
+			int count = 0;
+			for (;;) {
+				count++;
+				parseAddSub();
+				int ch = peek();
+				if (ch == -1) {
+					return count;
+				}
+				if (ch != ',' || !allowArray) {
+					unexpected(ch);
+				}
+				pos++;
+			}
+		} catch (ParseException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			throw (ParseException) (new ParseException("Unable to execute", pos)
+					.initCause(ex));
+		}
+	}
+
+	private void parseAddSub() throws ParseException {
+		parseMulDiv();
+		for (;;) {
+			int ch = peek();
+			switch (ch) {
+			case '+':
+				pos++;
+				parseMulDiv();
+				interpreter.add();
+				break;
+			case '-':
+				pos++;
+				parseMulDiv();
+				interpreter.sub();
+				break;
+			default:
+				return;
+			}
+		}
+	}
+
+	private void parseMulDiv() throws ParseException {
+		parseIdentOrConst();
+		for (;;) {
+			int ch = peek();
+			switch (ch) {
+			case '*':
+				pos++;
+				parseIdentOrConst();
+				interpreter.mul();
+				break;
+			case '/':
+				pos++;
+				parseIdentOrConst();
+				interpreter.div();
+				break;
+			default:
+				return;
+			}
+		}
+	}
+
+	private void parseIdentOrConst() throws ParseException {
+		int ch = peek();
+		if (ch == '\'' || Character.isJavaIdentifierStart((char) ch)) {
+			String ident = parseIdent();
+			ch = peek();
+			if (ch == '(') {
+				pos++;
+				parseCall(ident);
+				return;
+			}
+			interpreter.accessVariable(ident);
+			while (ch == '.' || ch == '[') {
+				pos++;
+				if (ch == '.') {
+					String field = parseIdent();
+					interpreter.accessField(field);
+				} else {
+					parseIdentOrConst();
+					expect(']');
+					interpreter.accessArray();
+				}
+				ch = peek();
+			}
+		} else if (ch == '-') {
+			pos++;
+			parseIdentOrConst();
+			interpreter.negate();
+		} else if (ch == '.' || ch == '+' || Character.isDigit((char) ch)) {
+			parseConst();
+		} else if (ch == '(') {
+			pos++;
+			parseAddSub();
+			expect(')');
+		}
+	}
+
+	private void parseCall(String name) throws ParseException {
+		int count = 1;
+		parseAddSub();
+		for (;;) {
+			int ch = peek();
+			if (ch == ')') {
+				pos++;
+				interpreter.callFunction(name, count);
+				return;
+			}
+			if (ch == ',') {
+				pos++;
+				count++;
+				parseAddSub();
+			} else {
+				unexpected(ch);
+			}
+		}
+	}
+
+	private void parseConst() throws ParseException {
+		final int len = str.length();
+		int start = pos;
+		Number n;
+		switch (str.charAt(pos)) {
+		case '+':
+			// skip
+			start = ++pos;
+			break;
+		case '0':
+			if (pos + 1 < len && str.charAt(pos + 1) == 'x') {
+				pos += 2;
+				parseHexInt();
+				return;
+			}
+			break;
+		}
+		while (pos < len && Character.isDigit(str.charAt(pos))) {
+			pos++;
+		}
+		if (pos < len && str.charAt(pos) == '.') {
+			pos++;
+			while (pos < len && Character.isDigit(str.charAt(pos))) {
+				pos++;
+			}
+			if (pos - start <= 1) {
+				unexpected(-1);
+			}
+			n = Float.valueOf(str.substring(start, pos));
+		} else {
+			n = Integer.valueOf(str.substring(start, pos));
+		}
+		interpreter.loadConst(n);
+	}
+
+	private void parseHexInt() throws ParseException {
+		final int len = str.length();
+		int start = pos;
+		while (pos < len
+				&& "0123456789abcdefABCDEF".indexOf(str.charAt(pos)) >= 0) {
+			pos++;
+		}
+		if (pos - start > 8) {
+			throw new ParseException("Number to large at " + pos, pos);
+		}
+		if (pos == start) {
+			unexpected((pos < len) ? str.charAt(pos) : -1);
+		}
+		interpreter.loadConst((int) Long.parseLong(str.substring(start, pos),
+				16));
+	}
+
+	private boolean skipSpaces() {
+		for (;;) {
+			if (pos == str.length()) {
+				return false;
+			}
+			if (!Character.isWhitespace(str.charAt(pos))) {
+				return true;
+			}
+			pos++;
+		}
+	}
+
+	private int peek() {
+		if (skipSpaces()) {
+			return str.charAt(pos);
+		}
+		return -1;
+	}
+
+	private String parseIdent() throws ParseException {
+		if (str.charAt(pos) == '\'') {
+			int start = ++pos;
+			pos = TextUtil.indexOf(str, '\'', pos);
+			String ident = str.substring(start, pos);
+			expect('\'');
+			return ident;
+		}
+		int start = pos;
+		while (pos < str.length()
+				&& Character.isJavaIdentifierPart(str.charAt(pos))) {
+			pos++;
+		}
+		return str.substring(start, pos);
+	}
+
+	private void expect(int what) throws ParseException {
+		int ch = peek();
+		if (ch != what) {
+			unexpected(ch);
+		} else {
+			pos++;
+		}
+	}
+
+	private void unexpected(int ch) throws ParseException {
+		if (ch < 0) {
+			throw new ParseException("Unexpected end of string", pos);
+		}
+		throw new ParseException("Unexpected character '" + (char) ch + "' at "
+				+ pos, pos);
+	}
 }

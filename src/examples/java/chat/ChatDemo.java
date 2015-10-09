@@ -29,10 +29,10 @@
  */
 package chat;
 
-import java.awt.DisplayMode;
-
-import org.lwjgl.Sys;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import test.TestUtils;
 import de.matthiasmann.twl.DesktopArea;
@@ -46,7 +46,6 @@ import de.matthiasmann.twl.ScrollPane;
 import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -58,179 +57,203 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class ChatDemo extends DesktopArea {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Chat Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Chat Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            ChatDemo chat = new ChatDemo();
-            GUI gui = new GUI(chat, renderer);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    ChatDemo.class.getResource("chat.xml"), renderer);
-            gui.applyTheme(theme);
+			GLFW.glfwSwapInterval(1); // vsync
 
-            while(!Display.isCloseRequested() && !chat.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			ChatDemo chat = new ChatDemo();
+			GUI gui = new GUI(chat, renderer);
 
-                gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
-            }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					ChatDemo.class.getResource("chat.xml"), renderer);
+			gui.applyTheme(theme);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !chat.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-    private final FPSCounter fpsCounter;
-    private final ChatFrame chatFrame;
+				gui.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
+				TestUtils.reduceInputLag();
+			}
 
-    public boolean quit;
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
-    public ChatDemo() {
-        fpsCounter = new FPSCounter();
-        add(fpsCounter);
+	private final FPSCounter fpsCounter;
+	private final ChatFrame chatFrame;
 
-        chatFrame = new ChatFrame();
-        add(chatFrame);
+	public boolean quit;
 
-        chatFrame.setSize(400, 200);
-        chatFrame.setPosition(10, 350);
-    }
+	public ChatDemo() {
+		fpsCounter = new FPSCounter();
+		add(fpsCounter);
 
-    @Override
-    protected void layout() {
-        super.layout();
+		chatFrame = new ChatFrame();
+		add(chatFrame);
 
-        // fpsCounter is bottom right
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
-    }
+		chatFrame.setSize(400, 200);
+		chatFrame.setPosition(10, 350);
+	}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        switch (evt.getType()) {
-            case KEY_PRESSED:
-                switch (evt.getKeyCode()) {
-                    case Event.KEY_ESCAPE:
-                        quit = true;
-                        return true;
-                }
-        }
-        return false;
-    }
+	@Override
+	protected void layout() {
+		super.layout();
 
-    static class ChatFrame extends ResizableFrame {
-        private final StringBuilder sb;
-        private final HTMLTextAreaModel textAreaModel;
-        private final TextArea textArea;
-        private final EditField editField;
-        private final ScrollPane scrollPane;
-        private int curColor;
+		// fpsCounter is bottom right
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
+	}
 
-        public ChatFrame() {
-            setTitle("Chat");
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_ESCAPE:
+				quit = true;
+				return true;
+			}
+		}
+		return false;
+	}
 
-            this.sb = new StringBuilder();
-            this.textAreaModel = new HTMLTextAreaModel();
-            this.textArea = new TextArea(textAreaModel);
-            this.editField = new EditField();
+	static class ChatFrame extends ResizableFrame {
+		private final StringBuilder sb;
+		private final HTMLTextAreaModel textAreaModel;
+		private final TextArea textArea;
+		private final EditField editField;
+		private final ScrollPane scrollPane;
+		private int curColor;
 
-            editField.addCallback(new EditField.Callback() {
-                public void callback(int key) {
-                    if(key == Event.KEY_RETURN) {
-                        // cycle through 3 different colors/font styles
-                        appendRow("color"+curColor, editField.getText());
-                        editField.setText("");
-                        curColor = (curColor + 1) % 3;
-                    }
-                }
-            });
+		public ChatFrame() {
+			setTitle("Chat");
 
-            textArea.addCallback(new TextArea.Callback() {
-                public void handleLinkClicked(String href) {
-                    Sys.openURL(href);
-                }
-            });
+			this.sb = new StringBuilder();
+			this.textAreaModel = new HTMLTextAreaModel();
+			this.textArea = new TextArea(textAreaModel);
+			this.editField = new EditField();
 
-            scrollPane = new ScrollPane(textArea);
-            scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
+			editField.addCallback(new EditField.Callback() {
+				public void callback(int key) {
+					if (key == Event.KEY_RETURN) {
+						// cycle through 3 different colors/font styles
+						appendRow("color" + curColor, editField.getText());
+						editField.setText("");
+						curColor = (curColor + 1) % 3;
+					}
+				}
+			});
 
-            DialogLayout l = new DialogLayout();
-            l.setTheme("content");
-            l.setHorizontalGroup(l.createParallelGroup(scrollPane, editField));
-            l.setVerticalGroup(l.createSequentialGroup(scrollPane, editField));
+			textArea.addCallback(new TextArea.Callback() {
+				public void handleLinkClicked(String href) {
+					// TODO open URL
+					// Sys.openURL(href);
+				}
+			});
 
-            add(l);
+			scrollPane = new ScrollPane(textArea);
+			scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
 
-            appendRow("default", "Welcome to the chat demo. Type your messages below :)");
-        }
+			DialogLayout l = new DialogLayout();
+			l.setTheme("content");
+			l.setHorizontalGroup(l.createParallelGroup(scrollPane, editField));
+			l.setVerticalGroup(l.createSequentialGroup(scrollPane, editField));
 
-        private void appendRow(String font, String text) {
-            sb.append("<div style=\"word-wrap: break-word; font-family: ").append(font).append("; \">");
-            // not efficient but simple
-            for(int i=0,l=text.length() ; i<l ; i++) {
-                char ch = text.charAt(i);
-                switch(ch) {
-                    case '<': sb.append("&lt;"); break;
-                    case '>': sb.append("&gt;"); break;
-                    case '&': sb.append("&amp;"); break;
-                    case '"': sb.append("&quot;"); break;
-                    case ':':
-                        if(text.startsWith(":)", i)) {
-                            sb.append("<img src=\"smiley\" alt=\":)\"/>");
-                            i += 1; // skip one less because of i++ in the for loop
-                            break;
-                        }
-                        sb.append(ch);
-                        break;
-                    case 'h':
-                        if(text.startsWith("http://", i)) {
-                            int end = i + 7;
-                            while(end < l && isURLChar(text.charAt(end))) {
-                                end++;
-                            }
-                            String href = text.substring(i, end);
-                            sb.append("<a style=\"font: link\" href=\"").append(href)
-                                    .append("\" >").append(href)
-                                    .append("</a>");
-                            i = end - 1; // skip one less because of i++ in the for loop
-                            break;
-                        }
-                        // fall through:
-                    default:
-                        sb.append(ch);
-                }
-            }
-            sb.append("</div>");
+			add(l);
 
-            boolean isAtEnd = scrollPane.getMaxScrollPosY() == scrollPane.getScrollPositionY();
+			appendRow("default",
+					"Welcome to the chat demo. Type your messages below :)");
+		}
 
-            textAreaModel.setHtml(sb.toString());
+		private void appendRow(String font, String text) {
+			sb.append("<div style=\"word-wrap: break-word; font-family: ")
+					.append(font).append("; \">");
+			// not efficient but simple
+			for (int i = 0, l = text.length(); i < l; i++) {
+				char ch = text.charAt(i);
+				switch (ch) {
+				case '<':
+					sb.append("&lt;");
+					break;
+				case '>':
+					sb.append("&gt;");
+					break;
+				case '&':
+					sb.append("&amp;");
+					break;
+				case '"':
+					sb.append("&quot;");
+					break;
+				case ':':
+					if (text.startsWith(":)", i)) {
+						sb.append("<img src=\"smiley\" alt=\":)\"/>");
+						i += 1; // skip one less because of i++ in the for loop
+						break;
+					}
+					sb.append(ch);
+					break;
+				case 'h':
+					if (text.startsWith("http://", i)) {
+						int end = i + 7;
+						while (end < l && isURLChar(text.charAt(end))) {
+							end++;
+						}
+						String href = text.substring(i, end);
+						sb.append("<a style=\"font: link\" href=\"")
+								.append(href).append("\" >").append(href)
+								.append("</a>");
+						i = end - 1; // skip one less because of i++ in the for
+										// loop
+						break;
+					}
+					// fall through:
+				default:
+					sb.append(ch);
+				}
+			}
+			sb.append("</div>");
 
-            if(isAtEnd) {
-                scrollPane.validateLayout();
-                scrollPane.setScrollPositionY(scrollPane.getMaxScrollPosY());
-            }
-        }
+			boolean isAtEnd = scrollPane.getMaxScrollPosY() == scrollPane
+					.getScrollPositionY();
 
-        private boolean isURLChar(char ch) {
-            return (ch == '.') || (ch == '/') || (ch == '%') ||
-                    (ch >= '0' && ch <= '9') ||
-                    (ch >= 'a' && ch <= 'z') ||
-                    (ch >= 'A' && ch <= 'Z');
-        }
-    }
+			textAreaModel.setHtml(sb.toString());
+
+			if (isAtEnd) {
+				scrollPane.validateLayout();
+				scrollPane.setScrollPositionY(scrollPane.getMaxScrollPosY());
+			}
+		}
+
+		private boolean isURLChar(char ch) {
+			return (ch == '.') || (ch == '/') || (ch == '%')
+					|| (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z')
+					|| (ch >= 'A' && ch <= 'Z');
+		}
+	}
 }

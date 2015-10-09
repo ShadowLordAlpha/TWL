@@ -35,18 +35,18 @@ package de.matthiasmann.twl.model;
  */
 public interface TreeTableNode {
 
-    public Object getData(int column);
+	public Object getData(int column);
 
-    public Object getTooltipContent(int column);
-    
-    public TreeTableNode getParent();
+	public Object getTooltipContent(int column);
 
-    public boolean isLeaf();
-    
-    public int getNumChildren();
+	public TreeTableNode getParent();
 
-    public TreeTableNode getChild(int idx);
+	public boolean isLeaf();
 
-    public int getChildIndex(TreeTableNode child);
-    
+	public int getNumChildren();
+
+	public TreeTableNode getChild(int idx);
+
+	public int getChildIndex(TreeTableNode child);
+
 }

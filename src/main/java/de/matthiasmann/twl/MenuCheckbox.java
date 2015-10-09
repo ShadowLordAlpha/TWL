@@ -40,43 +40,44 @@ import de.matthiasmann.twl.model.ToggleButtonModel;
  */
 public class MenuCheckbox extends MenuElement {
 
-    private BooleanModel model;
+	private BooleanModel model;
 
-    public MenuCheckbox() {
-    }
+	public MenuCheckbox() {
+	}
 
-    public MenuCheckbox(BooleanModel model) {
-        this.model = model;
-    }
+	public MenuCheckbox(BooleanModel model) {
+		this.model = model;
+	}
 
-    public MenuCheckbox(String name, BooleanModel model) {
-        super(name);
-        this.model = model;
-    }
+	public MenuCheckbox(String name, BooleanModel model) {
+		super(name);
+		this.model = model;
+	}
 
-    public BooleanModel getModel() {
-        return model;
-    }
+	public BooleanModel getModel() {
+		return model;
+	}
 
-    public void setModel(BooleanModel model) {
-        BooleanModel oldModel = this.model;
-        this.model = model;
-        firePropertyChange("model", oldModel, model);
-    }
+	public void setModel(BooleanModel model) {
+		BooleanModel oldModel = this.model;
+		this.model = model;
+		firePropertyChange("model", oldModel, model);
+	}
 
-    @Override
-    protected Widget createMenuWidget(MenuManager mm, int level) {
-        MenuBtn btn = new MenuBtn() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                super.propertyChange(evt);
-                ((ToggleButtonModel)getModel()).setModel(MenuCheckbox.this.getModel());
-            }
-        };
-        btn.setModel(new ToggleButtonModel(getModel()));
-        setWidgetTheme(btn, "checkbox");
-        btn.addCallback(mm.getCloseCallback());
-        return btn;
-    }
+	@Override
+	protected Widget createMenuWidget(MenuManager mm, int level) {
+		MenuBtn btn = new MenuBtn() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				super.propertyChange(evt);
+				((ToggleButtonModel) getModel()).setModel(MenuCheckbox.this
+						.getModel());
+			}
+		};
+		btn.setModel(new ToggleButtonModel(getModel()));
+		setWidgetTheme(btn, "checkbox");
+		btn.addCallback(mm.getCloseCallback());
+		return btn;
+	}
 
 }

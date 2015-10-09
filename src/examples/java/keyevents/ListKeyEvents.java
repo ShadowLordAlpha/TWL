@@ -29,19 +29,21 @@
  */
 package keyevents;
 
+import java.awt.DisplayMode;
+
+import org.lwjgl.opengl.GL11;
+
+import test.TestUtils;
 import de.matthiasmann.twl.Container;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.ScrollPane;
 import de.matthiasmann.twl.ScrollPane.Fixed;
 import de.matthiasmann.twl.TextArea;
+import de.matthiasmann.twl.input.lwjgl.Keyboard;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.textarea.SimpleTextAreaModel;
+import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import test.TestUtils;
 
 /**
  *
@@ -49,82 +51,84 @@ import test.TestUtils;
  */
 public class ListKeyEvents extends Container {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Keyboard Event Debugger");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			Display.setDisplayMode(new DisplayMode(800, 600));
+			Display.create();
+			Display.setTitle("TWL Keyboard Event Debugger");
+			Display.setVSyncEnabled(true);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            ListKeyEvents demo = new ListKeyEvents();
-            GUI gui = new GUI(demo, renderer);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			ListKeyEvents demo = new ListKeyEvents();
+			GUI gui = new GUI(demo, renderer);
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    ListKeyEvents.class.getResource("ListKeyEvents.xml"), renderer);
-            gui.applyTheme(theme);
+			ThemeManager theme = ThemeManager.createThemeManager(
+					ListKeyEvents.class.getResource("ListKeyEvents.xml"),
+					renderer);
+			gui.applyTheme(theme);
 
-            while(!Display.isCloseRequested() && !demo.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			while (!Display.isCloseRequested() && !demo.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-                demo.listKeyEvents();
-                gui.update();
-                Display.update();
-            }
+				demo.listKeyEvents();
+				gui.update();
+				Display.update();
+			}
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			gui.destroy();
+			theme.destroy();
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+		Display.destroy();
+	}
 
-    private final StringBuilder sb;
-    private final SimpleTextAreaModel textAreaModel;
-    private final TextArea textArea;
-    private final ScrollPane scrollPane;
+	private final StringBuilder sb;
+	private final SimpleTextAreaModel textAreaModel;
+	private final TextArea textArea;
+	private final ScrollPane scrollPane;
 
-    public boolean quit;
+	public boolean quit;
 
-    public ListKeyEvents() {
-        sb = new StringBuilder();
-        sb.append("Press any key - the keyboard events are displayed below\n");
-        
-        textAreaModel = new SimpleTextAreaModel(sb.toString());
-        textArea = new TextArea(textAreaModel);
-        scrollPane = new ScrollPane(textArea);
-        scrollPane.setFixed(Fixed.HORIZONTAL);
-        
-        add(scrollPane);
-    }
-    
-    public void listKeyEvents() {
-        boolean hadEvents = false;
-        while(Keyboard.next()) {
-            if(Keyboard.getEventCharacter() != Keyboard.CHAR_NONE) {
-                sb.append(String.format("%s %s (code %d) char %c (%d)\n",
-                        Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
-                        Keyboard.getKeyName(Keyboard.getEventKey()),
-                        Keyboard.getEventKey(),
-                        Keyboard.getEventCharacter(),
-                        (int)Keyboard.getEventCharacter()));
-            } else {
-                sb.append(String.format("%s %s (code %d)\n",
-                        Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
-                        Keyboard.getKeyName(Keyboard.getEventKey()),
-                        Keyboard.getEventKey()));
-            }
-            hadEvents = true;
-        }
-        if(hadEvents) {
-            boolean atEnd = scrollPane.getScrollPositionY() == scrollPane.getMaxScrollPosY();
-            textAreaModel.setText(sb.toString());
-            if(atEnd) {
-                scrollPane.validateLayout();
-                scrollPane.setScrollPositionY(scrollPane.getMaxScrollPosY());
-            }
-        }
-    }
-    
+	public ListKeyEvents() {
+		sb = new StringBuilder();
+		sb.append("Press any key - the keyboard events are displayed below\n");
+
+		textAreaModel = new SimpleTextAreaModel(sb.toString());
+		textArea = new TextArea(textAreaModel);
+		scrollPane = new ScrollPane(textArea);
+		scrollPane.setFixed(Fixed.HORIZONTAL);
+
+		add(scrollPane);
+	}
+
+	// TODO i need to switch this to use callbacks
+	public void listKeyEvents() {
+		boolean hadEvents = false;
+		while (Keyboard.next()) {
+			if (Keyboard.getEventCharacter() != Keyboard.CHAR_NONE) {
+				sb.append(String.format("%s %s (code %d) char %c (%d)\n",
+						Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
+						Keyboard.getKeyName(Keyboard.getEventKey()),
+						Keyboard.getEventKey(), Keyboard.getEventCharacter(),
+						(int) Keyboard.getEventCharacter()));
+			} else {
+				sb.append(String.format("%s %s (code %d)\n",
+						Keyboard.getEventKeyState() ? "PRESSED " : "RELEASED",
+						Keyboard.getKeyName(Keyboard.getEventKey()),
+						Keyboard.getEventKey()));
+			}
+			hadEvents = true;
+		}
+		if (hadEvents) {
+			boolean atEnd = scrollPane.getScrollPositionY() == scrollPane
+					.getMaxScrollPosY();
+			textAreaModel.setText(sb.toString());
+			if (atEnd) {
+				scrollPane.validateLayout();
+				scrollPane.setScrollPositionY(scrollPane.getMaxScrollPosY());
+			}
+		}
+	}
+
 }

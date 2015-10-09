@@ -41,48 +41,48 @@ import de.matthiasmann.twl.utils.StateSelect;
  */
 public class StateSelectImage implements Image, HasBorder {
 
-    final Image[] images;
-    final StateSelect select;
-    final Border border;
+	final Image[] images;
+	final StateSelect select;
+	final Border border;
 
-    public StateSelectImage(StateSelect select, Border border, Image ... images) {
-        assert images.length >= select.getNumExpressions();
-        assert images.length <= select.getNumExpressions() + 1;
-        
-        this.images = images;
-        this.select = select;
-        this.border = border;
-    }
+	public StateSelectImage(StateSelect select, Border border, Image... images) {
+		assert images.length >= select.getNumExpressions();
+		assert images.length <= select.getNumExpressions() + 1;
 
-    public int getWidth() {
-        return images[0].getWidth();
-    }
+		this.images = images;
+		this.select = select;
+		this.border = border;
+	}
 
-    public int getHeight() {
-        return images[0].getHeight();
-    }
+	public int getWidth() {
+		return images[0].getWidth();
+	}
 
-    public void draw(AnimationState as, int x, int y) {
-        draw(as, x, y, getWidth(), getHeight());
-    }
+	public int getHeight() {
+		return images[0].getHeight();
+	}
 
-    public void draw(AnimationState as, int x, int y, int width, int height) {
-        int idx = select.evaluate(as);
-        if(idx < images.length) {
-            images[idx].draw(as, x, y, width, height);
-        }
-    }
+	public void draw(AnimationState as, int x, int y) {
+		draw(as, x, y, getWidth(), getHeight());
+	}
 
-    public Border getBorder() {
-        return border;
-    }
+	public void draw(AnimationState as, int x, int y, int width, int height) {
+		int idx = select.evaluate(as);
+		if (idx < images.length) {
+			images[idx].draw(as, x, y, width, height);
+		}
+	}
 
-    public Image createTintedVersion(Color color) {
-        Image[] newImages = new Image[images.length];
-        for(int i=0 ; i<newImages.length ; i++) {
-            newImages[i] = images[i].createTintedVersion(color);
-        }
-        return new StateSelectImage(select, border, newImages);
-    }
+	public Border getBorder() {
+		return border;
+	}
+
+	public Image createTintedVersion(Color color) {
+		Image[] newImages = new Image[images.length];
+		for (int i = 0; i < newImages.length; i++) {
+			newImages[i] = images[i].createTintedVersion(color);
+		}
+		return new StateSelectImage(select, border, newImages);
+	}
 
 }

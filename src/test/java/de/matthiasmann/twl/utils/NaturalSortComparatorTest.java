@@ -41,71 +41,74 @@ import org.junit.Test;
  */
 public class NaturalSortComparatorTest {
 
-    public NaturalSortComparatorTest() {
-    }
+	public NaturalSortComparatorTest() {
+	}
 
-    @Test
-    public void testEquality() {
-        compareOrder("Test1", "Test1", 0);
-        compareOrder("bla", "bla", 0);
-        compareOrder(" bla", " bla", 0);
-        compareOrder("bla ", "bla ", 0);
-        compareOrder("bla  blub", "bla  blub", 0);
-    }
+	@Test
+	public void testEquality() {
+		compareOrder("Test1", "Test1", 0);
+		compareOrder("bla", "bla", 0);
+		compareOrder(" bla", " bla", 0);
+		compareOrder("bla ", "bla ", 0);
+		compareOrder("bla  blub", "bla  blub", 0);
+	}
 
-    @Test
-    public void testMixedCaseEquality() {
-        compareOrder("bla", "Bla", 0);
-        compareOrder("bla", "bLa", 0);
-        compareOrder("bla", "blA", 0);
-    }
+	@Test
+	public void testMixedCaseEquality() {
+		compareOrder("bla", "Bla", 0);
+		compareOrder("bla", "bLa", 0);
+		compareOrder("bla", "blA", 0);
+	}
 
-    @Test
-    public void testTextOrder() {
-        compareOrder("Affe", "Hund", -1);
-        compareOrder("Affe", "Anfang", -1);
-        compareOrder("Wohnhaus", "Wohnsiedlung", -1);
-        compareOrder("Bla", "Bla ", -1);
-        compareOrder("Chuck Norris", "Arni", +1);
-    }
+	@Test
+	public void testTextOrder() {
+		compareOrder("Affe", "Hund", -1);
+		compareOrder("Affe", "Anfang", -1);
+		compareOrder("Wohnhaus", "Wohnsiedlung", -1);
+		compareOrder("Bla", "Bla ", -1);
+		compareOrder("Chuck Norris", "Arni", +1);
+	}
 
-    @Test
-    public void testNumbersEquality() {
-        compareOrder("17", "17", 0);
-        compareOrder("3", "3", 0);
-        compareOrder("78834", "78834", 0);
-    }
+	@Test
+	public void testNumbersEquality() {
+		compareOrder("17", "17", 0);
+		compareOrder("3", "3", 0);
+		compareOrder("78834", "78834", 0);
+	}
 
-    @Test
-    public void testNumbersOrder() {
-        compareOrder("3", "4", -1);
-        compareOrder("007", "42", -1);
-        compareOrder("3", "0003", -1);
-        compareOrder("78834", "078834", -1);
-    }
+	@Test
+	public void testNumbersOrder() {
+		compareOrder("3", "4", -1);
+		compareOrder("007", "42", -1);
+		compareOrder("3", "0003", -1);
+		compareOrder("78834", "078834", -1);
+	}
 
-    @Test
-    public void testMixedEquality() {
-        compareOrder("Hallo 019 Welt", "Hallo 019 Welt", 0);
-        compareOrder("test66.001", "test066.01", 0);
-    }
+	@Test
+	public void testMixedEquality() {
+		compareOrder("Hallo 019 Welt", "Hallo 019 Welt", 0);
+		compareOrder("test66.001", "test066.01", 0);
+	}
 
-    @Test
-    public void testMixedOrder() {
-        compareOrder("test1.txt", "test2.txt", -1);
-        compareOrder("test007.txt", "test42.txt", -1);
-        compareOrder("teSt19.txt", "Test09.txt", +1);
-    }
+	@Test
+	public void testMixedOrder() {
+		compareOrder("test1.txt", "test2.txt", -1);
+		compareOrder("test007.txt", "test42.txt", -1);
+		compareOrder("teSt19.txt", "Test09.txt", +1);
+	}
 
-    /**
-     * Compares signum(a-b) == result and signum(b-a) == -result
-     *
-     * @param a First string
-     * @param b Second string
-     * @param result expected sign
-     */
-    private void compareOrder(String a, String b, int result) {
-        assertEquals( result, Integer.signum(naturalCompare(a, b)));
-        assertEquals(-result, Integer.signum(naturalCompare(b, a)));
-    }
+	/**
+	 * Compares signum(a-b) == result and signum(b-a) == -result
+	 *
+	 * @param a
+	 *            First string
+	 * @param b
+	 *            Second string
+	 * @param result
+	 *            expected sign
+	 */
+	private void compareOrder(String a, String b, int result) {
+		assertEquals(result, Integer.signum(naturalCompare(a, b)));
+		assertEquals(-result, Integer.signum(naturalCompare(b, a)));
+	}
 }

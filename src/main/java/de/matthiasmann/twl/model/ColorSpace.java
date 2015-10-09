@@ -32,82 +32,89 @@ package de.matthiasmann.twl.model;
 /**
  * A color space used by the color selector widget.
  *
- * It supports a variable number of color components.
- * It does not include an alpha channel.
+ * It supports a variable number of color components. It does not include an
+ * alpha channel.
  * 
  * @author Matthias Mann
  */
 public interface ColorSpace {
 
-    public String getColorSpaceName();
+	public String getColorSpaceName();
 
-    /**
-     * Returns the number of component for this model. Must be >= 3.
-     * @return the number of component for this model. Must be >= 3.
-     */
-    public int getNumComponents();
+	/**
+	 * Returns the number of component for this model. Must be >= 3.
+	 * 
+	 * @return the number of component for this model. Must be >= 3.
+	 */
+	public int getNumComponents();
 
-    /**
-     * Returns the name of the specified color component.
-     *
-     * @param component the color component index
-     * @return the name of the color component
-     */
-    public String getComponentName(int component);
+	/**
+	 * Returns the name of the specified color component.
+	 *
+	 * @param component
+	 *            the color component index
+	 * @return the name of the color component
+	 */
+	public String getComponentName(int component);
 
-    /**
-     * A short version of the component name for use in UIs. For best results
-     * all short names should have the same length.
-     * 
-     * @param component the color component index
-     * @return the name of the color component
-     */
-    public String getComponentShortName(int component);
+	/**
+	 * A short version of the component name for use in UIs. For best results
+	 * all short names should have the same length.
+	 * 
+	 * @param component
+	 *            the color component index
+	 * @return the name of the color component
+	 */
+	public String getComponentShortName(int component);
 
-    /**
-     * Returns the minimum allowed value for the specified component.
-     *
-     * @param component the color component index
-     * @return the minimum value
-     */
-    public float getMinValue(int component);
+	/**
+	 * Returns the minimum allowed value for the specified component.
+	 *
+	 * @param component
+	 *            the color component index
+	 * @return the minimum value
+	 */
+	public float getMinValue(int component);
 
-    /**
-     * Returns the maximum allowed value for the specified component.
-     *
-     * @param component the color component index
-     * @return the maximum value
-     */
-    public float getMaxValue(int component);
+	/**
+	 * Returns the maximum allowed value for the specified component.
+	 *
+	 * @param component
+	 *            the color component index
+	 * @return the maximum value
+	 */
+	public float getMaxValue(int component);
 
-    /**
-     * Returns the default component for the initial color
-     * @param component the color component index
-     * @return the default value
-     */
-    public float getDefaultValue(int component);
+	/**
+	 * Returns the default component for the initial color
+	 * 
+	 * @param component
+	 *            the color component index
+	 * @return the default value
+	 */
+	public float getDefaultValue(int component);
 
-    /**
-     * Converts the specified color into a RGB value without alpha part.
-     * This convertion is not exact.
-     * 
-     * bits  0- 7 are blue
-     * bits  8-15 are green
-     * bits 16-23 are red
-     * bits 24-31 must be 0
-     *
-     * @param color the color values
-     * @return the RGB value
-     */
-    public int toRGB(float[] color);
+	/**
+	 * Converts the specified color into a RGB value without alpha part. This
+	 * convertion is not exact.
+	 * 
+	 * bits 0- 7 are blue bits 8-15 are green bits 16-23 are red bits 24-31 must
+	 * be 0
+	 *
+	 * @param color
+	 *            the color values
+	 * @return the RGB value
+	 */
+	public int toRGB(float[] color);
 
-    /**
-     * Converts the given RGB value into color values for this color space.
-     *
-     * @param rgb the RGB value
-     * @return the color values corespondig to the RGB value
-     * @see #toRGB(float[]) 
-     */
-    public float[] fromRGB(int rgb);
-    
+	/**
+	 * Converts the given RGB value into color values for this color space.
+	 *
+	 * @param rgb
+	 *            the RGB value
+	 * @return the color values corespondig to the RGB value
+	 * @see #toRGB(float[])
+	 */
+	public float[] fromRGB(int rgb);
+
 }

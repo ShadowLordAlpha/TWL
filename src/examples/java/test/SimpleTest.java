@@ -29,29 +29,31 @@
  */
 package test;
 
-import de.matthiasmann.twl.Event;
-import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.theme.ThemeManager;
+import java.awt.DisplayMode;
+import java.io.IOException;
+
+import javafx.scene.image.PixelFormat;
+
+import org.lwjgl.opengl.GL11;
+
 import de.matthiasmann.twl.BoxLayout;
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.CallbackWithReason;
 import de.matthiasmann.twl.DesktopArea;
+import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.PopupWindow;
 import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.ToggleButton;
 import de.matthiasmann.twl.Widget;
-import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
 import de.matthiasmann.twl.model.PersistentIntegerModel;
 import de.matthiasmann.twl.model.SimpleBooleanModel;
+import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
+import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
+import de.matthiasmann.twl.textarea.TextAreaModel.Display;
+import de.matthiasmann.twl.theme.ThemeManager;
 import de.matthiasmann.twleffects.lwjgl.LWJGLEffectsRenderer;
-import java.io.IOException;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.PixelFormat;
 
 /**
  * A simple test for TWL.
@@ -60,341 +62,351 @@ import org.lwjgl.opengl.PixelFormat;
  */
 public class SimpleTest {
 
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+	private static final int WIDTH = 800;
+	private static final int HEIGHT = 600;
 
-    static final String WITH_TITLE = "resizableframe-title";
-    static final String WITHOUT_TITLE = "resizableframe";
+	static final String WITH_TITLE = "resizableframe-title";
+	static final String WITHOUT_TITLE = "resizableframe";
 
-    static class StyleItem {
-        public final String theme;
-        public final String name;
+	static class StyleItem {
+		public final String theme;
+		public final String name;
 
-        public StyleItem(String theme, String name) {
-            this.theme = theme;
-            this.name = name;
-        }
+		public StyleItem(String theme, String name) {
+			this.theme = theme;
+			this.name = name;
+		}
 
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-    
-    public static void main(String[] arg) throws LWJGLException {
-        SimpleTest test = new SimpleTest();
-        test.run(new VideoMode(new DisplayMode(WIDTH, HEIGHT), false));
-    }
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
 
-    private static final String[] THEME_FILES = {
-        "simple_demo.xml",
-        "guiTheme.xml"
-    };
+	public static void main(String[] arg) throws LWJGLException {
+		SimpleTest test = new SimpleTest();
+		test.run(new VideoMode(new DisplayMode(WIDTH, HEIGHT), false));
+	}
 
-    protected final DisplayMode desktopMode;
-    protected boolean closeRequested;
-    protected ThemeManager theme;
-    protected LWJGLRenderer renderer;
-    protected GUI gui;
-    protected VideoSettings.CallbackReason vidDlgCloseReason;
-    protected PersistentIntegerModel curThemeIdx;
+	private static final String[] THEME_FILES = { "simple_demo.xml",
+			"guiTheme.xml" };
 
-    public SimpleTest() {
-        desktopMode = Display.getDisplayMode();
-        curThemeIdx = new PersistentIntegerModel(
-                AppletPreferences.userNodeForPackage(SimpleTest.class),
-                "currentThemeIndex", 0, THEME_FILES.length, 0);
-    }
+	protected final DisplayMode desktopMode;
+	protected boolean closeRequested;
+	protected ThemeManager theme;
+	protected LWJGLRenderer renderer;
+	protected GUI gui;
+	protected VideoSettings.CallbackReason vidDlgCloseReason;
+	protected PersistentIntegerModel curThemeIdx;
 
-    private void loadTheme() throws IOException {
-        renderer.syncViewportSize();
-        System.out.println("width="+renderer.getWidth()+" height="+renderer.getHeight());
+	public SimpleTest() {
+		desktopMode = Display.getDisplayMode();
+		curThemeIdx = new PersistentIntegerModel(
+				AppletPreferences.userNodeForPackage(SimpleTest.class),
+				"currentThemeIndex", 0, THEME_FILES.length, 0);
+	}
 
-        long startTime = System.nanoTime();
-        // NOTE: this code destroys the old theme manager (including it's cache context)
-        // after loading the new theme with a new cache context.
-        // This allows easy reloading of a theme for development.
-        // If you want fast theme switching without reloading then use the existing
-        // cache context for loading the new theme and don't destroy the old theme.
-        ThemeManager newTheme = ThemeManager.createThemeManager(
-            SimpleTest.class.getResource(THEME_FILES[curThemeIdx.getValue()]), renderer);
-        long duration = System.nanoTime() - startTime;
-        System.out.println("Loaded theme in " + (duration/1000) + " us");
+	private void loadTheme() throws IOException {
+		renderer.syncViewportSize();
+		System.out.println("width=" + renderer.getWidth() + " height="
+				+ renderer.getHeight());
 
-        if(theme != null) {
-            theme.destroy();
-        }
-        theme = newTheme;
-        
-        gui.setSize();
-        gui.applyTheme(theme);
-        gui.setBackground(theme.getImageNoWarning("gui.background"));
-    }
+		long startTime = System.nanoTime();
+		// NOTE: this code destroys the old theme manager (including it's cache
+		// context)
+		// after loading the new theme with a new cache context.
+		// This allows easy reloading of a theme for development.
+		// If you want fast theme switching without reloading then use the
+		// existing
+		// cache context for loading the new theme and don't destroy the old
+		// theme.
+		ThemeManager newTheme = ThemeManager
+				.createThemeManager(SimpleTest.class
+						.getResource(THEME_FILES[curThemeIdx.getValue()]),
+						renderer);
+		long duration = System.nanoTime() - startTime;
+		System.out.println("Loaded theme in " + (duration / 1000) + " us");
 
-    private void createDisplay(VideoMode mode) throws LWJGLException {
-        Display.setTitle("TWL Examples");
-        Display.setFullscreen(mode.fullscreen);
-        Display.setDisplayMode(mode.mode);
-        Display.create(new PixelFormat(0, 0, 0));
-        Display.setVSyncEnabled(true);
-    }
+		if (theme != null) {
+			theme.destroy();
+		}
+		theme = newTheme;
 
-    @SuppressWarnings("SleepWhileInLoop")
-    public void mainLoop(boolean isApplet) throws LWJGLException, IOException {
-        final RootPane root = new RootPane();
-        //renderer = new LWJGLRenderer();
-        renderer = new LWJGLEffectsRenderer();
-        renderer.setUseSWMouseCursors(true);
-        gui = new GUI(root, renderer);
+		gui.setSize();
+		gui.applyTheme(theme);
+		gui.setBackground(theme.getImageNoWarning("gui.background"));
+	}
 
-        loadTheme();
+	private void createDisplay(VideoMode mode) throws LWJGLException {
+		Display.setTitle("TWL Examples");
+		Display.setFullscreen(mode.fullscreen);
+		Display.setDisplayMode(mode.mode);
+		Display.create(new PixelFormat(0, 0, 0));
+		Display.setVSyncEnabled(true);
+	}
 
-        WidgetsDemoDialog1 dlg1 = new WidgetsDemoDialog1();
-        root.desk.add(dlg1);
-        dlg1.adjustSize();
-        dlg1.center(0.35f, 0.5f);
+	@SuppressWarnings("SleepWhileInLoop")
+	public void mainLoop(boolean isApplet) throws LWJGLException, IOException {
+		final RootPane root = new RootPane();
+		// renderer = new LWJGLRenderer();
+		renderer = new LWJGLEffectsRenderer();
+		renderer.setUseSWMouseCursors(true);
+		gui = new GUI(root, renderer);
 
-        GraphDemoDialog1 fMS = new GraphDemoDialog1();
-        root.desk.add(fMS);
-        fMS.adjustSize();
-        fMS.center(1f, 0.8f);
+		loadTheme();
 
-        ScrollPaneDemoDialog1 fScroll = new ScrollPaneDemoDialog1();
-        root.desk.add(fScroll);
-        fScroll.adjustSize();
-        fScroll.center(0f, 0f);
-        fScroll.addCloseCallback();
-        fScroll.centerScrollPane();
+		WidgetsDemoDialog1 dlg1 = new WidgetsDemoDialog1();
+		root.desk.add(dlg1);
+		dlg1.adjustSize();
+		dlg1.center(0.35f, 0.5f);
 
-        TableDemoDialog1 fTable = new TableDemoDialog1();
-        root.desk.add(fTable);
-        fTable.adjustSize();
-        fTable.center(0f, 0.5f);
-        //fTable.addCloseCallback();
+		GraphDemoDialog1 fMS = new GraphDemoDialog1();
+		root.desk.add(fMS);
+		fMS.adjustSize();
+		fMS.center(1f, 0.8f);
 
-        PropertySheetDemoDialog fPropertySheet = new PropertySheetDemoDialog();
-        fPropertySheet.setHardVisible(false);
-        root.desk.add(fPropertySheet);
-        fPropertySheet.setSize(400, 400);
-        fPropertySheet.center(0f, 0.25f);
-        fPropertySheet.addCloseCallback();
+		ScrollPaneDemoDialog1 fScroll = new ScrollPaneDemoDialog1();
+		root.desk.add(fScroll);
+		fScroll.adjustSize();
+		fScroll.center(0f, 0f);
+		fScroll.addCloseCallback();
+		fScroll.centerScrollPane();
 
-        TextAreaDemoDialog1 fInfo = new TextAreaDemoDialog1();
-        root.desk.add(fInfo);
-        fInfo.setSize(gui.getWidth()*2/3, gui.getHeight()*2/3);
-        fInfo.center(0.5f, 0.5f);
-        fInfo.addCloseCallback();
+		TableDemoDialog1 fTable = new TableDemoDialog1();
+		root.desk.add(fTable);
+		fTable.adjustSize();
+		fTable.center(0f, 0.5f);
+		// fTable.addCloseCallback();
 
-        TextAreaDemoDialog2 fTextAreaTest = new TextAreaDemoDialog2();
-        fTextAreaTest.setHardVisible(false);
-        root.desk.add(fTextAreaTest);
-        fTextAreaTest.setSize(gui.getWidth()*2/3, gui.getHeight()*2/3);
-        fTextAreaTest.center(0.5f, 0.5f);
-        fTextAreaTest.addCloseCallback();
+		PropertySheetDemoDialog fPropertySheet = new PropertySheetDemoDialog();
+		fPropertySheet.setHardVisible(false);
+		root.desk.add(fPropertySheet);
+		fPropertySheet.setSize(400, 400);
+		fPropertySheet.center(0f, 0.25f);
+		fPropertySheet.addCloseCallback();
 
-        ColorSelectorDemoDialog1 fCS = new ColorSelectorDemoDialog1();
-        fCS.setHardVisible(false);
-        root.desk.add(fCS);
-        fCS.adjustSize();
-        fCS.center(0.5f, 0.5f);
-        fCS.addCloseCallback();
+		TextAreaDemoDialog1 fInfo = new TextAreaDemoDialog1();
+		root.desk.add(fInfo);
+		fInfo.setSize(gui.getWidth() * 2 / 3, gui.getHeight() * 2 / 3);
+		fInfo.center(0.5f, 0.5f);
+		fInfo.addCloseCallback();
 
-        final PopupWindow settingsDlg = new PopupWindow(root);
-        final VideoSettings settings = new VideoSettings(
-                AppletPreferences.userNodeForPackage(VideoSettings.class),
-                desktopMode);
-        settingsDlg.setTheme("settingdialog");
-        settingsDlg.add(settings);
-        settingsDlg.setCloseOnClickedOutside(false);
-        settings.setTheme("settings");
-        settings.addCallback(new CallbackWithReason<VideoSettings.CallbackReason>() {
-            public void callback(VideoSettings.CallbackReason reason) {
-                vidDlgCloseReason = reason;
-                settingsDlg.closePopup();
-            }
-        });
+		TextAreaDemoDialog2 fTextAreaTest = new TextAreaDemoDialog2();
+		fTextAreaTest.setHardVisible(false);
+		root.desk.add(fTextAreaTest);
+		fTextAreaTest.setSize(gui.getWidth() * 2 / 3, gui.getHeight() * 2 / 3);
+		fTextAreaTest.center(0.5f, 0.5f);
+		fTextAreaTest.addCloseCallback();
 
-        root.addButton("Exit", new Runnable() {
-            public void run() {
-                closeRequested = true;
-            }
-        });
-        root.addButton("Info", "Shows TWL license", new ToggleFadeFrame(fInfo)).setTooltipContent(makeComplexTooltip());
-        root.addButton("TA", "Shows a text area test", new ToggleFadeFrame(fTextAreaTest));
-        if(!isApplet) {
-            root.addButton("Settings", "Opens a dialog which might be used to change video settings", new Runnable() {
-                public void run() {
-                    settings.readSettings();
-                    settingsDlg.openPopupCentered();
-                }
-            });
-        }
-        root.addButton("Toggle Theme", new Runnable() {
-            @SuppressWarnings("CallToThreadDumpStack")
-            public void run() {
-                curThemeIdx.setValue((curThemeIdx.getValue() + 1) % THEME_FILES.length);
-                try {
-                    loadTheme();
-                } catch(IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        root.addButton("ScrollPane", new ToggleFadeFrame(fScroll));
-        root.addButton("Properties", new ToggleFadeFrame(fPropertySheet));
-        root.addButton("Color", new ToggleFadeFrame(fCS));
+		ColorSelectorDemoDialog1 fCS = new ColorSelectorDemoDialog1();
+		fCS.setHardVisible(false);
+		root.desk.add(fCS);
+		fCS.adjustSize();
+		fCS.center(0.5f, 0.5f);
+		fCS.addCloseCallback();
 
-        root.addButton("Game", new Runnable() {
-            public void run() {
-                BlockGame game = new BlockGame();
-                game.setTheme("/blockgame");
-                PopupWindow popup = new PopupWindow(root);
-                popup.setTheme("settingdialog");
-                popup.add(game);
-                popup.openPopupCentered();
-            }
-        });
+		final PopupWindow settingsDlg = new PopupWindow(root);
+		final VideoSettings settings = new VideoSettings(
+				AppletPreferences.userNodeForPackage(VideoSettings.class),
+				desktopMode);
+		settingsDlg.setTheme("settingdialog");
+		settingsDlg.add(settings);
+		settingsDlg.setCloseOnClickedOutside(false);
+		settings.setTheme("settings");
+		settings.addCallback(new CallbackWithReason<VideoSettings.CallbackReason>() {
+			public void callback(VideoSettings.CallbackReason reason) {
+				vidDlgCloseReason = reason;
+				settingsDlg.closePopup();
+			}
+		});
 
-        fInfo.requestKeyboardFocus();
+		root.addButton("Exit", new Runnable() {
+			public void run() {
+				closeRequested = true;
+			}
+		});
+		root.addButton("Info", "Shows TWL license", new ToggleFadeFrame(fInfo))
+				.setTooltipContent(makeComplexTooltip());
+		root.addButton("TA", "Shows a text area test", new ToggleFadeFrame(
+				fTextAreaTest));
+		if (!isApplet) {
+			root.addButton(
+					"Settings",
+					"Opens a dialog which might be used to change video settings",
+					new Runnable() {
+						public void run() {
+							settings.readSettings();
+							settingsDlg.openPopupCentered();
+						}
+					});
+		}
+		root.addButton("Toggle Theme", new Runnable() {
+			@SuppressWarnings("CallToThreadDumpStack")
+			public void run() {
+				curThemeIdx.setValue((curThemeIdx.getValue() + 1)
+						% THEME_FILES.length);
+				try {
+					loadTheme();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		root.addButton("ScrollPane", new ToggleFadeFrame(fScroll));
+		root.addButton("Properties", new ToggleFadeFrame(fPropertySheet));
+		root.addButton("Color", new ToggleFadeFrame(fCS));
 
-        while(!Display.isCloseRequested() && !closeRequested) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		root.addButton("Game", new Runnable() {
+			public void run() {
+				BlockGame game = new BlockGame();
+				game.setTheme("/blockgame");
+				PopupWindow popup = new PopupWindow(root);
+				popup.setTheme("settingdialog");
+				popup.add(game);
+				popup.openPopupCentered();
+			}
+		});
 
-            gui.update();
-            Display.update();
+		fInfo.requestKeyboardFocus();
 
-            if(root.reduceLag) {
-                TestUtils.reduceInputLag();
-            }
+		while (!Display.isCloseRequested() && !closeRequested) {
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-            if(!isApplet && vidDlgCloseReason == VideoSettings.CallbackReason.ACCEPT) {
-                settings.storeSettings();
-                VideoMode vm = settings.getSelectedVideoMode();
-                gui.destroy();
-                renderer.getActiveCacheContext().destroy();
-                Display.destroy();
-                createDisplay(vm);
-                loadTheme();
-            }
-            vidDlgCloseReason = null;
+			gui.update();
+			Display.update();
 
-            if(!Display.isActive()) {
-                gui.clearKeyboardState();
-                gui.clearMouseState();
-            }
-            
-            if(!Display.isVisible()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException unused) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-    }
+			if (root.reduceLag) {
+				TestUtils.reduceInputLag();
+			}
 
-    private Object makeComplexTooltip() {
-        HTMLTextAreaModel tam = new HTMLTextAreaModel();
-        tam.setHtml("Hello <img src=\"twl-logo\" alt=\"logo\"/> World");
-        TextArea ta = new TextArea(tam);
-        ta.setTheme("/htmlTooltip");
-        return ta;
-    }
+			if (!isApplet
+					&& vidDlgCloseReason == VideoSettings.CallbackReason.ACCEPT) {
+				settings.storeSettings();
+				VideoMode vm = settings.getSelectedVideoMode();
+				gui.destroy();
+				renderer.getActiveCacheContext().destroy();
+				Display.destroy();
+				createDisplay(vm);
+				loadTheme();
+			}
+			vidDlgCloseReason = null;
 
-    public void run(VideoMode mode) {
-        try {
-            createDisplay(mode);
+			if (!Display.isActive()) {
+				gui.clearKeyboardState();
+				gui.clearMouseState();
+			}
 
-            mainLoop(false);
-        } catch (Throwable ex) {
-            TestUtils.showErrMsg(ex);
-        }
+			if (!Display.isVisible()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException unused) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+	}
 
-        Display.destroy();
-        System.exit(0);
-    }
+	private Object makeComplexTooltip() {
+		HTMLTextAreaModel tam = new HTMLTextAreaModel();
+		tam.setHtml("Hello <img src=\"twl-logo\" alt=\"logo\"/> World");
+		TextArea ta = new TextArea(tam);
+		ta.setTheme("/htmlTooltip");
+		return ta;
+	}
 
-    static class RootPane extends Widget {
-        final DesktopArea desk;
-        final BoxLayout btnBox;
-        final BoxLayout vsyncBox;
-        boolean reduceLag = true;
+	public void run(VideoMode mode) {
+		try {
+			createDisplay(mode);
 
-        public RootPane() {
-            setTheme("");
-            
-            desk = new DesktopArea();
-            desk.setTheme("");
+			mainLoop(false);
+		} catch (Throwable ex) {
+			TestUtils.showErrMsg(ex);
+		}
 
-            btnBox = new BoxLayout(BoxLayout.Direction.HORIZONTAL);
-            btnBox.setTheme("buttonBox");
+		Display.destroy();
+		System.exit(0);
+	}
 
-            vsyncBox = new BoxLayout(BoxLayout.Direction.HORIZONTAL);
-            vsyncBox.setTheme("buttonBox");
+	static class RootPane extends Widget {
+		final DesktopArea desk;
+		final BoxLayout btnBox;
+		final BoxLayout vsyncBox;
+		boolean reduceLag = true;
 
-            final SimpleBooleanModel vsyncModel = new SimpleBooleanModel(true);
-            vsyncModel.addCallback(new Runnable() {
-                public void run() {
-                    Display.setVSyncEnabled(vsyncModel.getValue());
-                }
-            });
+		public RootPane() {
+			setTheme("");
 
-            ToggleButton vsyncBtn = new ToggleButton(vsyncModel);
-            vsyncBtn.setTheme("checkbox");
-            Label l = new Label("VSync");
-            l.setLabelFor(vsyncBtn);
+			desk = new DesktopArea();
+			desk.setTheme("");
 
-            vsyncBox.add(l);
-            vsyncBox.add(vsyncBtn);
+			btnBox = new BoxLayout(BoxLayout.Direction.HORIZONTAL);
+			btnBox.setTheme("buttonBox");
 
-            add(desk);
-            add(btnBox);
-            add(vsyncBox);
-        }
+			vsyncBox = new BoxLayout(BoxLayout.Direction.HORIZONTAL);
+			vsyncBox.setTheme("buttonBox");
 
-        public Button addButton(String text, Runnable cb) {
-            Button btn = new Button(text);
-            btn.addCallback(cb);
-            btnBox.add(btn);
-            invalidateLayout();
-            return btn;
-        }
+			final SimpleBooleanModel vsyncModel = new SimpleBooleanModel(true);
+			vsyncModel.addCallback(new Runnable() {
+				public void run() {
+					Display.setVSyncEnabled(vsyncModel.getValue());
+				}
+			});
 
-        public Button addButton(String text, String ttolTip, Runnable cb) {
-            Button btn = addButton(text, cb);
-            btn.setTooltipContent(ttolTip);
-            return btn;
-        }
-        
-        @Override
-        protected void layout() {
-            btnBox.adjustSize();
-            btnBox.setPosition(0, getParent().getHeight() - btnBox.getHeight());
-            desk.setSize(getParent().getWidth(), getParent().getHeight());
-            vsyncBox.adjustSize();
-            vsyncBox.setPosition(
-                    getParent().getWidth() - vsyncBox.getWidth(),
-                    getParent().getHeight() - vsyncBox.getHeight());
-        }
+			ToggleButton vsyncBtn = new ToggleButton(vsyncModel);
+			vsyncBtn.setTheme("checkbox");
+			Label l = new Label("VSync");
+			l.setLabelFor(vsyncBtn);
 
-        @Override
-        protected void afterAddToGUI(GUI gui) {
-            super.afterAddToGUI(gui);
-            validateLayout();
-        }
+			vsyncBox.add(l);
+			vsyncBox.add(vsyncBtn);
 
-        @Override
-        protected boolean handleEvent(Event evt) {
-            if(evt.getType() == Event.Type.KEY_PRESSED &&
-                    evt.getKeyCode() == Event.KEY_L &&
-                    (evt.getModifiers() & Event.MODIFIER_CTRL) != 0 &&
-                    (evt.getModifiers() & Event.MODIFIER_SHIFT) != 0) {
-                reduceLag ^= true;
-                System.out.println("reduceLag = " + reduceLag);
-            }
+			add(desk);
+			add(btnBox);
+			add(vsyncBox);
+		}
 
-            return super.handleEvent(evt);
-        }
+		public Button addButton(String text, Runnable cb) {
+			Button btn = new Button(text);
+			btn.addCallback(cb);
+			btnBox.add(btn);
+			invalidateLayout();
+			return btn;
+		}
 
-    }
+		public Button addButton(String text, String ttolTip, Runnable cb) {
+			Button btn = addButton(text, cb);
+			btn.setTooltipContent(ttolTip);
+			return btn;
+		}
+
+		@Override
+		protected void layout() {
+			btnBox.adjustSize();
+			btnBox.setPosition(0, getParent().getHeight() - btnBox.getHeight());
+			desk.setSize(getParent().getWidth(), getParent().getHeight());
+			vsyncBox.adjustSize();
+			vsyncBox.setPosition(getParent().getWidth() - vsyncBox.getWidth(),
+					getParent().getHeight() - vsyncBox.getHeight());
+		}
+
+		@Override
+		protected void afterAddToGUI(GUI gui) {
+			super.afterAddToGUI(gui);
+			validateLayout();
+		}
+
+		@Override
+		protected boolean handleEvent(Event evt) {
+			if (evt.getType() == Event.Type.KEY_PRESSED
+					&& evt.getKeyCode() == Event.KEY_L
+					&& (evt.getModifiers() & Event.MODIFIER_CTRL) != 0
+					&& (evt.getModifiers() & Event.MODIFIER_SHIFT) != 0) {
+				reduceLag ^= true;
+				System.out.println("reduceLag = " + reduceLag);
+			}
+
+			return super.handleEvent(evt);
+		}
+
+	}
 }

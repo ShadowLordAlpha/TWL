@@ -32,35 +32,36 @@ package de.matthiasmann.twl.model;
 /**
  * A simple enum model
  * 
- * @param <T> the enum class
+ * @param <T>
+ *            the enum class
  * @author Matthias Mann
  */
 public class SimpleEnumModel<T extends Enum<T>> extends AbstractEnumModel<T> {
 
-    private T value;
+	private T value;
 
-    public SimpleEnumModel(Class<T> clazz, T value) {
-        super(clazz);
-        if(value == null) {
-            throw new NullPointerException("value");
-        }
-        if(!clazz.isInstance(value)) {
-            throw new IllegalArgumentException("value");
-        }
-        this.value = value;
-    }
+	public SimpleEnumModel(Class<T> clazz, T value) {
+		super(clazz);
+		if (value == null) {
+			throw new NullPointerException("value");
+		}
+		if (!clazz.isInstance(value)) {
+			throw new IllegalArgumentException("value");
+		}
+		this.value = value;
+	}
 
-    public T getValue() {
-        return value;
-    }
+	public T getValue() {
+		return value;
+	}
 
-    public void setValue(T value) {
-        if(!getEnumClass().isInstance(value)) {
-            throw new IllegalArgumentException("value");
-        }
-        if(this.value != value) {
-            this.value = value;
-            doCallback();
-        }
-    }
+	public void setValue(T value) {
+		if (!getEnumClass().isInstance(value)) {
+			throw new IllegalArgumentException("value");
+		}
+		if (this.value != value) {
+			this.value = value;
+			doCallback();
+		}
+	}
 }

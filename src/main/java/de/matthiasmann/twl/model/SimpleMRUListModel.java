@@ -36,90 +36,92 @@ import de.matthiasmann.twl.utils.CallbackSupport;
 /**
  * A non persistent MRU list implementation
  *
- * @param <T> the data type stored in this MRU model
+ * @param <T>
+ *            the data type stored in this MRU model
  * 
  * @author Matthias Mann
  */
 public class SimpleMRUListModel<T> implements MRUListModel<T> {
 
-    protected final ArrayList<T> entries;
-    protected final int maxEntries;
-    protected ChangeListener[] listeners;
+	protected final ArrayList<T> entries;
+	protected final int maxEntries;
+	protected ChangeListener[] listeners;
 
-    public SimpleMRUListModel(int maxEntries) {
-        if(maxEntries <= 1) {
-            throw new IllegalArgumentException("maxEntries <= 1");
-        }
-        this.entries = new ArrayList<T>();
-        this.maxEntries = maxEntries;
-    }
+	public SimpleMRUListModel(int maxEntries) {
+		if (maxEntries <= 1) {
+			throw new IllegalArgumentException("maxEntries <= 1");
+		}
+		this.entries = new ArrayList<T>();
+		this.maxEntries = maxEntries;
+	}
 
-    public int getMaxEntries() {
-        return maxEntries;
-    }
+	public int getMaxEntries() {
+		return maxEntries;
+	}
 
-    public int getNumEntries() {
-        return entries.size();
-    }
+	public int getNumEntries() {
+		return entries.size();
+	}
 
-    public T getEntry(int index) {
-        return entries.get(index);
-    }
+	public T getEntry(int index) {
+		return entries.get(index);
+	}
 
-    public void addEntry(T entry) {
-        int idx = entries.indexOf(entry);
-        if(idx >= 0) {
-            doDeleteEntry(idx);
-        } else if(entries.size() == maxEntries) {
-            doDeleteEntry(maxEntries-1);
-        }
-        
-        entries.add(0, entry);
+	public void addEntry(T entry) {
+		int idx = entries.indexOf(entry);
+		if (idx >= 0) {
+			doDeleteEntry(idx);
+		} else if (entries.size() == maxEntries) {
+			doDeleteEntry(maxEntries - 1);
+		}
 
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.entriesInserted(0, 0);
-            }
-        }
+		entries.add(0, entry);
 
-        saveEntries();
-    }
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.entriesInserted(0, 0);
+			}
+		}
 
-    public void removeEntry(int index) {
-        if(index < 0 && index >= entries.size()) {
-            throw new IndexOutOfBoundsException();
-        }
-        doDeleteEntry(index);
-        
-        saveEntries();
-    }
+		saveEntries();
+	}
 
-    public void addChangeListener(ChangeListener listener) {
-        listeners = CallbackSupport.addCallbackToList(listeners, listener, ChangeListener.class);
-    }
+	public void removeEntry(int index) {
+		if (index < 0 && index >= entries.size()) {
+			throw new IndexOutOfBoundsException();
+		}
+		doDeleteEntry(index);
 
-    public void removeChangeListener(ChangeListener listener) {
-        listeners = CallbackSupport.removeCallbackFromList(listeners, listener);
-    }
+		saveEntries();
+	}
 
-    protected void doDeleteEntry(int idx) {
-        entries.remove(idx);
-        
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.entriesDeleted(idx, idx);
-            }
-        }
-    }
+	public void addChangeListener(ChangeListener listener) {
+		listeners = CallbackSupport.addCallbackToList(listeners, listener,
+				ChangeListener.class);
+	}
 
-    protected void saveEntries() {
-    }
+	public void removeChangeListener(ChangeListener listener) {
+		listeners = CallbackSupport.removeCallbackFromList(listeners, listener);
+	}
 
-    public Object getEntryTooltip(int index) {
-        return null;
-    }
+	protected void doDeleteEntry(int idx) {
+		entries.remove(idx);
 
-    public boolean matchPrefix(int index, String prefix) {
-        return false;
-    }
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.entriesDeleted(idx, idx);
+			}
+		}
+	}
+
+	protected void saveEntries() {
+	}
+
+	public Object getEntryTooltip(int index) {
+		return null;
+	}
+
+	public boolean matchPrefix(int index, String prefix) {
+		return false;
+	}
 }

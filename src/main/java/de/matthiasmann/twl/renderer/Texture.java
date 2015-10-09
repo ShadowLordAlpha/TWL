@@ -38,43 +38,55 @@ import de.matthiasmann.twl.Color;
  */
 public interface Texture extends Resource {
 
-    /**
-     * Returns the width in pixels of this texture.
-     * @return the width in pixels of this texture.
-     */
-    public int getWidth();
-    
-    /**
-     * Returns the height in pixels of this texture.
-     * @return the height in pixels of this texture.
-     */
-    public int getHeight();
-    
-    /**
-     * Creates an image from a sub section of this texture.
-     * @param x left coordinate in the texture of the image
-     * @param y top coordinate in the texture of the image
-     * @param width width in pixels of the image - if negative the image is horizontaly flipped
-     * @param height height in pixels of the image - if negative the image is vertically flipped
-     * @param tintColor the tintColor - maybe null
-     * @param tiled true if this image should do tiled rendering
-     * @param rotation the rotation to apply to this sub section while rendering
-     * @see Image#createTintedVersion(de.matthiasmann.twl.Color)
-     * @return an image object
-     */
-    public Image getImage(int x, int y, int width, int height, Color tintColor, boolean tiled, Rotation rotation);
+	/**
+	 * Returns the width in pixels of this texture.
+	 * 
+	 * @return the width in pixels of this texture.
+	 */
+	public int getWidth();
 
-    public MouseCursor createCursor(int x, int y, int width, int height, int hotSpotX, int hotSpotY, Image imageRef);
+	/**
+	 * Returns the height in pixels of this texture.
+	 * 
+	 * @return the height in pixels of this texture.
+	 */
+	public int getHeight();
 
-    /**
-     * After calling this function getImage() and createCursor() may fail to work
-     */
-    public void themeLoadingDone();
-    
-    public enum Rotation {
-        NONE,
-        CLOCKWISE_90,
-        CLOCKWISE_180,
-        CLOCKWISE_270
-    }
+	/**
+	 * Creates an image from a sub section of this texture.
+	 * 
+	 * @param x
+	 *            left coordinate in the texture of the image
+	 * @param y
+	 *            top coordinate in the texture of the image
+	 * @param width
+	 *            width in pixels of the image - if negative the image is
+	 *            horizontaly flipped
+	 * @param height
+	 *            height in pixels of the image - if negative the image is
+	 *            vertically flipped
+	 * @param tintColor
+	 *            the tintColor - maybe null
+	 * @param tiled
+	 *            true if this image should do tiled rendering
+	 * @param rotation
+	 *            the rotation to apply to this sub section while rendering
+	 * @see Image#createTintedVersion(de.matthiasmann.twl.Color)
+	 * @return an image object
+	 */
+	public Image getImage(int x, int y, int width, int height, Color tintColor,
+			boolean tiled, Rotation rotation);
+
+	public MouseCursor createCursor(int x, int y, int width, int height,
+			int hotSpotX, int hotSpotY, Image imageRef);
+
+	/**
+	 * After calling this function getImage() and createCursor() may fail to
+	 * work
+	 */
+	public void themeLoadingDone();
+
+	public enum Rotation {
+		NONE, CLOCKWISE_90, CLOCKWISE_180, CLOCKWISE_270
+	}
 }

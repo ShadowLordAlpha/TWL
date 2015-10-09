@@ -38,12 +38,12 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  */
 public interface IntegerModel extends WithRunnableCallback {
 
-    public int getValue();
+	public int getValue();
 
-    public int getMinValue();
-    
-    public int getMaxValue();
-    
-    public void setValue(int value);
-    
+	public int getMinValue();
+
+	public int getMaxValue();
+
+	public void setValue(int value);
+
 }

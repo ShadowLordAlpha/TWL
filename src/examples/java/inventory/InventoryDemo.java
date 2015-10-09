@@ -29,9 +29,10 @@
  */
 package inventory;
 
-import java.awt.DisplayMode;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import test.TestUtils;
 import de.matthiasmann.twl.DesktopArea;
@@ -39,7 +40,6 @@ import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.ResizableFrame;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -48,79 +48,92 @@ import de.matthiasmann.twl.theme.ThemeManager;
  * @author Matthias Mann
  */
 public class InventoryDemo extends DesktopArea {
-    
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Login Panel Demo");
-            Display.setVSyncEnabled(true);
 
-            Mouse.setClipMouseCoordinatesToWindow(false);
-            
-            InventoryDemo demo = new InventoryDemo();
-            
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            GUI gui = new GUI(demo, renderer);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600,
+					"TWL Inventory Panel Demo", MemoryUtil.NULL,
+					MemoryUtil.NULL);
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    InventoryDemo.class.getResource("inventory.xml"), renderer);
-            gui.applyTheme(theme);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            gui.validateLayout();
-            demo.positionFrame();
-            
-            while(!Display.isCloseRequested() && !demo.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			GLFW.glfwSwapInterval(1); // vsync
 
-                gui.update();
-                Display.update();
-            }
+			// TODO GLFW cursor thing maybe
+			// Mouse.setClipMouseCoordinatesToWindow(false);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			InventoryDemo demo = new InventoryDemo();
 
-    final FPSCounter fpsCounter;
-    final ResizableFrame frame;
-    final InventoryPanel inventoryPanel;
-    
-    boolean quit;
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			GUI gui = new GUI(demo, renderer);
 
-    public InventoryDemo() {
-        fpsCounter = new FPSCounter();
-        
-        inventoryPanel = new InventoryPanel(10, 5);
-        
-        frame = new ResizableFrame();
-        frame.setTitle("Inventory");
-        frame.setResizableAxis(ResizableFrame.ResizableAxis.NONE);
-        frame.add(inventoryPanel);
-        
-        add(fpsCounter);
-        add(frame);
-    }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					InventoryDemo.class.getResource("inventory.xml"), renderer);
+			gui.applyTheme(theme);
 
-    void positionFrame() {
-        frame.adjustSize();
-        frame.setPosition(
-                getInnerX() + (getInnerWidth() - frame.getWidth())/2,
-                getInnerY() + (getInnerHeight() - frame.getHeight())/2);
-    }
-    
-    @Override
-    protected void layout() {
-        super.layout();
-        
-        // fpsCounter is bottom right
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerRight() - fpsCounter.getWidth(),
-                getInnerBottom() - fpsCounter.getHeight());
-    }
-    
+			gui.validateLayout();
+			demo.positionFrame();
+
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !demo.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+				gui.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
+			}
+
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
+
+	final FPSCounter fpsCounter;
+	final ResizableFrame frame;
+	final InventoryPanel inventoryPanel;
+
+	boolean quit;
+
+	public InventoryDemo() {
+		fpsCounter = new FPSCounter();
+
+		inventoryPanel = new InventoryPanel(10, 5);
+
+		frame = new ResizableFrame();
+		frame.setTitle("Inventory");
+		frame.setResizableAxis(ResizableFrame.ResizableAxis.NONE);
+		frame.add(inventoryPanel);
+
+		add(fpsCounter);
+		add(frame);
+	}
+
+	void positionFrame() {
+		frame.adjustSize();
+		frame.setPosition(getInnerX() + (getInnerWidth() - frame.getWidth())
+				/ 2, getInnerY() + (getInnerHeight() - frame.getHeight()) / 2);
+	}
+
+	@Override
+	protected void layout() {
+		super.layout();
+
+		// fpsCounter is bottom right
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerRight() - fpsCounter.getWidth(),
+				getInnerBottom() - fpsCounter.getHeight());
+	}
+
 }

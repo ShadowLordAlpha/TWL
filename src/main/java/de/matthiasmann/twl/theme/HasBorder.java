@@ -38,6 +38,6 @@ import de.matthiasmann.twl.Border;
  */
 interface HasBorder {
 
-    Border getBorder();
+	Border getBorder();
 
 }

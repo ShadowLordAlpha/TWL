@@ -40,35 +40,35 @@ import org.junit.Test;
  */
 public class StyleAttributeTest {
 
-    @Test
-    public void testOrdinal() {
-        for(int i=0 ; i<StyleAttribute.getNumAttributes() ; i++) {
-            StyleAttribute sa = StyleAttribute.getAttribute(i);
-            assertEquals(i, sa.ordinal());
-        }
-    }
+	@Test
+	public void testOrdinal() {
+		for (int i = 0; i < StyleAttribute.getNumAttributes(); i++) {
+			StyleAttribute sa = StyleAttribute.getAttribute(i);
+			assertEquals(i, sa.ordinal());
+		}
+	}
 
-    @Test
-    public void testName() {
-        for(int i=0 ; i<StyleAttribute.getNumAttributes() ; i++) {
-            StyleAttribute sa1 = StyleAttribute.getAttribute(i);
-            StyleAttribute sa2 = StyleAttribute.getAttribute(sa1.name());
-            assertEquals(sa1, sa2);
-        }
-    }
+	@Test
+	public void testName() {
+		for (int i = 0; i < StyleAttribute.getNumAttributes(); i++) {
+			StyleAttribute sa1 = StyleAttribute.getAttribute(i);
+			StyleAttribute sa2 = StyleAttribute.getAttribute(sa1.name());
+			assertEquals(sa1, sa2);
+		}
+	}
 
-    @Test
-    public void testgetAttribute1() {
-        assertEquals(StyleAttribute.CLEAR, StyleAttribute.getAttribute("CLEAR"));
-    }
+	@Test
+	public void testgetAttribute1() {
+		assertEquals(StyleAttribute.CLEAR, StyleAttribute.getAttribute("CLEAR"));
+	}
 
-    @Test
-    public void testgetAttribute2() {
-        try {
-            StyleAttribute.getAttribute("foobar");
-            fail("Should not here");
-        } catch (Throwable ex) {
-            assertEquals(IllegalArgumentException.class, ex.getClass());
-        }
-    }
+	@Test
+	public void testgetAttribute2() {
+		try {
+			StyleAttribute.getAttribute("foobar");
+			fail("Should not here");
+		} catch (Throwable ex) {
+			assertEquals(IllegalArgumentException.class, ex.getClass());
+		}
+	}
 }

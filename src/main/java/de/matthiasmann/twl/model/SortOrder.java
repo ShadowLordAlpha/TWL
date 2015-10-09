@@ -38,15 +38,26 @@ import java.util.Comparator;
  * @author Matthias Mann
  */
 public enum SortOrder {
-    ASCENDING {
-        public<T> Comparator<T> map(Comparator<T> c) { return c; }
-        public SortOrder invert() { return DESCENDING; }
-    },
-    DESCENDING {
-        public<T> Comparator<T> map(Comparator<T> c) { return Collections.reverseOrder(c); }
-        public SortOrder invert() { return ASCENDING; }
-    };
+	ASCENDING {
+		public <T> Comparator<T> map(Comparator<T> c) {
+			return c;
+		}
 
-    public abstract<T> Comparator<T> map(Comparator<T> c);
-    public abstract SortOrder invert();
+		public SortOrder invert() {
+			return DESCENDING;
+		}
+	},
+	DESCENDING {
+		public <T> Comparator<T> map(Comparator<T> c) {
+			return Collections.reverseOrder(c);
+		}
+
+		public SortOrder invert() {
+			return ASCENDING;
+		}
+	};
+
+	public abstract <T> Comparator<T> map(Comparator<T> c);
+
+	public abstract SortOrder invert();
 }

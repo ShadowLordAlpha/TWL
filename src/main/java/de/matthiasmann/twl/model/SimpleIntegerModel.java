@@ -36,42 +36,45 @@ package de.matthiasmann.twl.model;
  */
 public class SimpleIntegerModel extends HasCallback implements IntegerModel {
 
-    private final int minValue;
-    private final int maxValue;
-    private int value;
+	private final int minValue;
+	private final int maxValue;
+	private int value;
 
-    /**
-     * Creates a new integer model with the specified min/max and initial value
-     *
-     * @param minValue the minimum allowed value
-     * @param maxValue the maximum allowed value
-     * @param value the initial value
-     */
-    public SimpleIntegerModel(int minValue, int maxValue, int value) {
-        if(maxValue < minValue) {
-            throw new IllegalArgumentException("maxValue < minValue");
-        }
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.value = value;
-    }
+	/**
+	 * Creates a new integer model with the specified min/max and initial value
+	 *
+	 * @param minValue
+	 *            the minimum allowed value
+	 * @param maxValue
+	 *            the maximum allowed value
+	 * @param value
+	 *            the initial value
+	 */
+	public SimpleIntegerModel(int minValue, int maxValue, int value) {
+		if (maxValue < minValue) {
+			throw new IllegalArgumentException("maxValue < minValue");
+		}
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		this.value = value;
+	}
 
-    public int getMaxValue() {
-        return maxValue;
-    }
+	public int getMaxValue() {
+		return maxValue;
+	}
 
-    public int getMinValue() {
-        return minValue;
-    }
+	public int getMinValue() {
+		return minValue;
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public int getValue() {
+		return value;
+	}
 
-    public void setValue(int value) {
-        if(this.value != value) {
-            this.value = value;
-            doCallback();
-        }
-    }
+	public void setValue(int value) {
+		if (this.value != value) {
+			this.value = value;
+			doCallback();
+		}
+	}
 }

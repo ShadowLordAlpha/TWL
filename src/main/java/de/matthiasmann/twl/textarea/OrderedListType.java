@@ -38,37 +38,42 @@ import de.matthiasmann.twl.utils.TextUtil;
  */
 public class OrderedListType {
 
-    public static final OrderedListType DECIMAL = new OrderedListType();
-    
-    protected final String characterList;
+	public static final OrderedListType DECIMAL = new OrderedListType();
 
-    /**
-     * Creates a new OrderedListType which just uses {@link Integer#toString(int) }
-     */
-    public OrderedListType() {
-        this.characterList = null;
-    }
+	protected final String characterList;
 
-    /**
-     * Creates a new OrderedListType which uses {@link TextUtil#toCharListNumber(int, java.lang.String) }
-     * for positive numbers and {@link Integer#toString(int) } for the rest.
-     *
-     * @param characterList the character list
-     */
-    public OrderedListType(String characterList) {
-        this.characterList = characterList;
-    }
+	/**
+	 * Creates a new OrderedListType which just uses
+	 * {@link Integer#toString(int) }
+	 */
+	public OrderedListType() {
+		this.characterList = null;
+	}
 
-    /**
-     * Convert the number into a String
-     * @param nr the number
-     * @return the String which represents the number
-     */
-    public String format(int nr) {
-        if(nr >= 1 && characterList != null) {
-            return TextUtil.toCharListNumber(nr, characterList);
-        } else {
-            return Integer.toString(nr);
-        }
-    }
+	/**
+	 * Creates a new OrderedListType which uses
+	 * {@link TextUtil#toCharListNumber(int, java.lang.String) } for positive
+	 * numbers and {@link Integer#toString(int) } for the rest.
+	 *
+	 * @param characterList
+	 *            the character list
+	 */
+	public OrderedListType(String characterList) {
+		this.characterList = characterList;
+	}
+
+	/**
+	 * Convert the number into a String
+	 * 
+	 * @param nr
+	 *            the number
+	 * @return the String which represents the number
+	 */
+	public String format(int nr) {
+		if (nr >= 1 && characterList != null) {
+			return TextUtil.toCharListNumber(nr, characterList);
+		} else {
+			return Integer.toString(nr);
+		}
+	}
 }

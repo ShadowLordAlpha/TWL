@@ -42,37 +42,39 @@ import de.matthiasmann.twl.input.Input;
  */
 public class LWJGLInput implements Input {
 
-    private boolean wasActive;
+	private boolean wasActive;
 
-    public boolean pollInput(GUI gui) {
-        boolean active = ((GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_VISIBLE) == GL11.GL_TRUE) && (GLFW.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(), GLFW.GLFW_FOCUSED) == GL11.GL_TRUE)) ? true : false;
-        if(wasActive && !active) {
-            wasActive = false;
-            return false;
-        }
-        wasActive = active;
-        
-        if(Keyboard.isCreated()) {
-            while(Keyboard.next()) {
-                gui.handleKey(
-                        Keyboard.getEventKey(),
-                        Keyboard.getEventCharacter(),
-                        Keyboard.getEventKeyState());
-            }
-        }
-        if(Mouse.isCreated()) {
-            while(Mouse.next()) {
-                gui.handleMouse(
-                        Mouse.getEventX(), gui.getHeight() - Mouse.getEventY() - 1,
-                        Mouse.getEventButton(), Mouse.getEventButtonState());
+	public boolean pollInput(GUI gui) {
+		boolean active = ((GLFW.glfwGetWindowAttrib(
+				GLFW.glfwGetCurrentContext(), GLFW.GLFW_VISIBLE) == GL11.GL_TRUE) && (GLFW
+				.glfwGetWindowAttrib(GLFW.glfwGetCurrentContext(),
+						GLFW.GLFW_FOCUSED) == GL11.GL_TRUE)) ? true : false;
+		if (wasActive && !active) {
+			wasActive = false;
+			return false;
+		}
+		wasActive = active;
 
-                int wheelDelta = Mouse.getEventDWheel();
-                if(wheelDelta != 0) {
-                    gui.handleMouseWheel(wheelDelta / 120);
-                }
-            }
-        }
-        return true;
-    }
+		if (Keyboard.isCreated()) {
+			while (Keyboard.next()) {
+				gui.handleKey(Keyboard.getEventKey(),
+						Keyboard.getEventCharacter(),
+						Keyboard.getEventKeyState());
+			}
+		}
+		if (Mouse.isCreated()) {
+			while (Mouse.next()) {
+				gui.handleMouse(Mouse.getEventX(),
+						gui.getHeight() - Mouse.getEventY() - 1,
+						Mouse.getEventButton(), Mouse.getEventButtonState());
+
+				int wheelDelta = Mouse.getEventDWheel();
+				if (wheelDelta != 0) {
+					gui.handleMouseWheel(wheelDelta / 120);
+				}
+			}
+		}
+		return true;
+	}
 
 }

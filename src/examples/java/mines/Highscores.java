@@ -54,145 +54,147 @@ import java.util.zip.CheckedOutputStream;
  * @author Matthias Mann
  */
 public class Highscores {
-    
-    private static final int MAX_ENTRIES = 100;
-    
-    private final HashMap<MineFieldSize, ArrayList<Entry>> lists;
 
-    public Highscores() {
-        lists = new HashMap<MineFieldSize, ArrayList<Entry>>();
-    }
-    
-    private ArrayList<Entry> getEntryList(MineFieldSize size) {
-        ArrayList<Entry> entries = lists.get(size);
-        if(entries == null) {
-            entries = new ArrayList<Entry>();
-            lists.put(size, entries);
-        }
-        return entries;
-    }
-    
-    public List<Entry> getEntries(MineFieldSize size) {
-        return Collections.unmodifiableList(getEntryList(size));
-    }
-    
-    public int addEntry(MineFieldSize size, Entry entry) {
-        if(entry == null) {
-            throw new NullPointerException("entry");
-        }
-        ArrayList<Entry> entries = getEntryList(size);
-        while(entries.size() >= MAX_ENTRIES) {
-            entries.remove(entries.size()-1);
-        }
-        int pos;
-        for(pos=0 ; pos<entries.size() ; pos++) {
-            if(entry.time < entries.get(pos).time) {
-                break;
-            }
-        }
-        entries.add(pos, entry);
-        return pos;
-    }
-    
-    public void read(InputStream in) throws IOException {
-        lists.clear();
-        
-        try {
-            CRC32 crc = new CRC32();
-            BufferedInputStream bis = new BufferedInputStream(in);
-            CheckedInputStream cis = new CheckedInputStream(bis, crc);
-            DataInputStream dis = new DataInputStream(cis);
-            int kCount = dis.readUnsignedShort();
-            for(int kIdx=0 ; kIdx<kCount ; kIdx++) {
-                MineFieldSize size = MineFieldSize.read(dis);
-                if(lists.containsKey(size)) {
-                    throw new IOException("duplicate key");
-                }
+	private static final int MAX_ENTRIES = 100;
 
-                int prevTime = 0;
-                int eCount = dis.readUnsignedShort();
-                ArrayList<Entry> entries = new ArrayList<Entry>(eCount);
-                for(int eIdx=0 ; eIdx<eCount ; eIdx++) {
-                    int time = dis.readInt();
-                    String name = dis.readUTF();
-                    Date date = new Date(dis.readLong());
+	private final HashMap<MineFieldSize, ArrayList<Entry>> lists;
 
-                    if(time < prevTime) {
-                        throw new IOException("Game time gone backwards");
-                    }
+	public Highscores() {
+		lists = new HashMap<MineFieldSize, ArrayList<Entry>>();
+	}
 
-                    prevTime = time;
-                    entries.add(new Entry(time, name, date));
-                }
+	private ArrayList<Entry> getEntryList(MineFieldSize size) {
+		ArrayList<Entry> entries = lists.get(size);
+		if (entries == null) {
+			entries = new ArrayList<Entry>();
+			lists.put(size, entries);
+		}
+		return entries;
+	}
 
-                lists.put(size, entries);
-            }
-            int crcValue = (int)crc.getValue();
-            if(crcValue != dis.readInt()) {
-                throw new IOException("CRC error");
-            }
-        } catch(IOException ex) {
-            lists.clear();
-            throw ex;
-        }
-    }
-    
-    public void read(File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        try {
-            read(fis);
-        } finally {
-            fis.close();
-        }
-    }
-    
-    public void write(OutputStream out) throws IOException {
-        CRC32 crc = new CRC32();
-        BufferedOutputStream bos = new BufferedOutputStream(out);
-        CheckedOutputStream cos = new CheckedOutputStream(bos, crc);
-        DataOutputStream dos = new DataOutputStream(cos);
-        dos.writeShort((short)lists.size());
-        for(Map.Entry<MineFieldSize, ArrayList<Entry>> e : lists.entrySet()) {
-            e.getKey().write(dos);
-            dos.writeShort((short)e.getValue().size());
-            for(Entry entry : e.getValue()) {
-                dos.writeInt(entry.time);
-                dos.writeUTF(entry.name);
-                dos.writeLong(entry.date.getTime());
-            }
-        }
-        dos.writeInt((int)crc.getValue());
-        dos.flush();
-    }
-    
-    public void secureWrite(File file) throws IOException {
-        File tmp = new File(file.getParentFile(), file.getName().concat(".tmp"));
-        FileOutputStream fos = new FileOutputStream(tmp);
-        try {
-            write(fos);
-        } finally {
-            fos.close();
-        }
-        
-        File bak = new File(file.getParentFile(), file.getName().concat(".bak"));
-        bak.delete();
-        if(file.exists() && !file.renameTo(bak)) {
-            throw new IOException("Could not backup file '"+file+"' to '" + bak + "'");
-        }
-        if(!tmp.renameTo(file)) {
-            throw new IOException("Could not rename file '"+tmp+"' to '" + file + "'");
-        }
-    }
-    
-    public static class Entry {
-        public final int time;
-        public final String name;
-        public final Date date;
+	public List<Entry> getEntries(MineFieldSize size) {
+		return Collections.unmodifiableList(getEntryList(size));
+	}
 
-        public Entry(int time, String name, Date date) {
-            this.time = time;
-            this.name = name;
-            this.date = date;
-        }
-    }
+	public int addEntry(MineFieldSize size, Entry entry) {
+		if (entry == null) {
+			throw new NullPointerException("entry");
+		}
+		ArrayList<Entry> entries = getEntryList(size);
+		while (entries.size() >= MAX_ENTRIES) {
+			entries.remove(entries.size() - 1);
+		}
+		int pos;
+		for (pos = 0; pos < entries.size(); pos++) {
+			if (entry.time < entries.get(pos).time) {
+				break;
+			}
+		}
+		entries.add(pos, entry);
+		return pos;
+	}
+
+	public void read(InputStream in) throws IOException {
+		lists.clear();
+
+		try {
+			CRC32 crc = new CRC32();
+			BufferedInputStream bis = new BufferedInputStream(in);
+			CheckedInputStream cis = new CheckedInputStream(bis, crc);
+			DataInputStream dis = new DataInputStream(cis);
+			int kCount = dis.readUnsignedShort();
+			for (int kIdx = 0; kIdx < kCount; kIdx++) {
+				MineFieldSize size = MineFieldSize.read(dis);
+				if (lists.containsKey(size)) {
+					throw new IOException("duplicate key");
+				}
+
+				int prevTime = 0;
+				int eCount = dis.readUnsignedShort();
+				ArrayList<Entry> entries = new ArrayList<Entry>(eCount);
+				for (int eIdx = 0; eIdx < eCount; eIdx++) {
+					int time = dis.readInt();
+					String name = dis.readUTF();
+					Date date = new Date(dis.readLong());
+
+					if (time < prevTime) {
+						throw new IOException("Game time gone backwards");
+					}
+
+					prevTime = time;
+					entries.add(new Entry(time, name, date));
+				}
+
+				lists.put(size, entries);
+			}
+			int crcValue = (int) crc.getValue();
+			if (crcValue != dis.readInt()) {
+				throw new IOException("CRC error");
+			}
+		} catch (IOException ex) {
+			lists.clear();
+			throw ex;
+		}
+	}
+
+	public void read(File file) throws IOException {
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			read(fis);
+		} finally {
+			fis.close();
+		}
+	}
+
+	public void write(OutputStream out) throws IOException {
+		CRC32 crc = new CRC32();
+		BufferedOutputStream bos = new BufferedOutputStream(out);
+		CheckedOutputStream cos = new CheckedOutputStream(bos, crc);
+		DataOutputStream dos = new DataOutputStream(cos);
+		dos.writeShort((short) lists.size());
+		for (Map.Entry<MineFieldSize, ArrayList<Entry>> e : lists.entrySet()) {
+			e.getKey().write(dos);
+			dos.writeShort((short) e.getValue().size());
+			for (Entry entry : e.getValue()) {
+				dos.writeInt(entry.time);
+				dos.writeUTF(entry.name);
+				dos.writeLong(entry.date.getTime());
+			}
+		}
+		dos.writeInt((int) crc.getValue());
+		dos.flush();
+	}
+
+	public void secureWrite(File file) throws IOException {
+		File tmp = new File(file.getParentFile(), file.getName().concat(".tmp"));
+		FileOutputStream fos = new FileOutputStream(tmp);
+		try {
+			write(fos);
+		} finally {
+			fos.close();
+		}
+
+		File bak = new File(file.getParentFile(), file.getName().concat(".bak"));
+		bak.delete();
+		if (file.exists() && !file.renameTo(bak)) {
+			throw new IOException("Could not backup file '" + file + "' to '"
+					+ bak + "'");
+		}
+		if (!tmp.renameTo(file)) {
+			throw new IOException("Could not rename file '" + tmp + "' to '"
+					+ file + "'");
+		}
+	}
+
+	public static class Entry {
+		public final int time;
+		public final String name;
+		public final Date date;
+
+		public Entry(int time, String name, Date date) {
+			this.time = time;
+			this.name = name;
+			this.date = date;
+		}
+	}
 }

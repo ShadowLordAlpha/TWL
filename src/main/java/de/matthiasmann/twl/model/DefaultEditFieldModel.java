@@ -38,80 +38,81 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  */
 public class DefaultEditFieldModel implements EditFieldModel {
 
-    private final StringBuilder sb;
-    private Callback[] callbacks;
+	private final StringBuilder sb;
+	private Callback[] callbacks;
 
-    public DefaultEditFieldModel() {
-        this.sb = new StringBuilder();
-    }
+	public DefaultEditFieldModel() {
+		this.sb = new StringBuilder();
+	}
 
-    public int length() {
-        return sb.length();
-    }
+	public int length() {
+		return sb.length();
+	}
 
-    public char charAt(int index) {
-        return sb.charAt(index);
-    }
+	public char charAt(int index) {
+		return sb.charAt(index);
+	}
 
-    public CharSequence subSequence(int start, int end) {
-        return sb.subSequence(start, end);
-    }
+	public CharSequence subSequence(int start, int end) {
+		return sb.subSequence(start, end);
+	}
 
-    @Override
-    public String toString() {
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+		return sb.toString();
+	}
 
-    public void addCallback(Callback callback) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, callback, Callback.class);
-    }
+	public void addCallback(Callback callback) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, callback,
+				Callback.class);
+	}
 
-    public void removeCallback(Callback callback) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, callback);
-    }
+	public void removeCallback(Callback callback) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, callback);
+	}
 
-    public int replace(int start, int count, String replacement) {
-        checkRange(start, count);
-        int replacementLength = replacement.length();
-        if(count > 0 || replacementLength > 0) {
-            sb.replace(start, start+count, replacement);
-            fireCallback(start, count, replacementLength);
-        }
-        return replacementLength;
-    }
+	public int replace(int start, int count, String replacement) {
+		checkRange(start, count);
+		int replacementLength = replacement.length();
+		if (count > 0 || replacementLength > 0) {
+			sb.replace(start, start + count, replacement);
+			fireCallback(start, count, replacementLength);
+		}
+		return replacementLength;
+	}
 
-    public boolean replace(int start, int count, char replacement) {
-        checkRange(start, count);
-        if(count == 0) {
-            sb.insert(start, replacement);
-        } else {
-            sb.delete(start, start+count-1);
-            sb.setCharAt(start, replacement);
-        }
-        fireCallback(start, count, 1);
-        return true;
-    }
+	public boolean replace(int start, int count, char replacement) {
+		checkRange(start, count);
+		if (count == 0) {
+			sb.insert(start, replacement);
+		} else {
+			sb.delete(start, start + count - 1);
+			sb.setCharAt(start, replacement);
+		}
+		fireCallback(start, count, 1);
+		return true;
+	}
 
-    public String substring(int start, int end) {
-        return sb.substring(start, end);
-    }
+	public String substring(int start, int end) {
+		return sb.substring(start, end);
+	}
 
-    private void checkRange(int start, int count) {
-        int len = sb.length();
-        if(start < 0 || start > len) {
-            throw new StringIndexOutOfBoundsException(start);
-        }
-        if(count < 0 || count > len - start) {
-            throw new StringIndexOutOfBoundsException();
-        }
-    }
+	private void checkRange(int start, int count) {
+		int len = sb.length();
+		if (start < 0 || start > len) {
+			throw new StringIndexOutOfBoundsException(start);
+		}
+		if (count < 0 || count > len - start) {
+			throw new StringIndexOutOfBoundsException();
+		}
+	}
 
-    private void fireCallback(int start, int oldCount, int newCount) {
-        Callback[] cbs = this.callbacks;
-        if(cbs != null) {
-            for(Callback cb : cbs) {
-                cb.charactersChanged(start, oldCount, newCount);
-            }
-        }
-    }
+	private void fireCallback(int start, int oldCount, int newCount) {
+		Callback[] cbs = this.callbacks;
+		if (cbs != null) {
+			for (Callback cb : cbs) {
+				cb.charactersChanged(start, oldCount, newCount);
+			}
+		}
+	}
 }

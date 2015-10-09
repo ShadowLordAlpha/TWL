@@ -38,44 +38,57 @@ import de.matthiasmann.twl.Color;
  */
 public interface Image {
 
-    /**
-     * Returns the width in pixels of the image
-     * @return the width in pixels of the image
-     */
-    public int getWidth();
-    
-    /**
-     * Returns the height in pixels of the image
-     * @return the height in pixels of the image
-     */
-    public int getHeight();
-    
-    /**
-     * Draws the image in it's original size at the given location
-     * @param as A time source for animation - may be null
-     * @param x left coordinate
-     * @param y top coordinate
-     */
-    public void draw(AnimationState as, int x, int y);
-    
-    /**
-     * Draws the image scaled to the given size at the given location
-     * @param as A time source for animation - may be null
-     * @param x left coordinate
-     * @param y top coordinate
-     * @param width the width in pixels
-     * @param height the height in pixels
-     */
-    public void draw(AnimationState as, int x, int y, int width, int height);
+	/**
+	 * Returns the width in pixels of the image
+	 * 
+	 * @return the width in pixels of the image
+	 */
+	public int getWidth();
 
-    /**
-     * Creates a new image with is tinted with the specified color.
-     *
-     * Tinting works by multiplying the color of the image's pixels
-     * with the specified color.
-     *
-     * @param color The color used for tinting.
-     * @return a new Image object.
-     */
-    public Image createTintedVersion(Color color);
+	/**
+	 * Returns the height in pixels of the image
+	 * 
+	 * @return the height in pixels of the image
+	 */
+	public int getHeight();
+
+	/**
+	 * Draws the image in it's original size at the given location
+	 * 
+	 * @param as
+	 *            A time source for animation - may be null
+	 * @param x
+	 *            left coordinate
+	 * @param y
+	 *            top coordinate
+	 */
+	public void draw(AnimationState as, int x, int y);
+
+	/**
+	 * Draws the image scaled to the given size at the given location
+	 * 
+	 * @param as
+	 *            A time source for animation - may be null
+	 * @param x
+	 *            left coordinate
+	 * @param y
+	 *            top coordinate
+	 * @param width
+	 *            the width in pixels
+	 * @param height
+	 *            the height in pixels
+	 */
+	public void draw(AnimationState as, int x, int y, int width, int height);
+
+	/**
+	 * Creates a new image with is tinted with the specified color.
+	 *
+	 * Tinting works by multiplying the color of the image's pixels with the
+	 * specified color.
+	 *
+	 * @param color
+	 *            The color used for tinting.
+	 * @return a new Image object.
+	 */
+	public Image createTintedVersion(Color color);
 }

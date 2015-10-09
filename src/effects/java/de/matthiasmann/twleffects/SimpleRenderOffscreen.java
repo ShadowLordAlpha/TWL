@@ -39,24 +39,25 @@ import de.matthiasmann.twl.renderer.OffscreenSurface;
  */
 public class SimpleRenderOffscreen implements Widget.RenderOffscreen {
 
-    public SimpleRenderOffscreen() {
-    }
+	public SimpleRenderOffscreen() {
+	}
 
-    public void offscreenRenderingFailed(Widget widget) {
-    }
+	public void offscreenRenderingFailed(Widget widget) {
+	}
 
-    public void paintOffscreenSurface(GUI gui, Widget widget, OffscreenSurface surface) {
-        surface.draw(widget.getAnimationState(),
-                widget.getX() - widget.getOffscreenExtraLeft(),
-                widget.getY() - widget.getOffscreenExtraTop());
-    }
+	public void paintOffscreenSurface(GUI gui, Widget widget,
+			OffscreenSurface surface) {
+		surface.draw(widget.getAnimationState(),
+				widget.getX() - widget.getOffscreenExtraLeft(), widget.getY()
+						- widget.getOffscreenExtraTop());
+	}
 
-    public int[] getEffectExtraArea(Widget widget) {
-        return null;
-    }
+	public int[] getEffectExtraArea(Widget widget) {
+		return null;
+	}
 
-    public boolean needPainting(GUI gui, Widget widget, OffscreenSurface surface) {
-        return true;
-    }
-    
+	public boolean needPainting(GUI gui, Widget widget, OffscreenSurface surface) {
+		return true;
+	}
+
 }

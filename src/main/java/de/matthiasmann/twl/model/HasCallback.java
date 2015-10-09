@@ -39,46 +39,52 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  */
 public class HasCallback implements WithRunnableCallback {
 
-    private Runnable[] callbacks;
+	private Runnable[] callbacks;
 
-    public HasCallback() {
-    }
-    
-    /**
-     * Adds a callback to the list.
-     * @param callback the callback
-     */
-    public void addCallback(Runnable callback) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, callback, Runnable.class);
-    }
+	public HasCallback() {
+	}
 
-    /**
-     * Removes a callback from the list.
-     * @param callback the callback that should be removed
-     */
-    public void removeCallback(Runnable callback) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, callback);
-    }
+	/**
+	 * Adds a callback to the list.
+	 * 
+	 * @param callback
+	 *            the callback
+	 */
+	public void addCallback(Runnable callback) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, callback,
+				Runnable.class);
+	}
 
-    /**
-     * Returns true when the callback list is not empty
-     * @return true when the callback list is not empty
-     */
-    public boolean hasCallbacks() {
-        return callbacks != null;
-    }
-    
-    /**
-     * Calls all registered callbacks.
-     *
-     * Callbacks can call {@code addCallback} or {@code removeCallback}.
-     * Modification to the callback list will only be visible to the next
-     * {@code doCallback} call.
-     *
-     * @see #addCallback(java.lang.Runnable)
-     * @see #removeCallback(java.lang.Runnable)
-     */
-    protected void doCallback() {
-        CallbackSupport.fireCallbacks(callbacks);
-    }
+	/**
+	 * Removes a callback from the list.
+	 * 
+	 * @param callback
+	 *            the callback that should be removed
+	 */
+	public void removeCallback(Runnable callback) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, callback);
+	}
+
+	/**
+	 * Returns true when the callback list is not empty
+	 * 
+	 * @return true when the callback list is not empty
+	 */
+	public boolean hasCallbacks() {
+		return callbacks != null;
+	}
+
+	/**
+	 * Calls all registered callbacks.
+	 *
+	 * Callbacks can call {@code addCallback} or {@code removeCallback}.
+	 * Modification to the callback list will only be visible to the next
+	 * {@code doCallback} call.
+	 *
+	 * @see #addCallback(java.lang.Runnable)
+	 * @see #removeCallback(java.lang.Runnable)
+	 */
+	protected void doCallback() {
+		CallbackSupport.fireCallbacks(callbacks);
+	}
 }

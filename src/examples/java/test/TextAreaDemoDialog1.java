@@ -43,29 +43,29 @@ import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
  */
 public class TextAreaDemoDialog1 extends FadeFrame {
 
-    public TextAreaDemoDialog1()  {
-        HTMLTextAreaModel tam = new HTMLTextAreaModel();
-        try {
-            tam.readHTMLFromURL(GUI.class.getResource("license.html"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+	public TextAreaDemoDialog1() {
+		HTMLTextAreaModel tam = new HTMLTextAreaModel();
+		try {
+			tam.readHTMLFromURL(GUI.class.getResource("license.html"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 
-        Button btnX = new Button("Blub!");
-        btnX.setTheme("/button");
+		Button btnX = new Button("Blub!");
+		btnX.setTheme("/button");
 
-        TextArea textArea = new TextArea(tam);
-        textArea.setTheme("textarea");
-        textArea.registerWidget("test", btnX);
-        textArea.setDefaultStyleSheet();
+		TextArea textArea = new TextArea(tam);
+		textArea.setTheme("textarea");
+		textArea.registerWidget("test", btnX);
+		textArea.setDefaultStyleSheet();
 
-        ScrollPane scrollPane2 = new ScrollPane(textArea);
-        scrollPane2.setTheme("scrollpane");
-        scrollPane2.setFixed(ScrollPane.Fixed.HORIZONTAL);
+		ScrollPane scrollPane2 = new ScrollPane(textArea);
+		scrollPane2.setTheme("scrollpane");
+		scrollPane2.setFixed(ScrollPane.Fixed.HORIZONTAL);
 
-        setTheme("licenseFrame");
-        setTitle("TWL License");
-        add(scrollPane2);
-    }
-    
+		setTheme("licenseFrame");
+		setTitle("TWL License");
+		add(scrollPane2);
+	}
+
 }

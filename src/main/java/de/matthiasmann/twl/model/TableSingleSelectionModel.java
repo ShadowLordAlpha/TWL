@@ -36,102 +36,102 @@ package de.matthiasmann.twl.model;
  */
 public class TableSingleSelectionModel extends AbstractTableSelectionModel {
 
-    public static final int NO_SELECTION = -1;
+	public static final int NO_SELECTION = -1;
 
-    private int selection;
+	private int selection;
 
-    @Override
-    public void rowsInserted(int index, int count) {
-        boolean changed = false;
-        if(selection >= index) {
-            selection += count;
-            changed = true;
-        }
-        super.rowsInserted(index, count);
-        if(changed) {
-            fireSelectionChange();
-        }
-    }
+	@Override
+	public void rowsInserted(int index, int count) {
+		boolean changed = false;
+		if (selection >= index) {
+			selection += count;
+			changed = true;
+		}
+		super.rowsInserted(index, count);
+		if (changed) {
+			fireSelectionChange();
+		}
+	}
 
-    @Override
-    public void rowsDeleted(int index, int count) {
-        boolean changed = false;
-        if(selection >= index) {
-            if(selection < index + count) {
-                selection = NO_SELECTION;
-            } else {
-                selection -= count;
-            }
-            changed = true;
-        }
-        super.rowsDeleted(index, count);
-        if(changed) {
-            fireSelectionChange();
-        }
-    }
+	@Override
+	public void rowsDeleted(int index, int count) {
+		boolean changed = false;
+		if (selection >= index) {
+			if (selection < index + count) {
+				selection = NO_SELECTION;
+			} else {
+				selection -= count;
+			}
+			changed = true;
+		}
+		super.rowsDeleted(index, count);
+		if (changed) {
+			fireSelectionChange();
+		}
+	}
 
-    public void clearSelection() {
-        if(hasSelection()) {
-            selection = NO_SELECTION;
-            fireSelectionChange();
-        }
-    }
+	public void clearSelection() {
+		if (hasSelection()) {
+			selection = NO_SELECTION;
+			fireSelectionChange();
+		}
+	}
 
-    public void setSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        selection = index1;
-        fireSelectionChange();
-    }
+	public void setSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		selection = index1;
+		fireSelectionChange();
+	}
 
-    public void addSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        selection = index1;
-        fireSelectionChange();
-    }
+	public void addSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		selection = index1;
+		fireSelectionChange();
+	}
 
-    public void invertSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        if(selection == index1) {
-            selection = NO_SELECTION;
-        } else {
-            selection = index1;
-        }
-        fireSelectionChange();
-    }
+	public void invertSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		if (selection == index1) {
+			selection = NO_SELECTION;
+		} else {
+			selection = index1;
+		}
+		fireSelectionChange();
+	}
 
-    public void removeSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        if(hasSelection()) {
-            int first = Math.min(index0, index1);
-            int last = Math.max(index0, index1);
-            if(selection >= first && selection <= last) {
-                selection = NO_SELECTION;
-            }
-            fireSelectionChange();
-        }
-    }
+	public void removeSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		if (hasSelection()) {
+			int first = Math.min(index0, index1);
+			int last = Math.max(index0, index1);
+			if (selection >= first && selection <= last) {
+				selection = NO_SELECTION;
+			}
+			fireSelectionChange();
+		}
+	}
 
-    public boolean isSelected(int index) {
-        return selection == index;
-    }
+	public boolean isSelected(int index) {
+		return selection == index;
+	}
 
-    public boolean hasSelection() {
-        return selection >= 0;
-    }
+	public boolean hasSelection() {
+		return selection >= 0;
+	}
 
-    public int getFirstSelected() {
-        return selection;
-    }
+	public int getFirstSelected() {
+		return selection;
+	}
 
-    public int getLastSelected() {
-        return selection;
-    }
+	public int getLastSelected() {
+		return selection;
+	}
 
-    public int[] getSelection() {
-        if(selection >= 0) {
-            return new int[] { selection };
-        }
-        return new int[0];
-    }
+	public int[] getSelection() {
+		if (selection >= 0) {
+			return new int[] { selection };
+		}
+		return new int[0];
+	}
 
 }

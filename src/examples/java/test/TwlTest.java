@@ -23,109 +23,114 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class TwlTest {
 
-    private LWJGLRenderer renderer;
-    private ThemeManager theme;
-    private GUI gui;
-    private Widget root;
+	private LWJGLRenderer renderer;
+	private ThemeManager theme;
+	private GUI gui;
+	private Widget root;
 
-    public TwlTest() throws Exception {
-        renderer = new LWJGLRenderer();
+	public TwlTest() throws Exception {
+		renderer = new LWJGLRenderer();
 
-        theme = ThemeManager.createThemeManager(SimpleTest.class.getResource("simple_demo.xml"), renderer);
+		theme = ThemeManager.createThemeManager(
+				SimpleTest.class.getResource("simple_demo.xml"), renderer);
 
-        root = new Widget();
-        root.setTheme("");
+		root = new Widget();
+		root.setTheme("");
 
-        gui = new GUI(root, renderer);
-        gui.setSize();
-        gui.applyTheme(theme);
+		gui = new GUI(root, renderer);
+		gui.setSize();
+		gui.applyTheme(theme);
 
-        addTestAlert(10, 10, "&lt;minwidth");
+		addTestAlert(10, 10, "&lt;minwidth");
 
-        addTestAlert(10, 100, "Between min and max width");
+		addTestAlert(10, 100, "Between min and max width");
 
-        addTestAlert(10, 180, "Past max width but less than max height. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. ");
+		addTestAlert(
+				10,
+				180,
+				"Past max width but less than max height. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. ");
 
-        addTestAlert(10, 350, "Past max width and past max height. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
-                + "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. ");
-    }
-    
-    public void run() {
-        while(!Display.isCloseRequested()) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            gui.update();
-            Display.update();
-            TestUtils.reduceInputLag();
-        }
-    }
+		addTestAlert(
+				10,
+				350,
+				"Past max width and past max height. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. "
+						+ "This is a lot of text. This is a lot of text. This is a lot of text. This is a lot of text. ");
+	}
 
-    private void addTestAlert(int x, int y, String text) {
-        Alert alert = new Alert(text);
-        alert.addButton("OK");
-        alert.addButton("Cancel");
-        alert.setPosition(x, y);
-        root.add(alert);
-	alert.adjustSize();
-    }
+	public void run() {
+		while (!Display.isCloseRequested()) {
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			gui.update();
+			Display.update();
+			TestUtils.reduceInputLag();
+		}
+	}
 
-    public class Alert extends ResizableFrame {
+	private void addTestAlert(int x, int y, String text) {
+		Alert alert = new Alert(text);
+		alert.addButton("OK");
+		alert.addButton("Cancel");
+		alert.setPosition(x, y);
+		root.add(alert);
+		alert.adjustSize();
+	}
 
-        private Group buttonGroupH, buttonGroupV;
-        private TextArea textArea;
-        private ScrollPane scrollPane;
+	public class Alert extends ResizableFrame {
 
-        public Alert(String text) {
-            setTheme("/resizableframe");
+		private Group buttonGroupH, buttonGroupV;
+		private TextArea textArea;
+		private ScrollPane scrollPane;
 
-            final HTMLTextAreaModel textAreaModel = new HTMLTextAreaModel(text);
-            textArea = new TextArea(textAreaModel);
+		public Alert(String text) {
+			setTheme("/resizableframe");
 
-            scrollPane = new ScrollPane(textArea);
-            scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
+			final HTMLTextAreaModel textAreaModel = new HTMLTextAreaModel(text);
+			textArea = new TextArea(textAreaModel);
 
-            DialogLayout layout = new DialogLayout();
+			scrollPane = new ScrollPane(textArea);
+			scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
 
-            buttonGroupH = layout.createSequentialGroup();
-            buttonGroupH.addGap();
-            buttonGroupV = layout.createParallelGroup();
+			DialogLayout layout = new DialogLayout();
 
-            layout.setTheme("/alertbox");
-            layout.setHorizontalGroup(layout.createParallelGroup()
-                    .addWidget(scrollPane)
-                    .addGroup(buttonGroupH));
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addWidget(scrollPane)
-                    .addGroup(buttonGroupV));
-            add(layout);
-        }
+			buttonGroupH = layout.createSequentialGroup();
+			buttonGroupH.addGap();
+			buttonGroupV = layout.createParallelGroup();
 
-        public void addButton(String text) {
-            Button button = new Button(text);
-            buttonGroupH.addWidget(button);
-            buttonGroupV.addWidget(button);
-        }
-    }
+			layout.setTheme("/alertbox");
+			layout.setHorizontalGroup(layout.createParallelGroup()
+					.addWidget(scrollPane).addGroup(buttonGroupH));
+			layout.setVerticalGroup(layout.createSequentialGroup()
+					.addWidget(scrollPane).addGroup(buttonGroupV));
+			add(layout);
+		}
 
-    public static void main(String[] args) throws Exception {
-        Display.setTitle("TWL Examples");
-        Display.setDisplayMode(new DisplayMode(800, 600));
-        Display.setVSyncEnabled(true);
-        Display.create();
-        TwlTest twlTest = new TwlTest();
-        twlTest.run();
-    }
+		public void addButton(String text) {
+			Button button = new Button(text);
+			buttonGroupH.addWidget(button);
+			buttonGroupV.addWidget(button);
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		Display.setTitle("TWL Examples");
+		Display.setDisplayMode(new DisplayMode(800, 600));
+		Display.setVSyncEnabled(true);
+		Display.create();
+		TwlTest twlTest = new TwlTest();
+		twlTest.run();
+	}
 }

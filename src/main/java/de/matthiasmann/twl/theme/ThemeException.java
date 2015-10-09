@@ -39,73 +39,75 @@ import java.net.URL;
  */
 public class ThemeException extends IOException {
 
-    protected final Source source;
-    
-    public ThemeException(String msg, URL url, int lineNumber, int columnNumber, Throwable cause) {
-        super(msg);
-        this.source = new Source(url, lineNumber, columnNumber);
-        initCause(cause);
-    }
-    
-    void addIncludedBy(URL url, int lineNumber, int columnNumber) {
-        Source head = source;
-        while(head.includedBy != null) {
-            head = head.includedBy;
-        }
-        head.includedBy = new Source(url, lineNumber, columnNumber);
-    }
+	protected final Source source;
 
-    @Override
-    public String getMessage() {
-        StringBuilder sb = new StringBuilder(super.getMessage());
-        String prefix = "\n           in ";
-        for(Source src=source ; src!=null ; src=src.includedBy) {
-            sb.append(prefix).append(src.url)
-                    .append(" @").append(src.lineNumber)
-                    .append(':').append(src.columnNumber);
-            prefix = "\n  included by ";
-        }
-        return sb.toString();
-    }
+	public ThemeException(String msg, URL url, int lineNumber,
+			int columnNumber, Throwable cause) {
+		super(msg);
+		this.source = new Source(url, lineNumber, columnNumber);
+		initCause(cause);
+	}
 
-    /**
-     * Returns the source URL of the XML file and the line/column number
-     * where the exception originated.
-     * @return the source
-     */
-    public Source getSource() {
-        return source;
-    }
-    
-    /**
-     * Describes a position in an XML file
-     */
-    public static final class Source {
-        protected final URL url;
-        protected final int lineNumber;
-        protected final int columnNumber;
-        protected Source includedBy;
+	void addIncludedBy(URL url, int lineNumber, int columnNumber) {
+		Source head = source;
+		while (head.includedBy != null) {
+			head = head.includedBy;
+		}
+		head.includedBy = new Source(url, lineNumber, columnNumber);
+	}
 
-        Source(URL url, int lineNumber, int columnNumber) {
-            this.url = url;
-            this.lineNumber = lineNumber;
-            this.columnNumber = columnNumber;
-        }
+	@Override
+	public String getMessage() {
+		StringBuilder sb = new StringBuilder(super.getMessage());
+		String prefix = "\n           in ";
+		for (Source src = source; src != null; src = src.includedBy) {
+			sb.append(prefix).append(src.url).append(" @")
+					.append(src.lineNumber).append(':')
+					.append(src.columnNumber);
+			prefix = "\n  included by ";
+		}
+		return sb.toString();
+	}
 
-        public URL getUrl() {
-            return url;
-        }
+	/**
+	 * Returns the source URL of the XML file and the line/column number where
+	 * the exception originated.
+	 * 
+	 * @return the source
+	 */
+	public Source getSource() {
+		return source;
+	}
 
-        public int getLineNumber() {
-            return lineNumber;
-        }
+	/**
+	 * Describes a position in an XML file
+	 */
+	public static final class Source {
+		protected final URL url;
+		protected final int lineNumber;
+		protected final int columnNumber;
+		protected Source includedBy;
 
-        public int getColumnNumber() {
-            return columnNumber;
-        }
+		Source(URL url, int lineNumber, int columnNumber) {
+			this.url = url;
+			this.lineNumber = lineNumber;
+			this.columnNumber = columnNumber;
+		}
 
-        public Source getIncludedBy() {
-            return includedBy;
-        }
-    }
+		public URL getUrl() {
+			return url;
+		}
+
+		public int getLineNumber() {
+			return lineNumber;
+		}
+
+		public int getColumnNumber() {
+			return columnNumber;
+		}
+
+		public Source getIncludedBy() {
+			return includedBy;
+		}
+	}
 }

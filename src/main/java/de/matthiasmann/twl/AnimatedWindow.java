@@ -39,198 +39,199 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  */
 public class AnimatedWindow extends Widget {
 
-    private int numAnimSteps = 10;
-    private int currentStep;
-    private int animSpeed;
+	private int numAnimSteps = 10;
+	private int currentStep;
+	private int animSpeed;
 
-    private BooleanModel model;
-    private Runnable modelCallback;
-    private Runnable[] callbacks;
-    
-    public AnimatedWindow() {
-        setVisible(false); // we start closed
-    }
+	private BooleanModel model;
+	private Runnable modelCallback;
+	private Runnable[] callbacks;
 
-    public void addCallback(Runnable cb) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, cb, Runnable.class);
-    }
+	public AnimatedWindow() {
+		setVisible(false); // we start closed
+	}
 
-    public void removeCallback(Runnable cb) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
-    }
+	public void addCallback(Runnable cb) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, cb,
+				Runnable.class);
+	}
 
-    private void doCallback() {
-        CallbackSupport.fireCallbacks(callbacks);
-    }
+	public void removeCallback(Runnable cb) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
+	}
 
-    public int getNumAnimSteps() {
-        return numAnimSteps;
-    }
+	private void doCallback() {
+		CallbackSupport.fireCallbacks(callbacks);
+	}
 
-    public void setNumAnimSteps(int numAnimSteps) {
-        if(numAnimSteps < 1) {
-            throw new IllegalArgumentException("numAnimSteps");
-        }
-        this.numAnimSteps = numAnimSteps;
-    }
+	public int getNumAnimSteps() {
+		return numAnimSteps;
+	}
 
-    public void setState(boolean open) {
-        if(open && !isOpen()) {
-            animSpeed = 1;
-            setVisible(true);
-            doCallback();
-        } else if(!open && !isClosed()) {
-            animSpeed = -1;
-            doCallback();
-        }
-        if(model != null) {
-            model.setValue(open);
-        }
-    }
-    
-    public BooleanModel getModel() {
-        return model;
-    }
+	public void setNumAnimSteps(int numAnimSteps) {
+		if (numAnimSteps < 1) {
+			throw new IllegalArgumentException("numAnimSteps");
+		}
+		this.numAnimSteps = numAnimSteps;
+	}
 
-    public void setModel(BooleanModel model) {
-        if(this.model != model) {
-            if(this.model != null) {
-                this.model.removeCallback(modelCallback);
-            }
-            this.model = model;
-            if(model != null) {
-                if(modelCallback == null) {
-                    modelCallback = new ModelCallback();
-                }
-                model.addCallback(modelCallback);
-                syncWithModel();
-            }
-        }
-    }
-    
-    public boolean isOpen() {
-        return currentStep == numAnimSteps && animSpeed >= 0;
-    }
-    
-    public boolean isOpening() {
-        return animSpeed > 0;
-    }
-    
-    public boolean isClosed() {
-        return currentStep == 0 && animSpeed <= 0;
-    }
-    
-    public boolean isClosing() {
-        return animSpeed < 0;
-    }
-    
-    public boolean isAnimating() {
-        return animSpeed != 0;
-    }
+	public void setState(boolean open) {
+		if (open && !isOpen()) {
+			animSpeed = 1;
+			setVisible(true);
+			doCallback();
+		} else if (!open && !isClosed()) {
+			animSpeed = -1;
+			doCallback();
+		}
+		if (model != null) {
+			model.setValue(open);
+		}
+	}
 
-    @Override
-    public boolean handleEvent(Event evt) {
-        if(isOpen()) {
-            if(super.handleEvent(evt)) {
-                return true;
-            }
-            if(evt.isKeyPressedEvent()) {
-                switch (evt.getKeyCode()) {
-                case Event.KEY_ESCAPE:
-                    setState(false);
-                    return true;
-                default:
-                    break;
-                }
-            }
-            return false;
-        }
-        if(isClosed()) {
-            return false;
-        }
-        // eat every event when we animate
-        int mouseX = evt.getMouseX() - getX();
-        int mouseY = evt.getMouseY() - getY();
-        return mouseX >= 0 && mouseX < getAnimatedWidth() &&
-                mouseY >= 0 && mouseY < getAnimatedHeight();
-    }
+	public BooleanModel getModel() {
+		return model;
+	}
 
-    @Override
-    public int getMinWidth() {
-        int minWidth = 0;
-        for(int i=0,n=getNumChildren() ; i<n ; i++) {
-            Widget child = getChild(i);
-            minWidth = Math.max(minWidth, child.getMinWidth());
-        }
-        return Math.max(super.getMinWidth(), minWidth + getBorderHorizontal());
-    }
+	public void setModel(BooleanModel model) {
+		if (this.model != model) {
+			if (this.model != null) {
+				this.model.removeCallback(modelCallback);
+			}
+			this.model = model;
+			if (model != null) {
+				if (modelCallback == null) {
+					modelCallback = new ModelCallback();
+				}
+				model.addCallback(modelCallback);
+				syncWithModel();
+			}
+		}
+	}
 
-    @Override
-    public int getMinHeight() {
-        int minHeight = 0;
-        for(int i=0,n=getNumChildren() ; i<n ; i++) {
-            Widget child = getChild(i);
-            minHeight = Math.max(minHeight, child.getMinHeight());
-        }
-        return Math.max(super.getMinHeight(), minHeight + getBorderVertical());
-    }
+	public boolean isOpen() {
+		return currentStep == numAnimSteps && animSpeed >= 0;
+	}
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return BoxLayout.computePreferredWidthVertical(this);
-    }
+	public boolean isOpening() {
+		return animSpeed > 0;
+	}
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return BoxLayout.computePreferredHeightHorizontal(this);
-    }
+	public boolean isClosed() {
+		return currentStep == 0 && animSpeed <= 0;
+	}
 
-    @Override
-    protected void layout() {
-        layoutChildrenFullInnerArea();
-    }
-    
-    @Override
-    protected void paint(GUI gui) {
-        if(animSpeed != 0) {
-            animate();
-        }
-        
-        if(isOpen()) {
-            super.paint(gui);
-        } else if(!isClosed() && getBackground() != null) {
-            getBackground().draw(getAnimationState(),
-                    getX(), getY(), getAnimatedWidth(), getAnimatedHeight());
-        }
-    }
+	public boolean isClosing() {
+		return animSpeed < 0;
+	}
 
-    private void animate() {
-        currentStep += animSpeed;
-        if(currentStep == 0 || currentStep == numAnimSteps) {
-            setVisible(currentStep > 0);
-            animSpeed = 0;
-            doCallback();
-        }
-    }
+	public boolean isAnimating() {
+		return animSpeed != 0;
+	}
 
-    private int getAnimatedWidth() {
-        return getWidth() * currentStep / numAnimSteps;
-    }
+	@Override
+	public boolean handleEvent(Event evt) {
+		if (isOpen()) {
+			if (super.handleEvent(evt)) {
+				return true;
+			}
+			if (evt.isKeyPressedEvent()) {
+				switch (evt.getKeyCode()) {
+				case Event.KEY_ESCAPE:
+					setState(false);
+					return true;
+				default:
+					break;
+				}
+			}
+			return false;
+		}
+		if (isClosed()) {
+			return false;
+		}
+		// eat every event when we animate
+		int mouseX = evt.getMouseX() - getX();
+		int mouseY = evt.getMouseY() - getY();
+		return mouseX >= 0 && mouseX < getAnimatedWidth() && mouseY >= 0
+				&& mouseY < getAnimatedHeight();
+	}
 
-    private int getAnimatedHeight() {
-        return getHeight() * currentStep / numAnimSteps;
-    }
-    
-    void syncWithModel() {
-        setState(model.getValue());
-    }
-    
-    class ModelCallback implements Runnable {
-        ModelCallback() {
-        }
+	@Override
+	public int getMinWidth() {
+		int minWidth = 0;
+		for (int i = 0, n = getNumChildren(); i < n; i++) {
+			Widget child = getChild(i);
+			minWidth = Math.max(minWidth, child.getMinWidth());
+		}
+		return Math.max(super.getMinWidth(), minWidth + getBorderHorizontal());
+	}
 
-        public void run() {
-            syncWithModel();
-        }
-    }
+	@Override
+	public int getMinHeight() {
+		int minHeight = 0;
+		for (int i = 0, n = getNumChildren(); i < n; i++) {
+			Widget child = getChild(i);
+			minHeight = Math.max(minHeight, child.getMinHeight());
+		}
+		return Math.max(super.getMinHeight(), minHeight + getBorderVertical());
+	}
+
+	@Override
+	public int getPreferredInnerWidth() {
+		return BoxLayout.computePreferredWidthVertical(this);
+	}
+
+	@Override
+	public int getPreferredInnerHeight() {
+		return BoxLayout.computePreferredHeightHorizontal(this);
+	}
+
+	@Override
+	protected void layout() {
+		layoutChildrenFullInnerArea();
+	}
+
+	@Override
+	protected void paint(GUI gui) {
+		if (animSpeed != 0) {
+			animate();
+		}
+
+		if (isOpen()) {
+			super.paint(gui);
+		} else if (!isClosed() && getBackground() != null) {
+			getBackground().draw(getAnimationState(), getX(), getY(),
+					getAnimatedWidth(), getAnimatedHeight());
+		}
+	}
+
+	private void animate() {
+		currentStep += animSpeed;
+		if (currentStep == 0 || currentStep == numAnimSteps) {
+			setVisible(currentStep > 0);
+			animSpeed = 0;
+			doCallback();
+		}
+	}
+
+	private int getAnimatedWidth() {
+		return getWidth() * currentStep / numAnimSteps;
+	}
+
+	private int getAnimatedHeight() {
+		return getHeight() * currentStep / numAnimSteps;
+	}
+
+	void syncWithModel() {
+		setState(model.getValue());
+	}
+
+	class ModelCallback implements Runnable {
+		ModelCallback() {
+		}
+
+		public void run() {
+			syncWithModel();
+		}
+	}
 }

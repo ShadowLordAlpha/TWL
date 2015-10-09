@@ -35,9 +35,9 @@ package de.matthiasmann.twl.textarea;
  */
 public interface StyleSheetResolver {
 
-    public void startLayout();
+	public void startLayout();
 
-    public Style resolve(Style style);
+	public Style resolve(Style style);
 
-    public void layoutFinished();
+	public void layoutFinished();
 }

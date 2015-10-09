@@ -35,16 +35,17 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractTableColumnHeaderModel implements TableColumnHeaderModel {
+public abstract class AbstractTableColumnHeaderModel implements
+		TableColumnHeaderModel {
 
-    private static final StateKey[] EMPTY_STATE_ARRAY = {};
+	private static final StateKey[] EMPTY_STATE_ARRAY = {};
 
-    public StateKey[] getColumnHeaderStates() {
-        return EMPTY_STATE_ARRAY;
-    }
+	public StateKey[] getColumnHeaderStates() {
+		return EMPTY_STATE_ARRAY;
+	}
 
-    public boolean getColumnHeaderState(int column, int stateIdx) {
-        return false;
-    }
+	public boolean getColumnHeaderState(int column, int stateIdx) {
+		return false;
+	}
 
 }

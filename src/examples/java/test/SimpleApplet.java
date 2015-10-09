@@ -45,109 +45,112 @@ import de.matthiasmann.twl.textarea.TextAreaModel.Display;
  */
 public class SimpleApplet extends Applet {
 
-    /** The Canvas where the LWJGL Display is added */
-    Canvas display_parent;
-    /** Thread which runs the main game loop */
-    Thread gameThread;
+	/** The Canvas where the LWJGL Display is added */
+	Canvas display_parent;
+	/** Thread which runs the main game loop */
+	Thread gameThread;
 
-    SimpleTest simpleTest;
+	SimpleTest simpleTest;
 
-    public void startLWJGL() {
-        gameThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Display.setParent(display_parent);
-                    Display.setVSyncEnabled(true);
-                    Display.create();
-                    gameLoop();
-                    Display.destroy();
-                } catch (LWJGLException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        gameThread.start();
-    }
+	public void startLWJGL() {
+		gameThread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					Display.setParent(display_parent);
+					Display.setVSyncEnabled(true);
+					Display.create();
+					gameLoop();
+					Display.destroy();
+				} catch (LWJGLException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		gameThread.start();
+	}
 
-    /**
-     * Tell game loop to stop running, after which the LWJGL Display will be destoryed.
-     * The main thread will wait for the Display.destroy() to complete
-     */
-    private void stopLWJGL() {
-        if(simpleTest != null) {
-            simpleTest.closeRequested = true;
-        }
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * Tell game loop to stop running, after which the LWJGL Display will be
+	 * destoryed. The main thread will wait for the Display.destroy() to
+	 * complete
+	 */
+	private void stopLWJGL() {
+		if (simpleTest != null) {
+			simpleTest.closeRequested = true;
+		}
+		try {
+			gameThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public void start() {
-    }
+	@Override
+	public void start() {
+	}
 
-    @Override
-    public void stop() {
-    }
+	@Override
+	public void stop() {
+	}
 
-    /**
-     * Applet Destroy method will remove the canvas, before canvas is destroyed it will notify
-     * stopLWJGL() to stop main game loop and to destroy the Display
-     */
-    @Override
-    public void destroy() {
-        remove(display_parent);
-        super.destroy();
-        System.out.println("Clear up");
-    }
+	/**
+	 * Applet Destroy method will remove the canvas, before canvas is destroyed
+	 * it will notify stopLWJGL() to stop main game loop and to destroy the
+	 * Display
+	 */
+	@Override
+	public void destroy() {
+		remove(display_parent);
+		super.destroy();
+		System.out.println("Clear up");
+	}
 
-    /**
-     * initialise applet by adding a canvas to it, this canvas will start the LWJGL Display and game loop
-     * in another thread. It will also stop the game loop and destroy the display on canvas removal when
-     * applet is destroyed.
-     */
-    @Override
-    public void init() {
-        setLayout(new BorderLayout());
-        try {
-            display_parent = new Canvas() {
-                @Override
-                public final void addNotify() {
-                    super.addNotify();
-                    startLWJGL();
-                }
-                @Override
-                public final void removeNotify() {
-                    stopLWJGL();
-                    super.removeNotify();
-                }
-            };
-            display_parent.setSize(getWidth(), getHeight());
-            add(display_parent);
-            display_parent.setFocusable(true);
-            display_parent.requestFocus();
-            display_parent.setIgnoreRepaint(true);
-            //setResizable(true);
-            setVisible(true);
-        } catch (Exception e) {
-            System.err.println(e);
-            throw new RuntimeException("Unable to create display");
-        }
-    }
+	/**
+	 * initialise applet by adding a canvas to it, this canvas will start the
+	 * LWJGL Display and game loop in another thread. It will also stop the game
+	 * loop and destroy the display on canvas removal when applet is destroyed.
+	 */
+	@Override
+	public void init() {
+		setLayout(new BorderLayout());
+		try {
+			display_parent = new Canvas() {
+				@Override
+				public final void addNotify() {
+					super.addNotify();
+					startLWJGL();
+				}
 
-    public void gameLoop() {
-        try {
-            simpleTest = new SimpleTest();
-            simpleTest.mainLoop(true);
-        } catch (Exception ex) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            pw.flush();
-            Sys.alert("Error", sw.toString());
-        }
-    }
+				@Override
+				public final void removeNotify() {
+					stopLWJGL();
+					super.removeNotify();
+				}
+			};
+			display_parent.setSize(getWidth(), getHeight());
+			add(display_parent);
+			display_parent.setFocusable(true);
+			display_parent.requestFocus();
+			display_parent.setIgnoreRepaint(true);
+			// setResizable(true);
+			setVisible(true);
+		} catch (Exception e) {
+			System.err.println(e);
+			throw new RuntimeException("Unable to create display");
+		}
+	}
+
+	public void gameLoop() {
+		try {
+			simpleTest = new SimpleTest();
+			simpleTest.mainLoop(true);
+		} catch (Exception ex) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			pw.flush();
+			Sys.alert("Error", sw.toString());
+		}
+	}
 }

@@ -52,112 +52,122 @@ import de.matthiasmann.twl.textarea.TextAreaModel;
  */
 public class JavaTextAreaModel extends HasCallback implements TextAreaModel {
 
-    private final EnumMap<JavaScanner.Kind, Style> styles;
-    private final Style normalStyle;
-    private ContainerElement root;
+	private final EnumMap<JavaScanner.Kind, Style> styles;
+	private final Style normalStyle;
+	private ContainerElement root;
 
-    public JavaTextAreaModel() {
-        this.styles = new EnumMap<JavaScanner.Kind, Style>(JavaScanner.Kind.class);
-        this.normalStyle = new Style(null, new StyleSheetKey("pre", "code", null))
-                .with(StyleAttribute.PREFORMATTED, true);
-        styles.put(JavaScanner.Kind.NORMAL, normalStyle);
-        styles.put(JavaScanner.Kind.COMMENT, new Style(normalStyle, new StyleSheetKey("span", "comment", null)));
-        styles.put(JavaScanner.Kind.COMMENT_TAG, new Style(normalStyle, new StyleSheetKey("span", "commentTag", null)));
-        styles.put(JavaScanner.Kind.STRING, new Style(normalStyle, new StyleSheetKey("span", "string", null)));
-        styles.put(JavaScanner.Kind.KEYWORD, new Style(normalStyle, new StyleSheetKey("span", "keyword", null)));
-    }
+	public JavaTextAreaModel() {
+		this.styles = new EnumMap<JavaScanner.Kind, Style>(
+				JavaScanner.Kind.class);
+		this.normalStyle = new Style(null, new StyleSheetKey("pre", "code",
+				null)).with(StyleAttribute.PREFORMATTED, true);
+		styles.put(JavaScanner.Kind.NORMAL, normalStyle);
+		styles.put(JavaScanner.Kind.COMMENT, new Style(normalStyle,
+				new StyleSheetKey("span", "comment", null)));
+		styles.put(JavaScanner.Kind.COMMENT_TAG, new Style(normalStyle,
+				new StyleSheetKey("span", "commentTag", null)));
+		styles.put(JavaScanner.Kind.STRING, new Style(normalStyle,
+				new StyleSheetKey("span", "string", null)));
+		styles.put(JavaScanner.Kind.KEYWORD, new Style(normalStyle,
+				new StyleSheetKey("span", "keyword", null)));
+	}
 
-    public Iterator<Element> iterator() {
-        return new IteratorImpl(root);
-    }
+	public Iterator<Element> iterator() {
+		return new IteratorImpl(root);
+	}
 
-    public void clear() {
-        root = null;
-        doCallback();
-    }
+	public void clear() {
+		root = null;
+		doCallback();
+	}
 
-    public void parse(Reader r, boolean withLineNumbers) {
-        JavaScanner js = new JavaScanner(r);
+	public void parse(Reader r, boolean withLineNumbers) {
+		JavaScanner js = new JavaScanner(r);
 
-        ContainerElement container;
-        Style lineStyle;
-        if(withLineNumbers) {
-            container = new OrderedListElement(new Style(normalStyle, new StyleSheetKey("ol", "linenumbers", null)), 1);
-            lineStyle = new Style(container.getStyle(), new StyleSheetKey("li", null, null));
-        } else {
-            container = new BlockElement(normalStyle);
-            lineStyle = null;
-        }
-        ContainerElement line = null;
-        TextElement newLine = new TextElement(normalStyle, "\n");
+		ContainerElement container;
+		Style lineStyle;
+		if (withLineNumbers) {
+			container = new OrderedListElement(new Style(normalStyle,
+					new StyleSheetKey("ol", "linenumbers", null)), 1);
+			lineStyle = new Style(container.getStyle(), new StyleSheetKey("li",
+					null, null));
+		} else {
+			container = new BlockElement(normalStyle);
+			lineStyle = null;
+		}
+		ContainerElement line = null;
+		TextElement newLine = new TextElement(normalStyle, "\n");
 
-        JavaScanner.Kind kind;
-        while((kind=js.scan()) != JavaScanner.Kind.EOF) {
-            if(withLineNumbers && line == null) {
-                line = new ContainerElement(lineStyle);
-            }
-            if(kind == JavaScanner.Kind.NEWLINE) {
-                if(line != null) {
-                    line.add(newLine);
-                    container.add(line);
-                    line = null;
-                } else {
-                    container.add(newLine);
-                }
-                continue;
-            }
-            TextElement textElement = new TextElement(styles.get(kind), js.getString());
-            if(line != null) {
-                line.add(textElement);
-            } else {
-                container.add(textElement);
-            }
-        }
+		JavaScanner.Kind kind;
+		while ((kind = js.scan()) != JavaScanner.Kind.EOF) {
+			if (withLineNumbers && line == null) {
+				line = new ContainerElement(lineStyle);
+			}
+			if (kind == JavaScanner.Kind.NEWLINE) {
+				if (line != null) {
+					line.add(newLine);
+					container.add(line);
+					line = null;
+				} else {
+					container.add(newLine);
+				}
+				continue;
+			}
+			TextElement textElement = new TextElement(styles.get(kind),
+					js.getString());
+			if (line != null) {
+				line.add(textElement);
+			} else {
+				container.add(textElement);
+			}
+		}
 
-        root = container;
-        doCallback();
-    }
+		root = container;
+		doCallback();
+	}
 
-    public void parse(InputStream is, String charsetName, boolean withLineNumbers) throws UnsupportedEncodingException {
-        InputStreamReader isr = new InputStreamReader(is, charsetName);
-        parse(isr, withLineNumbers);
-    }
+	public void parse(InputStream is, String charsetName,
+			boolean withLineNumbers) throws UnsupportedEncodingException {
+		InputStreamReader isr = new InputStreamReader(is, charsetName);
+		parse(isr, withLineNumbers);
+	}
 
-    public void parse(URL url, boolean withLineNumbers) throws IOException {
-        InputStream is = url.openStream();
-        try {
-            parse(is, "UTF8", withLineNumbers);
-        } finally {
-            is.close();
-        }
-    }
+	public void parse(URL url, boolean withLineNumbers) throws IOException {
+		InputStream is = url.openStream();
+		try {
+			parse(is, "UTF8", withLineNumbers);
+		} finally {
+			is.close();
+		}
+	}
 
-    public void parse(File file, boolean withLineNumbers) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
-        try {
-            parse(fis, "UTF8", withLineNumbers);
-        } finally {
-            fis.close();
-        }
-    }
+	public void parse(File file, boolean withLineNumbers) throws IOException {
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			parse(fis, "UTF8", withLineNumbers);
+		} finally {
+			fis.close();
+		}
+	}
 
-    private static class IteratorImpl implements Iterator<Element> {
-        Element e;
-        public IteratorImpl(Element e) {
-            this.e = e;
-        }
+	private static class IteratorImpl implements Iterator<Element> {
+		Element e;
 
-        public boolean hasNext() {
-            return e != null;
-        }
+		public IteratorImpl(Element e) {
+			this.e = e;
+		}
 
-        public Element next() {
-            Element tmp = e;
-            e = null;
-            return tmp;
-        }
+		public boolean hasNext() {
+			return e != null;
+		}
 
-        public void remove() {
-        }
-    }
+		public Element next() {
+			Element tmp = e;
+			e = null;
+			return tmp;
+		}
+
+		public void remove() {
+		}
+	}
 }

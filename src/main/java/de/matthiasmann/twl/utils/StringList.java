@@ -38,110 +38,118 @@ import java.util.NoSuchElementException;
  * @author Matthias Mann
  */
 public final class StringList implements Iterable<String> {
-    private final String value;
-    private final StringList next;
+	private final String value;
+	private final StringList next;
 
-    /**
-     * Constructs a string list with a single entry.
-     * This is equivalent to {@code new StringList(value, null); }
-     * 
-     * @param value the string value
-     * @throws NullPointerException if value is null
-     */
-    public StringList(String value) {
-        this(value, null);
-    }
+	/**
+	 * Constructs a string list with a single entry. This is equivalent to
+	 * {@code new StringList(value, null); }
+	 * 
+	 * @param value
+	 *            the string value
+	 * @throws NullPointerException
+	 *             if value is null
+	 */
+	public StringList(String value) {
+		this(value, null);
+	}
 
-    /**
-     * Constructs a new head of a string list.
-     * 
-     * @param value the string value
-     * @param next the rest/tail of the string list, can be null
-     * @throws NullPointerException if value is null
-     */
-    public StringList(String value, StringList next) {
-        if(value == null) {
-            throw new NullPointerException("value");
-        }
-        this.value = value;
-        this.next = next;
-    }
+	/**
+	 * Constructs a new head of a string list.
+	 * 
+	 * @param value
+	 *            the string value
+	 * @param next
+	 *            the rest/tail of the string list, can be null
+	 * @throws NullPointerException
+	 *             if value is null
+	 */
+	public StringList(String value, StringList next) {
+		if (value == null) {
+			throw new NullPointerException("value");
+		}
+		this.value = value;
+		this.next = next;
+	}
 
-    /**
-     * Returns the next element in the string list, or null if this is the last
-     * @return the next element in the string list, or null if this is the last
-     */
-    public StringList getNext() {
-        return next;
-    }
+	/**
+	 * Returns the next element in the string list, or null if this is the last
+	 * 
+	 * @return the next element in the string list, or null if this is the last
+	 */
+	public StringList getNext() {
+		return next;
+	}
 
-    /**
-     * Returns the string value of this element, never null
-     * @return the string value of this element, never null
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * Returns the string value of this element, never null
+	 * 
+	 * @return the string value of this element, never null
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof StringList)) {
-            return false;
-        }
-        final StringList that = (StringList)obj;
-        return this.value.equals(that.value) &&
-                (this.next == that.next || (this.next != null && this.next.equals(that.next)));
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof StringList)) {
+			return false;
+		}
+		final StringList that = (StringList) obj;
+		return this.value.equals(that.value)
+				&& (this.next == that.next || (this.next != null && this.next
+						.equals(that.next)));
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = value.hashCode();
-        if(next != null) {
-            hash = 67 * hash + next.hashCode();
-        }
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = value.hashCode();
+		if (next != null) {
+			hash = 67 * hash + next.hashCode();
+		}
+		return hash;
+	}
 
-    @Override
-    public String toString() {
-        if(next == null) {
-            return value;
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            for(StringList list=next ; list!=null ; list=list.next) {
-                sb.append(", ").append(list.value);
-            }
-            return sb.toString();
-        }
-    }
-    
-    public Iterator<String> iterator() {
-        return new I(this);
-    }
-    
-    static class I implements Iterator<String> {
-        private StringList list;
+	@Override
+	public String toString() {
+		if (next == null) {
+			return value;
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append(value);
+			for (StringList list = next; list != null; list = list.next) {
+				sb.append(", ").append(list.value);
+			}
+			return sb.toString();
+		}
+	}
 
-        I(StringList list) {
-            this.list = list;
-        }
+	public Iterator<String> iterator() {
+		return new I(this);
+	}
 
-        public boolean hasNext() {
-            return list != null;
-        }
+	static class I implements Iterator<String> {
+		private StringList list;
 
-        public String next() {
-            if(list == null) {
-                throw new NoSuchElementException();
-            }
-            String value = list.getValue();
-            list = list.getNext();
-            return value;
-        }
+		I(StringList list) {
+			this.list = list;
+		}
 
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported");
-        }
-    }
+		public boolean hasNext() {
+			return list != null;
+		}
+
+		public String next() {
+			if (list == null) {
+				throw new NoSuchElementException();
+			}
+			String value = list.getValue();
+			list = list.getNext();
+			return value;
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException("Not supported");
+		}
+	}
 }

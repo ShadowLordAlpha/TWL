@@ -35,11 +35,11 @@ package de.matthiasmann.twl;
  */
 public class MenuSpacer extends MenuElement {
 
-    @Override
-    protected Widget createMenuWidget(MenuManager mm, int level) {
-        Widget w = new Widget();
-        setWidgetTheme(w, "spacer");
-        return w;
-    }
+	@Override
+	protected Widget createMenuWidget(MenuManager mm, int level) {
+		Widget w = new Widget();
+		setWidgetTheme(w, "spacer");
+		return w;
+	}
 
 }

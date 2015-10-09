@@ -30,20 +30,22 @@
 package de.matthiasmann.twl.textarea;
 
 /**
- * A bundle of 4 attributes which form the top, left, right and bottom part of a box
+ * A bundle of 4 attributes which form the top, left, right and bottom part of a
+ * box
  *
  * @author Matthias Mann
  */
 public class BoxAttribute {
-    public final StyleAttribute<Value> top;
-    public final StyleAttribute<Value> left;
-    public final StyleAttribute<Value> right;
-    public final StyleAttribute<Value> bottom;
+	public final StyleAttribute<Value> top;
+	public final StyleAttribute<Value> left;
+	public final StyleAttribute<Value> right;
+	public final StyleAttribute<Value> bottom;
 
-    BoxAttribute(StyleAttribute<Value> top, StyleAttribute<Value> left, StyleAttribute<Value> right, StyleAttribute<Value> bottom) {
-        this.top = top;
-        this.left = left;
-        this.right = right;
-        this.bottom = bottom;
-    }
+	BoxAttribute(StyleAttribute<Value> top, StyleAttribute<Value> left,
+			StyleAttribute<Value> right, StyleAttribute<Value> bottom) {
+		this.top = top;
+		this.left = left;
+		this.right = right;
+		this.bottom = bottom;
+	}
 }

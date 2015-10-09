@@ -37,36 +37,35 @@ import de.matthiasmann.twl.model.TableSelectionModel;
  */
 public interface TableSelectionManager {
 
-    public enum SelectionGranularity {
-        ROWS,
-        CELLS
-    }
+	public enum SelectionGranularity {
+		ROWS, CELLS
+	}
 
-    public TableSelectionModel getSelectionModel();
-    
-    public void setAssociatedTable(TableBase base);
+	public TableSelectionModel getSelectionModel();
 
-    public SelectionGranularity getSelectionGranularity();
+	public void setAssociatedTable(TableBase base);
 
-    public boolean handleKeyStrokeAction(String action, Event event);
+	public SelectionGranularity getSelectionGranularity();
 
-    public boolean handleMouseEvent(int row, int column, Event event);
+	public boolean handleKeyStrokeAction(String action, Event event);
 
-    public boolean isRowSelected(int row);
+	public boolean handleMouseEvent(int row, int column, Event event);
 
-    public boolean isCellSelected(int row, int column);
+	public boolean isRowSelected(int row);
 
-    public int getLeadRow();
+	public boolean isCellSelected(int row, int column);
 
-    public int getLeadColumn();
-    
-    public void modelChanged();
-    
-    public void rowsInserted(int index, int count);
+	public int getLeadRow();
 
-    public void rowsDeleted(int index, int count);
+	public int getLeadColumn();
 
-    public void columnInserted(int index, int count);
+	public void modelChanged();
 
-    public void columnsDeleted(int index, int count);
+	public void rowsInserted(int index, int count);
+
+	public void rowsDeleted(int index, int count);
+
+	public void columnInserted(int index, int count);
+
+	public void columnsDeleted(int index, int count);
 }

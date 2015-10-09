@@ -37,38 +37,39 @@ import java.util.prefs.Preferences;
  */
 public class PersistentStringModel extends HasCallback implements StringModel {
 
-    private final Preferences prefs;
-    private final String prefKey;
-    private String value;
+	private final Preferences prefs;
+	private final String prefKey;
+	private String value;
 
-    public PersistentStringModel(Preferences prefs, String prefKey, String defaultValue) {
-        if(prefs == null) {
-            throw new NullPointerException("prefs");
-        }
-        if(prefKey == null) {
-            throw new NullPointerException("prefKey");
-        }
-        if(defaultValue == null) {
-            throw new NullPointerException("defaultValue");
-        }
-        this.prefs = prefs;
-        this.prefKey = prefKey;
-        this.value = prefs.get(prefKey, defaultValue);
-    }
+	public PersistentStringModel(Preferences prefs, String prefKey,
+			String defaultValue) {
+		if (prefs == null) {
+			throw new NullPointerException("prefs");
+		}
+		if (prefKey == null) {
+			throw new NullPointerException("prefKey");
+		}
+		if (defaultValue == null) {
+			throw new NullPointerException("defaultValue");
+		}
+		this.prefs = prefs;
+		this.prefKey = prefKey;
+		this.value = prefs.get(prefKey, defaultValue);
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        if(value == null) {
-            throw new NullPointerException("value");
-        }
-        if(!this.value.equals(value)) {
-            this.value = value;
-            prefs.put(prefKey, value);
-            doCallback();
-        }
-    }
+	public void setValue(String value) {
+		if (value == null) {
+			throw new NullPointerException("value");
+		}
+		if (!this.value.equals(value)) {
+			this.value = value;
+			prefs.put(prefKey, value);
+			doCallback();
+		}
+	}
 
 }

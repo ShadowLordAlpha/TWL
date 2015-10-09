@@ -17,164 +17,164 @@ import org.junit.Test;
  */
 public class SizeSequenceTest {
 
-    public SizeSequenceTest() {
-    }
+	public SizeSequenceTest() {
+	}
 
-    @Test
-    public void testInsert() {
-        final int count = 2000;
-        final int initialSize = 50;
+	@Test
+	public void testInsert() {
+		final int count = 2000;
+		final int initialSize = 50;
 
-        SizeSequence ss = new SizeSequence();
-        ss.setDefaultValue(initialSize);
-        ss.insert(0, count);
+		SizeSequence ss = new SizeSequence();
+		ss.setDefaultValue(initialSize);
+		ss.insert(0, count);
 
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize, ss.getSize(i));
-        }
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize*i, ss.getPosition(i));
-        }
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize, ss.getSize(i));
+		}
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize * i, ss.getPosition(i));
+		}
 
-        int maxValue = 0;
-        for(int v : ss.table) {
-            maxValue = Math.max(maxValue, v);
-        }
-        System.out.println("maxValue=" + maxValue);
-    }
+		int maxValue = 0;
+		for (int v : ss.table) {
+			maxValue = Math.max(maxValue, v);
+		}
+		System.out.println("maxValue=" + maxValue);
+	}
 
-    @Test
-    public void testInsert2() {
-        final int count = 2000;
-        final int initialSize = 50;
+	@Test
+	public void testInsert2() {
+		final int count = 2000;
+		final int initialSize = 50;
 
-        SizeSequence ss = new SizeSequence();
-        ss.setDefaultValue(initialSize);
-        ss.insert(0, count);
+		SizeSequence ss = new SizeSequence();
+		ss.setDefaultValue(initialSize);
+		ss.insert(0, count);
 
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize, ss.getSize(i));
-        }
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize*i, ss.getPosition(i));
-        }
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize, ss.getSize(i));
+		}
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize * i, ss.getPosition(i));
+		}
 
-        final int insertIndex = 666;
-        final int insertCount = 321;
-        final int insertSize = 32;
+		final int insertIndex = 666;
+		final int insertCount = 321;
+		final int insertSize = 32;
 
-        ss.setDefaultValue(insertSize);
-        ss.insert(insertIndex, insertCount);
+		ss.setDefaultValue(insertSize);
+		ss.insert(insertIndex, insertCount);
 
-        assertEquals(count+insertCount, ss.size);
+		assertEquals(count + insertCount, ss.size);
 
-        int idx=0;
-        for(; idx<insertIndex ; idx++) {
-            assertEquals(initialSize, ss.getSize(idx));
-        }
-        for(int i=0 ; i<insertCount ; i++,idx++) {
-            assertEquals(insertSize, ss.getSize(idx));
-        }
-        for(int i=insertIndex ; i<count ; i++,idx++) {
-            assertEquals(initialSize, ss.getSize(idx));
-        }
-        
-        int maxValue = 0;
-        for(int v : ss.table) {
-            maxValue = Math.max(maxValue, v);
-        }
-        System.out.println("maxValue=" + maxValue);
-    }
+		int idx = 0;
+		for (; idx < insertIndex; idx++) {
+			assertEquals(initialSize, ss.getSize(idx));
+		}
+		for (int i = 0; i < insertCount; i++, idx++) {
+			assertEquals(insertSize, ss.getSize(idx));
+		}
+		for (int i = insertIndex; i < count; i++, idx++) {
+			assertEquals(initialSize, ss.getSize(idx));
+		}
 
-    @Test
-    public void testSetSize() {
-        final long seed = 0x12345678;
-        final int count = 2000;
-        final int initialSize = 50;
+		int maxValue = 0;
+		for (int v : ss.table) {
+			maxValue = Math.max(maxValue, v);
+		}
+		System.out.println("maxValue=" + maxValue);
+	}
 
-        Random r = new Random();
+	@Test
+	public void testSetSize() {
+		final long seed = 0x12345678;
+		final int count = 2000;
+		final int initialSize = 50;
 
-        SizeSequence ss = new SizeSequence();
-        ss.setDefaultValue(initialSize);
-        ss.insert(0, count);
+		Random r = new Random();
 
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize, ss.getSize(i));
-        }
-        for(int i=0 ; i<count ; i++) {
-            assertEquals(initialSize*i, ss.getPosition(i));
-        }
+		SizeSequence ss = new SizeSequence();
+		ss.setDefaultValue(initialSize);
+		ss.insert(0, count);
 
-        r.setSeed(seed);
-        for(int i=0 ; i<count ; i++) {
-            int size = r.nextInt(initialSize*2);
-            ss.setSize(i, size);
-        }
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize, ss.getSize(i));
+		}
+		for (int i = 0; i < count; i++) {
+			assertEquals(initialSize * i, ss.getPosition(i));
+		}
 
-        r.setSeed(seed);
-        for(int i=0 ; i<count ; i++) {
-            int size = r.nextInt(initialSize*2);
-            assertEquals(size, ss.getSize(i));
-        }
+		r.setSeed(seed);
+		for (int i = 0; i < count; i++) {
+			int size = r.nextInt(initialSize * 2);
+			ss.setSize(i, size);
+		}
 
-        int maxValue = 0;
-        for(int v : ss.table) {
-            maxValue = Math.max(maxValue, v);
-        }
-        System.out.println("maxValue=" + maxValue);
-    }
+		r.setSeed(seed);
+		for (int i = 0; i < count; i++) {
+			int size = r.nextInt(initialSize * 2);
+			assertEquals(size, ss.getSize(i));
+		}
 
-    @Test
-    public void testRemove() {
-        final long seed = 0x12345678;
-        final int count = 2000;
-        final int maxSize = 100;
+		int maxValue = 0;
+		for (int v : ss.table) {
+			maxValue = Math.max(maxValue, v);
+		}
+		System.out.println("maxValue=" + maxValue);
+	}
 
-        Random r = new Random();
+	@Test
+	public void testRemove() {
+		final long seed = 0x12345678;
+		final int count = 2000;
+		final int maxSize = 100;
 
-        SizeSequence ss = new SizeSequence();
-        ss.setDefaultValue(0);
-        ss.initializeAll(count);
+		Random r = new Random();
 
-        r.setSeed(seed);
-        for(int i=0 ; i<count ; i++) {
-            int size = r.nextInt(maxSize);
-            ss.setSize(i, size);
-        }
+		SizeSequence ss = new SizeSequence();
+		ss.setDefaultValue(0);
+		ss.initializeAll(count);
 
-        r.setSeed(seed);
-        for(int i=0 ; i<count ; i++) {
-            int size = r.nextInt(maxSize);
-            assertEquals(size, ss.getSize(i));
-        }
+		r.setSeed(seed);
+		for (int i = 0; i < count; i++) {
+			int size = r.nextInt(maxSize);
+			ss.setSize(i, size);
+		}
 
-        final int removeIndex = 1337;
-        final int removeCount = 42;
+		r.setSeed(seed);
+		for (int i = 0; i < count; i++) {
+			int size = r.nextInt(maxSize);
+			assertEquals(size, ss.getSize(i));
+		}
 
-        ss.remove(removeIndex, removeCount);
+		final int removeIndex = 1337;
+		final int removeCount = 42;
 
-        assertEquals(count - removeCount, ss.size);
+		ss.remove(removeIndex, removeCount);
 
-        r.setSeed(seed);
+		assertEquals(count - removeCount, ss.size);
 
-        int idx = 0;
-        for(; idx<removeIndex ; idx++) {
-            int size = r.nextInt(maxSize);
-            assertEquals(size, ss.getSize(idx));
-        }
-        for(int i=0 ; i<removeCount ; i++) {
-            int size = r.nextInt(maxSize);
-        }
-        for(int i=removeIndex+removeCount ; i<count ; i++,idx++) {
-            int size = r.nextInt(maxSize);
-            assertEquals(size, ss.getSize(idx));
-        }
+		r.setSeed(seed);
 
-        int maxValue = 0;
-        for(int v : ss.table) {
-            maxValue = Math.max(maxValue, v);
-        }
-        System.out.println("maxValue=" + maxValue);
-    }
+		int idx = 0;
+		for (; idx < removeIndex; idx++) {
+			int size = r.nextInt(maxSize);
+			assertEquals(size, ss.getSize(idx));
+		}
+		for (int i = 0; i < removeCount; i++) {
+			int size = r.nextInt(maxSize);
+		}
+		for (int i = removeIndex + removeCount; i < count; i++, idx++) {
+			int size = r.nextInt(maxSize);
+			assertEquals(size, ss.getSize(idx));
+		}
+
+		int maxValue = 0;
+		for (int v : ss.table) {
+			maxValue = Math.max(maxValue, v);
+		}
+		System.out.println("maxValue=" + maxValue);
+	}
 
 }

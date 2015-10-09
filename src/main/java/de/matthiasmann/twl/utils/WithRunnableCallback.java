@@ -35,9 +35,9 @@ package de.matthiasmann.twl.utils;
  * @author Matthias Mann
  */
 public interface WithRunnableCallback {
-    
-    public void addCallback(Runnable cb);
-    
-    public void removeCallback(Runnable cb);
-    
+
+	public void addCallback(Runnable cb);
+
+	public void removeCallback(Runnable cb);
+
 }

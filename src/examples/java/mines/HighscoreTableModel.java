@@ -39,41 +39,47 @@ import de.matthiasmann.twl.model.AbstractTableModel;
  * @author Matthias Mann
  */
 public class HighscoreTableModel extends AbstractTableModel {
-    
-    private final List<Highscores.Entry> entries;
-    private final DateFormat dateFormat;
 
-    public HighscoreTableModel(List<Highscores.Entry> entries) {
-        this.entries = entries;
-        this.dateFormat = DateFormat.getDateInstance();
-    }
-    
-    public int getNumColumns() {
-        return 3;
-    }
-    
-    public String getColumnHeaderText(int column) {
-        switch(column) {
-            case 0: return "Date";
-            case 1: return "Name";
-            case 2: return "Time";
-            default:
-                throw new AssertionError();
-        }
-    }
-    
-    public int getNumRows() {
-        return entries.size();
-    }
-    
-    public Object getCell(int row, int column) {
-        Highscores.Entry entry = entries.get(row);
-        switch(column) {
-            case 0: return dateFormat.format(entry.date);
-            case 1: return entry.name;
-            case 2: return String.format("%d:%02d", entry.time/60, entry.time%60);
-            default:
-                throw new AssertionError();
-        }
-    }
+	private final List<Highscores.Entry> entries;
+	private final DateFormat dateFormat;
+
+	public HighscoreTableModel(List<Highscores.Entry> entries) {
+		this.entries = entries;
+		this.dateFormat = DateFormat.getDateInstance();
+	}
+
+	public int getNumColumns() {
+		return 3;
+	}
+
+	public String getColumnHeaderText(int column) {
+		switch (column) {
+		case 0:
+			return "Date";
+		case 1:
+			return "Name";
+		case 2:
+			return "Time";
+		default:
+			throw new AssertionError();
+		}
+	}
+
+	public int getNumRows() {
+		return entries.size();
+	}
+
+	public Object getCell(int row, int column) {
+		Highscores.Entry entry = entries.get(row);
+		switch (column) {
+		case 0:
+			return dateFormat.format(entry.date);
+		case 1:
+			return entry.name;
+		case 2:
+			return String.format("%d:%02d", entry.time / 60, entry.time % 60);
+		default:
+			throw new AssertionError();
+		}
+	}
 }

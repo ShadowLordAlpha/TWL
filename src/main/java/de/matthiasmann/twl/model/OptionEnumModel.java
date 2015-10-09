@@ -38,51 +38,53 @@ package de.matthiasmann.twl.model;
  * another OptionEnumModel working on the same EnumModel to true.
  *
  * @author Matthias Mann
- * @param <T> The enum class
+ * @param <T>
+ *            The enum class
  */
 public class OptionEnumModel<T extends Enum<T>> extends AbstractOptionModel {
 
-    protected final EnumModel<T> optionState;
-    protected final T optionCode;
+	protected final EnumModel<T> optionState;
+	protected final T optionCode;
 
-    public OptionEnumModel(EnumModel<T> optionState, T optionCode) {
-        if(optionState == null) {
-            throw new NullPointerException("optionState");
-        }
-        if(optionCode == null) {
-            throw new NullPointerException("optionCode");
-        }
+	public OptionEnumModel(EnumModel<T> optionState, T optionCode) {
+		if (optionState == null) {
+			throw new NullPointerException("optionState");
+		}
+		if (optionCode == null) {
+			throw new NullPointerException("optionCode");
+		}
 
-        this.optionState = optionState;
-        this.optionCode = optionCode;
-    }
+		this.optionState = optionState;
+		this.optionCode = optionCode;
+	}
 
-    public boolean getValue() {
-        return optionState.getValue() == optionCode;
-    }
+	public boolean getValue() {
+		return optionState.getValue() == optionCode;
+	}
 
-    /**
-     * If value is true, then the underlying EnumModel is set to the
-     * option code of this OptionEnumModel.
-     *
-     * if value if false then nothing happens.
-     *
-     * @param value the new value of this BooleanModel
-     */
-    public void setValue(boolean value) {
-        if(value) {
-            optionState.setValue(optionCode);
-        }
-    }
+	/**
+	 * If value is true, then the underlying EnumModel is set to the option code
+	 * of this OptionEnumModel.
+	 *
+	 * if value if false then nothing happens.
+	 *
+	 * @param value
+	 *            the new value of this BooleanModel
+	 */
+	public void setValue(boolean value) {
+		if (value) {
+			optionState.setValue(optionCode);
+		}
+	}
 
-    @Override
-    protected void installSrcCallback(Runnable cb) {
-        optionState.addCallback(cb);
-    }
+	@Override
+	protected void installSrcCallback(Runnable cb) {
+		optionState.addCallback(cb);
+	}
 
-    @Override
-    protected void removeSrcCallback(Runnable cb) {
-        optionState.removeCallback(cb);
-    }
-    
+	@Override
+	protected void removeSrcCallback(Runnable cb) {
+		optionState.removeCallback(cb);
+	}
+
 }

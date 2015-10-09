@@ -35,17 +35,17 @@ package test;
  */
 public class ToggleFadeFrame implements Runnable {
 
-    private final FadeFrame frame;
+	private final FadeFrame frame;
 
-    public ToggleFadeFrame(FadeFrame frame) {
-        this.frame = frame;
-    }
+	public ToggleFadeFrame(FadeFrame frame) {
+		this.frame = frame;
+	}
 
-    public void run() {
-        if(frame.isVisible()) {
-            frame.hide();
-        } else {
-            frame.show();
-        }
-    }
+	public void run() {
+		if (frame.isVisible()) {
+			frame.hide();
+		} else {
+			frame.show();
+		}
+	}
 }

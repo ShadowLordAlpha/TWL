@@ -29,12 +29,14 @@
  */
 package textarea;
 
-import java.awt.DisplayMode;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import test.TestUtils;
 import de.matthiasmann.twl.DesktopArea;
@@ -53,7 +55,6 @@ import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
 import de.matthiasmann.twl.textarea.StyleAttribute;
 import de.matthiasmann.twl.textarea.StyleSheet;
 import de.matthiasmann.twl.textarea.TextAreaModel;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.textarea.Value;
 import de.matthiasmann.twl.theme.ThemeManager;
 import de.matthiasmann.twl.utils.TextUtil;
@@ -64,197 +65,215 @@ import de.matthiasmann.twl.utils.TextUtil;
  */
 public class TextAreaDemo extends DesktopArea {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL TextArea Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL TextArea Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            TextAreaDemo demo = new TextAreaDemo();
-            GUI gui = new GUI(demo, renderer);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    TextAreaDemo.class.getResource("demo.xml"), renderer);
-            gui.applyTheme(theme);
+			GLFW.glfwSwapInterval(1); // vsync
 
-            while(!Display.isCloseRequested() && !demo.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			TextAreaDemo demo = new TextAreaDemo();
+			GUI gui = new GUI(demo, renderer);
 
-                gui.update();
+			ThemeManager theme = ThemeManager.createThemeManager(
+					TextAreaDemo.class.getResource("demo.xml"), renderer);
+			gui.applyTheme(theme);
 
-                /**
-                 * requires LWJGL 2.4 - for 2.3 just call Display.update()
-                 */
-                Display.update(false);
-                GL11.glGetError();  // force sync with multi threaded GL driver
-                Display.sync(60);   // ensure 60Hz even without vsync
-                Display.processMessages();  // now process inputs
-            }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !demo.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+				gui.update();
 
-    private final FPSCounter fpsCounter;
-    private final TextFrame textFrame;
+				/**
+				 * requires LWJGL 2.4 - for 2.3 just call Display.update()
+				 */
+				GLFW.glfwSwapBuffers(window);
+				GL11.glGetError(); // force sync with multi threaded GL driver
+				GLFW.glfwPollEvents(); // now process inputs
+			}
 
-    public boolean quit;
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
-    public TextAreaDemo() {
-        fpsCounter = new FPSCounter();
-        add(fpsCounter);
+	private final FPSCounter fpsCounter;
+	private final TextFrame textFrame;
 
-        textFrame = new TextFrame();
-        add(textFrame);
+	public boolean quit;
 
-        textFrame.setSize(600, 500);
-        textFrame.setPosition(40, 20);
-    }
+	public TextAreaDemo() {
+		fpsCounter = new FPSCounter();
+		add(fpsCounter);
 
-    @Override
-    protected void layout() {
-        super.layout();
+		textFrame = new TextFrame();
+		add(textFrame);
 
-        // fpsCounter is bottom right
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
-    }
+		textFrame.setSize(600, 500);
+		textFrame.setPosition(40, 20);
+	}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        switch (evt.getType()) {
-            case KEY_PRESSED:
-                switch (evt.getKeyCode()) {
-                    case Event.KEY_ESCAPE:
-                        quit = true;
-                        return true;
-                }
-        }
-        return false;
-    }
+	@Override
+	protected void layout() {
+		super.layout();
 
-    static class TextFrame extends ResizableFrame {
-        private final HTMLTextAreaModel textAreaModel;
-        private final TextArea textArea;
-        private final ScrollPane scrollPane;
-        private Timer timer;
-        private int size;
-        private int dir;
+		// fpsCounter is bottom right
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
+	}
 
-        private static final int MIN_SIZE = 128;
-        private static final int MAX_SIZE = 256;
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_ESCAPE:
+				quit = true;
+				return true;
+			}
+		}
+		return false;
+	}
 
-        public TextFrame() {
-            setTitle("Text");
+	static class TextFrame extends ResizableFrame {
+		private final HTMLTextAreaModel textAreaModel;
+		private final TextArea textArea;
+		private final ScrollPane scrollPane;
+		private Timer timer;
+		private int size;
+		private int dir;
 
-            this.textAreaModel = new HTMLTextAreaModel();
-            this.textArea = new TextArea(textAreaModel);
+		private static final int MIN_SIZE = 128;
+		private static final int MAX_SIZE = 256;
 
-            readFile("demo.html");
+		public TextFrame() {
+			setTitle("Text");
 
-            textArea.addCallback(new TextArea.Callback() {
-                public void handleLinkClicked(String href) {
-                    if(href.startsWith("javascript:")) {
-                        handleAction(href.substring(11));
-                    } else if(href.startsWith("#")) {
-                        TextAreaModel.Element ankor = textAreaModel.getElementById(href.substring(1));
-                        if(ankor != null) {
-                            Rect rect = textArea.getElementRect(ankor);
-                            if(rect != null) {
-                                scrollPane.setScrollPositionY(rect.getY());
-                            }
-                        }
-                    } else {
-                        readFile(href);
-                    }
-                }
-            });
+			this.textAreaModel = new HTMLTextAreaModel();
+			this.textArea = new TextArea(textAreaModel);
 
-            ValueAdjusterInt vai = new ValueAdjusterInt(new SimpleIntegerModel(0, 100, 50));
-            vai.setTooltipContent("Select a nice value");
-            textArea.registerWidget("niceValueSlider", vai);
-            
-            scrollPane = new ScrollPane(textArea);
-            scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
+			readFile("demo.html");
 
-            add(scrollPane);
-        }
+			textArea.addCallback(new TextArea.Callback() {
+				public void handleLinkClicked(String href) {
+					if (href.startsWith("javascript:")) {
+						handleAction(href.substring(11));
+					} else if (href.startsWith("#")) {
+						TextAreaModel.Element ankor = textAreaModel
+								.getElementById(href.substring(1));
+						if (ankor != null) {
+							Rect rect = textArea.getElementRect(ankor);
+							if (rect != null) {
+								scrollPane.setScrollPositionY(rect.getY());
+							}
+						}
+					} else {
+						readFile(href);
+					}
+				}
+			});
 
-        @Override
-        protected void afterAddToGUI(GUI gui) {
-            super.afterAddToGUI(gui);
-            timer = gui.createTimer();
-            timer.setDelay(16);
-            timer.setContinuous(true);
-            timer.setCallback(new Runnable() {
-                public void run() {
-                    animate();
-                }
-            });
-        }
+			ValueAdjusterInt vai = new ValueAdjusterInt(new SimpleIntegerModel(
+					0, 100, 50));
+			vai.setTooltipContent("Select a nice value");
+			textArea.registerWidget("niceValueSlider", vai);
 
-        @Override
-        protected void beforeRemoveFromGUI(GUI gui) {
-            super.beforeRemoveFromGUI(gui);
-            timer.stop();
-            timer = null;
-        }
+			scrollPane = new ScrollPane(textArea);
+			scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
 
-        void readFile(String name) {
-            try {
-                textAreaModel.readHTMLFromURL(TextAreaDemo.class.getResource(name));
+			add(scrollPane);
+		}
 
-                StyleSheet styleSheet = new StyleSheet();
-                for(String styleSheetLink : textAreaModel.getStyleSheetLinks()) {
-                    try {
-                        styleSheet.parse(TextAreaDemo.class.getResource(styleSheetLink));
-                    } catch(IOException ex) {
-                        Logger.getLogger(TextAreaDemo.class.getName()).log(Level.SEVERE,
-                                "Can't parse style sheet: " + styleSheetLink, ex);
-                    }
-                }
-                textArea.setStyleClassResolver(styleSheet);
-                
-                setTitle(TextUtil.notNull(textAreaModel.getTitle()));
+		@Override
+		protected void afterAddToGUI(GUI gui) {
+			super.afterAddToGUI(gui);
+			timer = gui.createTimer();
+			timer.setDelay(16);
+			timer.setContinuous(true);
+			timer.setCallback(new Runnable() {
+				public void run() {
+					animate();
+				}
+			});
+		}
 
-                size = MIN_SIZE;
-                dir = -4;
-            } catch(IOException ex) {
-                Logger.getLogger(TextAreaDemo.class.getName()).log(Level.SEVERE, "Can't read HTML: " + name, ex);
-            }
-        }
+		@Override
+		protected void beforeRemoveFromGUI(GUI gui) {
+			super.beforeRemoveFromGUI(gui);
+			timer.stop();
+			timer = null;
+		}
 
-        void handleAction(String what) {
-            if("zoomImage()".equals(what)) {
-                if(timer != null && !timer.isRunning()) {
-                    dir = -dir;
-                    timer.start();
-                }
-            }
-        }
+		void readFile(String name) {
+			try {
+				textAreaModel.readHTMLFromURL(TextAreaDemo.class
+						.getResource(name));
 
-        void animate() {
-            size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, size + dir));
-            if(size == MIN_SIZE || size == MAX_SIZE) {
-                timer.stop();
-            }
+				StyleSheet styleSheet = new StyleSheet();
+				for (String styleSheetLink : textAreaModel.getStyleSheetLinks()) {
+					try {
+						styleSheet.parse(TextAreaDemo.class
+								.getResource(styleSheetLink));
+					} catch (IOException ex) {
+						Logger.getLogger(TextAreaDemo.class.getName()).log(
+								Level.SEVERE,
+								"Can't parse style sheet: " + styleSheetLink,
+								ex);
+					}
+				}
+				textArea.setStyleClassResolver(styleSheet);
 
-            TextAreaModel.Element e = textAreaModel.getElementById("portrait");
-            if(e != null) {
-                e.setStyle(e.getStyle().with(StyleAttribute.WIDTH, new Value(size, Value.Unit.PX)));
-                textAreaModel.domModified();
-            }
-        }
-    }
+				setTitle(TextUtil.notNull(textAreaModel.getTitle()));
+
+				size = MIN_SIZE;
+				dir = -4;
+			} catch (IOException ex) {
+				Logger.getLogger(TextAreaDemo.class.getName()).log(
+						Level.SEVERE, "Can't read HTML: " + name, ex);
+			}
+		}
+
+		void handleAction(String what) {
+			if ("zoomImage()".equals(what)) {
+				if (timer != null && !timer.isRunning()) {
+					dir = -dir;
+					timer.start();
+				}
+			}
+		}
+
+		void animate() {
+			size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, size + dir));
+			if (size == MIN_SIZE || size == MAX_SIZE) {
+				timer.stop();
+			}
+
+			TextAreaModel.Element e = textAreaModel.getElementById("portrait");
+			if (e != null) {
+				e.setStyle(e.getStyle().with(StyleAttribute.WIDTH,
+						new Value(size, Value.Unit.PX)));
+				textAreaModel.domModified();
+			}
+		}
+	}
 }

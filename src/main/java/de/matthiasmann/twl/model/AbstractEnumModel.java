@@ -32,22 +32,24 @@ package de.matthiasmann.twl.model;
 /**
  * Abstract base class to simplify implementing EnumModels.
  * 
- * @param <T> The enum type
+ * @param <T>
+ *            The enum type
  * @author Matthias Mann
  */
-public abstract class AbstractEnumModel<T extends Enum<T>> extends HasCallback implements EnumModel<T> {
+public abstract class AbstractEnumModel<T extends Enum<T>> extends HasCallback
+		implements EnumModel<T> {
 
-    private final Class<T> enumClass;
+	private final Class<T> enumClass;
 
-    protected AbstractEnumModel(Class<T> clazz) {
-        if(clazz == null) {
-            throw new NullPointerException("clazz");
-        }
-        this.enumClass = clazz;
-    }
+	protected AbstractEnumModel(Class<T> clazz) {
+		if (clazz == null) {
+			throw new NullPointerException("clazz");
+		}
+		this.enumClass = clazz;
+	}
 
-    public Class<T> getEnumClass() {
-        return enumClass;
-    }
-    
+	public Class<T> getEnumClass() {
+		return enumClass;
+	}
+
 }

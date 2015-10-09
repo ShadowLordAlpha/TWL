@@ -45,177 +45,181 @@ import de.matthiasmann.twl.utils.CascadedHashMap;
  * @author Matthias Mann
  */
 class ParameterMapImpl extends ThemeChildImpl implements ParameterMap {
-    
-    private final CascadedHashMap<String, Object> params;
 
-    ParameterMapImpl(ThemeManager manager, ThemeInfoImpl parent) {
-        super(manager, parent);
-        this.params = new CascadedHashMap<String, Object>();
-    }
-    
-    void copy(ParameterMapImpl src) {
-        params.collapseAndSetFallback(src.params);
-    }
+	private final CascadedHashMap<String, Object> params;
 
-    public Font getFont(String name) {
-        Font value = getParameterValue(name, true, Font.class);
-        if(value != null) {
-            return value;
-        }
-        return manager.getDefaultFont();
-    }
+	ParameterMapImpl(ThemeManager manager, ThemeInfoImpl parent) {
+		super(manager, parent);
+		this.params = new CascadedHashMap<String, Object>();
+	}
 
-    public Image getImage(String name) {
-        Image img = getParameterValue(name, true, Image.class);
-        if(img == ImageManager.NONE) {
-            return null;
-        }
-        return img;
-    }
+	void copy(ParameterMapImpl src) {
+		params.collapseAndSetFallback(src.params);
+	}
 
-    public MouseCursor getMouseCursor(String name) {
-        MouseCursor value = getParameterValue(name, false, MouseCursor.class);
-        return value;
-    }
+	public Font getFont(String name) {
+		Font value = getParameterValue(name, true, Font.class);
+		if (value != null) {
+			return value;
+		}
+		return manager.getDefaultFont();
+	}
 
-    public ParameterMap getParameterMap(String name) {
-        ParameterMap value = getParameterValue(name, true, ParameterMap.class);
-        if(value == null) {
-            return manager.emptyMap;
-        }
-        return value;
-    }
+	public Image getImage(String name) {
+		Image img = getParameterValue(name, true, Image.class);
+		if (img == ImageManager.NONE) {
+			return null;
+		}
+		return img;
+	}
 
-    public ParameterList getParameterList(String name) {
-        ParameterList value = getParameterValue(name, true, ParameterList.class);
-        if(value == null) {
-            return manager.emptyList;
-        }
-        return value;
-    }
+	public MouseCursor getMouseCursor(String name) {
+		MouseCursor value = getParameterValue(name, false, MouseCursor.class);
+		return value;
+	}
 
-    public boolean getParameter(String name, boolean defaultValue) {
-        Boolean value = getParameterValue(name, true, Boolean.class);
-        if(value != null) {
-            return value.booleanValue();
-        }
-        return defaultValue;
-    }
+	public ParameterMap getParameterMap(String name) {
+		ParameterMap value = getParameterValue(name, true, ParameterMap.class);
+		if (value == null) {
+			return manager.emptyMap;
+		}
+		return value;
+	}
 
-    public int getParameter(String name, int defaultValue) {
-        Integer value = getParameterValue(name, true, Integer.class);
-        if(value != null) {
-            return value.intValue();
-        }
-        return defaultValue;
-    }
+	public ParameterList getParameterList(String name) {
+		ParameterList value = getParameterValue(name, true, ParameterList.class);
+		if (value == null) {
+			return manager.emptyList;
+		}
+		return value;
+	}
 
-    public float getParameter(String name, float defaultValue) {
-        Float value = getParameterValue(name, true, Float.class);
-        if(value != null) {
-            return value.floatValue();
-        }
-        return defaultValue;
-    }
+	public boolean getParameter(String name, boolean defaultValue) {
+		Boolean value = getParameterValue(name, true, Boolean.class);
+		if (value != null) {
+			return value.booleanValue();
+		}
+		return defaultValue;
+	}
 
-    public String getParameter(String name, String defaultValue) {
-        String value = getParameterValue(name, true, String.class);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public int getParameter(String name, int defaultValue) {
+		Integer value = getParameterValue(name, true, Integer.class);
+		if (value != null) {
+			return value.intValue();
+		}
+		return defaultValue;
+	}
 
-    public Color getParameter(String name, Color defaultValue) {
-        Color value = getParameterValue(name, true, Color.class);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public float getParameter(String name, float defaultValue) {
+		Float value = getParameterValue(name, true, Float.class);
+		if (value != null) {
+			return value.floatValue();
+		}
+		return defaultValue;
+	}
 
-    public <E extends Enum<E>> E getParameter(String name, E defaultValue) {
-        Class<E> enumType = defaultValue.getDeclaringClass();
-        E value = getParameterValue(name, true, enumType);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public String getParameter(String name, String defaultValue) {
+		String value = getParameterValue(name, true, String.class);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public Object getParameterValue(String name, boolean warnIfNotPresent) {
-        Object value = params.get(name);
-        if(value == null && warnIfNotPresent) {
-            missingParameter(name, null);
-        }
-        return value;
-    }
+	public Color getParameter(String name, Color defaultValue) {
+		Color value = getParameterValue(name, true, Color.class);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public <T> T getParameterValue(String name, boolean warnIfNotPresent, Class<T> clazz) {
-        return getParameterValue(name, warnIfNotPresent, clazz, null);
-    }
+	public <E extends Enum<E>> E getParameter(String name, E defaultValue) {
+		Class<E> enumType = defaultValue.getDeclaringClass();
+		E value = getParameterValue(name, true, enumType);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public <T> T getParameterValue(String name, boolean warnIfNotPresent, Class<T> clazz, T defaultValue) {
-        Object value = params.get(name);
-        if(value == null && warnIfNotPresent) {
-            missingParameter(name, clazz);
-        }
-        if(!clazz.isInstance(value)) {
-            if(value != null) {
-                wrongParameterType(name, clazz, value.getClass());
-            }
-            return defaultValue;
-        }
-        return clazz.cast(value);
-    }
+	public Object getParameterValue(String name, boolean warnIfNotPresent) {
+		Object value = params.get(name);
+		if (value == null && warnIfNotPresent) {
+			missingParameter(name, null);
+		}
+		return value;
+	}
 
+	public <T> T getParameterValue(String name, boolean warnIfNotPresent,
+			Class<T> clazz) {
+		return getParameterValue(name, warnIfNotPresent, clazz, null);
+	}
 
-    protected void wrongParameterType(String paramName, Class<?> expectedType, Class<?> foundType) {
-        DebugHook.getDebugHook().wrongParameterType(this, paramName, expectedType, foundType, getParentDescription());
-    }
+	public <T> T getParameterValue(String name, boolean warnIfNotPresent,
+			Class<T> clazz, T defaultValue) {
+		Object value = params.get(name);
+		if (value == null && warnIfNotPresent) {
+			missingParameter(name, clazz);
+		}
+		if (!clazz.isInstance(value)) {
+			if (value != null) {
+				wrongParameterType(name, clazz, value.getClass());
+			}
+			return defaultValue;
+		}
+		return clazz.cast(value);
+	}
 
-    protected void missingParameter(String paramName, Class<?> dataType) {
-        DebugHook.getDebugHook().missingParameter(this, paramName, getParentDescription(), dataType);
-    }
-    
-    protected void replacingWithDifferentType(String paramName, Class<?> oldType, Class<?> newType) {
-        DebugHook.getDebugHook().replacingWithDifferentType(this, paramName, oldType, newType, getParentDescription());
-    }
+	protected void wrongParameterType(String paramName, Class<?> expectedType,
+			Class<?> foundType) {
+		DebugHook.getDebugHook().wrongParameterType(this, paramName,
+				expectedType, foundType, getParentDescription());
+	}
 
-    Object getParam(String name) {
-        return params.get(name);
-    }
-    
-    void put(Map<String, ?> params) {
-        for(Map.Entry<String, ?> e : params.entrySet()) {
-            put(e.getKey(), e.getValue());
-        }
-    }
-    
-    void put(String paramName, Object value) {
-        Object old = params.put(paramName, value);
-        if(old != null && value != null) {
-            Class<?> oldClass = old.getClass();
-            Class<?> newClass = value.getClass();
+	protected void missingParameter(String paramName, Class<?> dataType) {
+		DebugHook.getDebugHook().missingParameter(this, paramName,
+				getParentDescription(), dataType);
+	}
 
-            if(oldClass != newClass && !areTypesCompatible(oldClass, newClass)) {
-                replacingWithDifferentType(paramName, oldClass, newClass);
-            }
-        }
-    }
-    
-    private static boolean areTypesCompatible(Class<?> classA, Class<?> classB) {
-        for(Class<?> clazz : BASE_CLASSES) {
-            if(clazz.isAssignableFrom(classA) && clazz.isAssignableFrom(classB)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private static final Class<?> BASE_CLASSES[] = {
-        Image.class,
-        Font.class,
-        MouseCursor.class
-    };
+	protected void replacingWithDifferentType(String paramName,
+			Class<?> oldType, Class<?> newType) {
+		DebugHook.getDebugHook().replacingWithDifferentType(this, paramName,
+				oldType, newType, getParentDescription());
+	}
+
+	Object getParam(String name) {
+		return params.get(name);
+	}
+
+	void put(Map<String, ?> params) {
+		for (Map.Entry<String, ?> e : params.entrySet()) {
+			put(e.getKey(), e.getValue());
+		}
+	}
+
+	void put(String paramName, Object value) {
+		Object old = params.put(paramName, value);
+		if (old != null && value != null) {
+			Class<?> oldClass = old.getClass();
+			Class<?> newClass = value.getClass();
+
+			if (oldClass != newClass && !areTypesCompatible(oldClass, newClass)) {
+				replacingWithDifferentType(paramName, oldClass, newClass);
+			}
+		}
+	}
+
+	private static boolean areTypesCompatible(Class<?> classA, Class<?> classB) {
+		for (Class<?> clazz : BASE_CLASSES) {
+			if (clazz.isAssignableFrom(classA)
+					&& clazz.isAssignableFrom(classB)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static final Class<?> BASE_CLASSES[] = { Image.class, Font.class,
+			MouseCursor.class };
 }

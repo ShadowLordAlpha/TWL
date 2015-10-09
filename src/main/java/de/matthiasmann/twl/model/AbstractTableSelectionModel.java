@@ -35,66 +35,69 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractTableSelectionModel implements TableSelectionModel {
+public abstract class AbstractTableSelectionModel implements
+		TableSelectionModel {
 
-    protected int leadIndex;
-    protected int anchorIndex;
-    protected Runnable[] selectionChangeListener;
+	protected int leadIndex;
+	protected int anchorIndex;
+	protected Runnable[] selectionChangeListener;
 
-    protected AbstractTableSelectionModel() {
-        this.leadIndex = -1;
-        this.anchorIndex = -1;
-    }
+	protected AbstractTableSelectionModel() {
+		this.leadIndex = -1;
+		this.anchorIndex = -1;
+	}
 
-    public int getAnchorIndex() {
-        return anchorIndex;
-    }
+	public int getAnchorIndex() {
+		return anchorIndex;
+	}
 
-    public int getLeadIndex() {
-        return leadIndex;
-    }
+	public int getLeadIndex() {
+		return leadIndex;
+	}
 
-    public void setAnchorIndex(int index) {
-        anchorIndex = index;
-    }
+	public void setAnchorIndex(int index) {
+		anchorIndex = index;
+	}
 
-    public void setLeadIndex(int index) {
-        leadIndex = index;
-    }
+	public void setLeadIndex(int index) {
+		leadIndex = index;
+	}
 
-    public void addSelectionChangeListener(Runnable cb) {
-        selectionChangeListener = CallbackSupport.addCallbackToList(selectionChangeListener, cb, Runnable.class);
-    }
+	public void addSelectionChangeListener(Runnable cb) {
+		selectionChangeListener = CallbackSupport.addCallbackToList(
+				selectionChangeListener, cb, Runnable.class);
+	}
 
-    public void removeSelectionChangeListener(Runnable cb) {
-        selectionChangeListener = CallbackSupport.removeCallbackFromList(selectionChangeListener, cb);
-    }
+	public void removeSelectionChangeListener(Runnable cb) {
+		selectionChangeListener = CallbackSupport.removeCallbackFromList(
+				selectionChangeListener, cb);
+	}
 
-    public void rowsDeleted(int index, int count) {
-        if(leadIndex >= index) {
-            leadIndex = Math.max(index, leadIndex - count);
-        }
-        if(anchorIndex >= index) {
-            anchorIndex = Math.max(index, anchorIndex - count);
-        }
-    }
+	public void rowsDeleted(int index, int count) {
+		if (leadIndex >= index) {
+			leadIndex = Math.max(index, leadIndex - count);
+		}
+		if (anchorIndex >= index) {
+			anchorIndex = Math.max(index, anchorIndex - count);
+		}
+	}
 
-    public void rowsInserted(int index, int count) {
-        if(leadIndex >= index) {
-            leadIndex += count;
-        }
-        if(anchorIndex >= index) {
-            anchorIndex += count;
-        }
-    }
+	public void rowsInserted(int index, int count) {
+		if (leadIndex >= index) {
+			leadIndex += count;
+		}
+		if (anchorIndex >= index) {
+			anchorIndex += count;
+		}
+	}
 
-    protected void fireSelectionChange() {
-        CallbackSupport.fireCallbacks(selectionChangeListener);
-    }
-    
-    protected void updateLeadAndAnchor(int index0, int index1) {
-        anchorIndex = index0;
-        leadIndex = index1;
-    }
-    
+	protected void fireSelectionChange() {
+		CallbackSupport.fireCallbacks(selectionChangeListener);
+	}
+
+	protected void updateLeadAndAnchor(int index0, int index1) {
+		anchorIndex = index0;
+		leadIndex = index1;
+	}
+
 }

@@ -32,11 +32,12 @@ package de.matthiasmann.twl;
 /**
  * A callback interface with an enum as reason
  *
- * @param <T> The type of the reason enum
+ * @param <T>
+ *            The type of the reason enum
  * @author Matthias Mann
  */
 public interface CallbackWithReason<T extends Enum<T>> {
 
-    public void callback(T reason);
-    
+	public void callback(T reason);
+
 }

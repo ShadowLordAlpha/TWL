@@ -29,6 +29,11 @@
  */
 package actions;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
+
 import de.matthiasmann.twl.ActionMap.Action;
 import de.matthiasmann.twl.FPSCounter;
 import de.matthiasmann.twl.GUI;
@@ -37,11 +42,6 @@ import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
-
 /**
  * A small demo showing how to use keyboard actions
  * 
@@ -49,118 +49,122 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class ActionDemo extends Widget {
 
-    public static void main(String[] args) {
-        try {
-        	if(GLFW.glfwInit() != GL11.GL_TRUE) {
-        		System.err.println("Failed To Initilize GLFW!");
-            	System.exit(-1);
-        	}
-        	long window = GLFW.glfwCreateWindow(800, 600, "TWL Action Demo", MemoryUtil.NULL, MemoryUtil.NULL);
-        	
-            if(window == MemoryUtil.NULL) {
-            	System.err.println("Failed To Create Window!");
-            	System.exit(-1);
-            }
-        	GLFW.glfwMakeContextCurrent(window);
-        	GL.createCapabilities();
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Action Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            ActionDemo demo = new ActionDemo();
-            GUI gui = new GUI(demo, renderer);
-            
-            demo.requestKeyboardFocus();
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    ActionDemo.class.getResource("actiondemo.xml"), renderer);
-            gui.applyTheme(theme);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			ActionDemo demo = new ActionDemo();
+			GUI gui = new GUI(demo, renderer);
 
-            while(!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE) && !demo.quit) {
-            	GLFW.glfwPollEvents();
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			demo.requestKeyboardFocus();
 
-                gui.update();
-                GLFW.glfwSwapBuffers(window);
-                //TestUtils.reduceInputLag();
-            }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					ActionDemo.class.getResource("actiondemo.xml"), renderer);
+			gui.applyTheme(theme);
 
-            gui.destroy();
-            theme.destroy();
-            GLFW.glfwDestroyWindow(window);
-        } catch (Exception ex) {
-            //TestUtils.showErrMsg(ex);
-        	ex.printStackTrace();
-        }
-    }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !demo.quit) {
+				GLFW.glfwPollEvents();
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-    private final FPSCounter fpsCounter;
-    private final Label instructions;
-    private final Label result;
-    public boolean quit;
+				gui.update();
+				GLFW.glfwSwapBuffers(window);
+				// TestUtils.reduceInputLag();
+			}
 
-    @SuppressWarnings("LeakingThisInConstructor")
-    public ActionDemo() {
-        fpsCounter = new FPSCounter();
-        add(fpsCounter);
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			// TestUtils.showErrMsg(ex);
+			ex.printStackTrace();
+		}
+	}
 
-        instructions = new Label();
-        instructions.setTheme("instructions");
-        instructions.setText("Press the keys W, A, S, D, Ctrl-O and Ctrl-S to invoke actions");
-        add(instructions);
-        
-        result = new Label();
-        result.setTheme("result");
-        add(result);
-        
-        getOrCreateActionMap().addMapping(this);
-        
-        setCanAcceptKeyboardFocus(true);
-    }
+	private final FPSCounter fpsCounter;
+	private final Label instructions;
+	private final Label result;
+	public boolean quit;
 
-    @Action
-    public void left() {
-        result.setText("You go left, but only found a wall");
-    }
-    
-    @Action
-    public void right() {
-        result.setText("right is not a direction you want to go");
-    }
-    
-    @Action
-    public void forward() {
-        result.setText("forward is the direction of the future");
-    }
-    
-    @Action
-    public void back() {
-        result.setText("we have to go back into the future !");
-    }
-    
-    @Action
-    public void load() {
-        result.setText("there is no previous save game");
-    }
-    
-    @Action
-    public void save() {
-        result.setText("save! yes - you are save here");
-    }
-    
-    @Override
-    protected void layout() {
-        // instructions are near the top 
-        instructions.setSize(getInnerWidth(), instructions.getPreferredHeight());
-        instructions.setPosition(getInnerX(), getInnerY() + 20);
-        
-        // result is in the screen center
-        result.setSize(getInnerWidth(), result.getPreferredHeight());
-        result.setPosition(getInnerX(), getInnerY() + (getInnerHeight() - result.getHeight())/2);
-        
-        // fpsCounter is bottom right
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
-    }
+	@SuppressWarnings("LeakingThisInConstructor")
+	public ActionDemo() {
+		fpsCounter = new FPSCounter();
+		add(fpsCounter);
+
+		instructions = new Label();
+		instructions.setTheme("instructions");
+		instructions
+				.setText("Press the keys W, A, S, D, Ctrl-O and Ctrl-S to invoke actions");
+		add(instructions);
+
+		result = new Label();
+		result.setTheme("result");
+		add(result);
+
+		getOrCreateActionMap().addMapping(this);
+
+		setCanAcceptKeyboardFocus(true);
+	}
+
+	@Action
+	public void left() {
+		result.setText("You go left, but only found a wall");
+	}
+
+	@Action
+	public void right() {
+		result.setText("right is not a direction you want to go");
+	}
+
+	@Action
+	public void forward() {
+		result.setText("forward is the direction of the future");
+	}
+
+	@Action
+	public void back() {
+		result.setText("we have to go back into the future !");
+	}
+
+	@Action
+	public void load() {
+		result.setText("there is no previous save game");
+	}
+
+	@Action
+	public void save() {
+		result.setText("save! yes - you are save here");
+	}
+
+	@Override
+	protected void layout() {
+		// instructions are near the top
+		instructions
+				.setSize(getInnerWidth(), instructions.getPreferredHeight());
+		instructions.setPosition(getInnerX(), getInnerY() + 20);
+
+		// result is in the screen center
+		result.setSize(getInnerWidth(), result.getPreferredHeight());
+		result.setPosition(getInnerX(), getInnerY()
+				+ (getInnerHeight() - result.getHeight()) / 2);
+
+		// fpsCounter is bottom right
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
+	}
 
 }

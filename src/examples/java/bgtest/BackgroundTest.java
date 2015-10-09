@@ -29,14 +29,15 @@
  */
 package bgtest;
 
-import java.awt.DisplayMode;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
-import test.TestUtils;
 import de.matthiasmann.twl.DesktopArea;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.FPSCounter;
@@ -47,7 +48,6 @@ import de.matthiasmann.twl.renderer.DynamicImage;
 import de.matthiasmann.twl.renderer.Image;
 import de.matthiasmann.twl.renderer.Renderer;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -56,105 +56,123 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class BackgroundTest extends DesktopArea {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Chat Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600,
+					"TWL Background Test", MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            BackgroundTest bgtest = new BackgroundTest();
-            GUI gui = new GUI(bgtest, renderer);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    BackgroundTest.class.getResource("bgtest.xml"), renderer);
-            gui.applyTheme(theme);
+			GLFW.glfwSwapInterval(1);
 
-            while(!Display.isCloseRequested()) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			BackgroundTest bgtest = new BackgroundTest();
+			GUI gui = new GUI(bgtest, renderer);
 
-                gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
-            }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					BackgroundTest.class.getResource("bgtest.xml"), renderer);
+			gui.applyTheme(theme);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-    private final FPSCounter fpsCounter;
-    private final Label mouseCoords;
+				gui.update();
+				GLFW.glfwSwapBuffers(window);
+				GLFW.glfwPollEvents();
+				// TestUtils.reduceInputLag();
+			}
 
-    private Image gridBase;
-    private Image gridMask;
-    private DynamicImage lightImage;
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			// TestUtils.showErrMsg(ex);
+			ex.printStackTrace();
+		}
+	}
 
-    public BackgroundTest() {
-        fpsCounter = new FPSCounter();
-        mouseCoords = new Label();
+	private final FPSCounter fpsCounter;
+	private final Label mouseCoords;
 
-        add(fpsCounter);
-        add(mouseCoords);
-    }
+	private Image gridBase;
+	private Image gridMask;
+	private DynamicImage lightImage;
 
-    @Override
-    protected void layout() {
-        super.layout();
+	public BackgroundTest() {
+		fpsCounter = new FPSCounter();
+		mouseCoords = new Label();
 
-        // fpsCounter is bottom right
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
+		add(fpsCounter);
+		add(mouseCoords);
+	}
 
-        mouseCoords.adjustSize();
-        mouseCoords.setPosition(0, getInnerHeight() - fpsCounter.getHeight());
-    }
+	@Override
+	protected void layout() {
+		super.layout();
 
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        gridBase = themeInfo.getImage("grid.base");
-        gridMask = themeInfo.getImage("grid.mask");
-    }
+		// fpsCounter is bottom right
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
 
-    @Override
-    protected void paintBackground(GUI gui) {
-        if(lightImage == null) {
-            createLightImage(gui.getRenderer());
-        }
-        if(gridBase != null && gridMask != null) {
-            int time = (int)(gui.getCurrentTime() % 2000);
-            int offset = (time * (getInnerHeight() + 2*lightImage.getHeight()) / 2000) - lightImage.getHeight();
-            gridBase.draw(getAnimationState(), getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-            lightImage.draw(getAnimationState(), getInnerX(), getInnerY() + offset, getInnerWidth(), lightImage.getHeight());
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            gridMask.draw(getAnimationState(), getInnerX(), getInnerY(), getInnerWidth(), getInnerHeight());
-        }
-    }
+		mouseCoords.adjustSize();
+		mouseCoords.setPosition(0, getInnerHeight() - fpsCounter.getHeight());
+	}
 
-    private void createLightImage(Renderer renderer) {
-        lightImage = renderer.createDynamicImage(1, 128);
-        ByteBuffer bb = ByteBuffer.allocateDirect(128 * 4);
-        IntBuffer ib = bb.order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
-        for(int i=0 ; i<128 ; i++) {
-            int value = (int)(255 * Math.sin(i * Math.PI / 127.0));
-            ib.put(i, (value * 0x010101) | 0xFF000000);
-        }
-        lightImage.update(bb, DynamicImage.Format.BGRA);
-    }
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		gridBase = themeInfo.getImage("grid.base");
+		gridMask = themeInfo.getImage("grid.mask");
+	}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(evt.isMouseEvent()) {
-            mouseCoords.setText("x: " + evt.getMouseX() + "  y: " + evt.getMouseY());
-        }
-        return super.handleEvent(evt) || evt.isMouseEventNoWheel();
-    }
+	@Override
+	protected void paintBackground(GUI gui) {
+		if (lightImage == null) {
+			createLightImage(gui.getRenderer());
+		}
+		if (gridBase != null && gridMask != null) {
+			int time = (int) (gui.getCurrentTime() % 2000);
+			int offset = (time
+					* (getInnerHeight() + 2 * lightImage.getHeight()) / 2000)
+					- lightImage.getHeight();
+			gridBase.draw(getAnimationState(), getInnerX(), getInnerY(),
+					getInnerWidth(), getInnerHeight());
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+			lightImage.draw(getAnimationState(), getInnerX(), getInnerY()
+					+ offset, getInnerWidth(), lightImage.getHeight());
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			gridMask.draw(getAnimationState(), getInnerX(), getInnerY(),
+					getInnerWidth(), getInnerHeight());
+		}
+	}
+
+	private void createLightImage(Renderer renderer) {
+		lightImage = renderer.createDynamicImage(1, 128);
+		ByteBuffer bb = ByteBuffer.allocateDirect(128 * 4);
+		IntBuffer ib = bb.order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+		for (int i = 0; i < 128; i++) {
+			int value = (int) (255 * Math.sin(i * Math.PI / 127.0));
+			ib.put(i, (value * 0x010101) | 0xFF000000);
+		}
+		lightImage.update(bb, DynamicImage.Format.BGRA);
+	}
+
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (evt.isMouseEvent()) {
+			mouseCoords.setText("x: " + evt.getMouseX() + "  y: "
+					+ evt.getMouseY());
+		}
+		return super.handleEvent(evt) || evt.isMouseEventNoWheel();
+	}
 }

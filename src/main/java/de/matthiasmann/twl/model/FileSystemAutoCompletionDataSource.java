@@ -38,137 +38,142 @@ import de.matthiasmann.twl.model.FileSystemModel.FileFilter;
  * 
  * @author Matthias Mann
  */
-public class FileSystemAutoCompletionDataSource implements AutoCompletionDataSource {
+public class FileSystemAutoCompletionDataSource implements
+		AutoCompletionDataSource {
 
-    final FileSystemModel fsm;
-    final FileSystemModel.FileFilter fileFilter;
+	final FileSystemModel fsm;
+	final FileSystemModel.FileFilter fileFilter;
 
-    public FileSystemAutoCompletionDataSource(FileSystemModel fsm, FileFilter fileFilter) {
-        if(fsm == null) {
-            throw new NullPointerException("fsm");
-        }
-        
-        this.fsm = fsm;
-        this.fileFilter = fileFilter;
-    }
+	public FileSystemAutoCompletionDataSource(FileSystemModel fsm,
+			FileFilter fileFilter) {
+		if (fsm == null) {
+			throw new NullPointerException("fsm");
+		}
 
-    public FileSystemModel getFileSystemModel() {
-        return fsm;
-    }
+		this.fsm = fsm;
+		this.fileFilter = fileFilter;
+	}
 
-    public FileFilter getFileFilter() {
-        return fileFilter;
-    }
+	public FileSystemModel getFileSystemModel() {
+		return fsm;
+	}
 
-    public AutoCompletionResult collectSuggestions(String text, int cursorPos, AutoCompletionResult prev) {
-        text = text.substring(0, cursorPos);
-        int prefixLength = computePrefixLength(text);
-        String prefix = text.substring(0, prefixLength);
-        Object parent;
+	public FileFilter getFileFilter() {
+		return fileFilter;
+	}
 
-        if((prev instanceof Result) &&
-                prev.getPrefixLength() == prefixLength &&
-                prev.getText().startsWith(prefix)) {
-            parent = ((Result)prev).parent;
-        } else {
-            parent = fsm.getFile(prefix);
-        }
+	public AutoCompletionResult collectSuggestions(String text, int cursorPos,
+			AutoCompletionResult prev) {
+		text = text.substring(0, cursorPos);
+		int prefixLength = computePrefixLength(text);
+		String prefix = text.substring(0, prefixLength);
+		Object parent;
 
-        if(parent == null) {
-            return null;
-        }
+		if ((prev instanceof Result) && prev.getPrefixLength() == prefixLength
+				&& prev.getText().startsWith(prefix)) {
+			parent = ((Result) prev).parent;
+		} else {
+			parent = fsm.getFile(prefix);
+		}
 
-        Result result = new Result(text, prefixLength, parent);
-        fsm.listFolder(parent, result);
+		if (parent == null) {
+			return null;
+		}
 
-        if(result.getNumResults() == 0) {
-            return null;
-        }
+		Result result = new Result(text, prefixLength, parent);
+		fsm.listFolder(parent, result);
 
-        return result;
-    }
-    
-    int computePrefixLength(String text) {
-        String separator = fsm.getSeparator();
-        int prefixLength = text.lastIndexOf(separator) + separator.length();
-        if(prefixLength < 0) {
-            prefixLength = 0;
-        }
-        return prefixLength;
-    }
+		if (result.getNumResults() == 0) {
+			return null;
+		}
 
-    class Result extends AutoCompletionResult implements FileSystemModel.FileFilter {
-        final Object parent;
-        final String nameFilter;
+		return result;
+	}
 
-        final ArrayList<String> results1 = new ArrayList<String>();
-        final ArrayList<String> results2 = new ArrayList<String>();
+	int computePrefixLength(String text) {
+		String separator = fsm.getSeparator();
+		int prefixLength = text.lastIndexOf(separator) + separator.length();
+		if (prefixLength < 0) {
+			prefixLength = 0;
+		}
+		return prefixLength;
+	}
 
-        public Result(String text, int prefixLength, Object parent) {
-            super(text, prefixLength);
-            this.parent = parent;
-            this.nameFilter = text.substring(prefixLength).toUpperCase();
-        }
+	class Result extends AutoCompletionResult implements
+			FileSystemModel.FileFilter {
+		final Object parent;
+		final String nameFilter;
 
-        public boolean accept(FileSystemModel fsm, Object file) {
-            FileSystemModel.FileFilter ff = fileFilter;
-            if(ff == null || ff.accept(fsm, file)) {
-                int idx = getMatchIndex(fsm.getName(file));
-                if(idx >= 0) {
-                    addName(fsm.getPath(file), idx);
-                }
-            }
-            return false;
-        }
+		final ArrayList<String> results1 = new ArrayList<String>();
+		final ArrayList<String> results2 = new ArrayList<String>();
 
-        private int getMatchIndex(String partName) {
-            return partName.toUpperCase().indexOf(nameFilter);
-        }
-        private void addName(String fullName, int matchIdx) {
-            if(matchIdx == 0) {
-                results1.add(fullName);
-            } else if(matchIdx > 0) {
-                results2.add(fullName);
-            }
-        }
+		public Result(String text, int prefixLength, Object parent) {
+			super(text, prefixLength);
+			this.parent = parent;
+			this.nameFilter = text.substring(prefixLength).toUpperCase();
+		}
 
-        private void addFiltedNames(ArrayList<String> results) {
-            for(int i=0,n=results.size() ; i<n ; i++) {
-                String fullName = results.get(i);
-                int idx = getMatchIndex(fullName.substring(prefixLength));
-                addName(fullName, idx);
-            }
-        }
+		public boolean accept(FileSystemModel fsm, Object file) {
+			FileSystemModel.FileFilter ff = fileFilter;
+			if (ff == null || ff.accept(fsm, file)) {
+				int idx = getMatchIndex(fsm.getName(file));
+				if (idx >= 0) {
+					addName(fsm.getPath(file), idx);
+				}
+			}
+			return false;
+		}
 
-        @Override
-        public int getNumResults() {
-            return results1.size() + results2.size();
-        }
+		private int getMatchIndex(String partName) {
+			return partName.toUpperCase().indexOf(nameFilter);
+		}
 
-        @Override
-        public String getResult(int idx) {
-            int size1 = results1.size();
-            if(idx >= size1) {
-                return results2.get(idx - size1);
-            } else {
-                return results1.get(idx);
-            }
-        }
+		private void addName(String fullName, int matchIdx) {
+			if (matchIdx == 0) {
+				results1.add(fullName);
+			} else if (matchIdx > 0) {
+				results2.add(fullName);
+			}
+		}
 
-        boolean canRefine(String text) {
-            return prefixLength == computePrefixLength(text) && text.startsWith(this.text);
-        }
+		private void addFiltedNames(ArrayList<String> results) {
+			for (int i = 0, n = results.size(); i < n; i++) {
+				String fullName = results.get(i);
+				int idx = getMatchIndex(fullName.substring(prefixLength));
+				addName(fullName, idx);
+			}
+		}
 
-        @Override
-        public AutoCompletionResult refine(String text, int cursorPos) {
-            text = text.substring(0, cursorPos);
-            if(canRefine(text)) {
-                Result result = new Result(text, prefixLength, parent);
-                result.addFiltedNames(results1);
-                result.addFiltedNames(results2);
-                return result;
-            }
-            return null;
-        }
-    }
+		@Override
+		public int getNumResults() {
+			return results1.size() + results2.size();
+		}
+
+		@Override
+		public String getResult(int idx) {
+			int size1 = results1.size();
+			if (idx >= size1) {
+				return results2.get(idx - size1);
+			} else {
+				return results1.get(idx);
+			}
+		}
+
+		boolean canRefine(String text) {
+			return prefixLength == computePrefixLength(text)
+					&& text.startsWith(this.text);
+		}
+
+		@Override
+		public AutoCompletionResult refine(String text, int cursorPos) {
+			text = text.substring(0, cursorPos);
+			if (canRefine(text)) {
+				Result result = new Result(text, prefixLength, parent);
+				result.addFiltedNames(results1);
+				result.addFiltedNames(results2);
+				return result;
+			}
+			return null;
+		}
+	}
 }

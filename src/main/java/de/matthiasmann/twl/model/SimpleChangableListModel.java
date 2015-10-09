@@ -34,80 +34,81 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * A simple list model which manages it's content and provides method
- * to modify that content.
+ * A simple list model which manages it's content and provides method to modify
+ * that content.
  *
- * @param <T> The type of the list entries
+ * @param <T>
+ *            The type of the list entries
  * @author Matthias Mann
  */
 public class SimpleChangableListModel<T> extends SimpleListModel<T> {
 
-    private final ArrayList<T> content;
+	private final ArrayList<T> content;
 
-    public SimpleChangableListModel() {
-        this.content = new ArrayList<T>();
-    }
+	public SimpleChangableListModel() {
+		this.content = new ArrayList<T>();
+	}
 
-    public SimpleChangableListModel(Collection<T> content) {
-        this.content = new ArrayList<T>(content);
-    }
+	public SimpleChangableListModel(Collection<T> content) {
+		this.content = new ArrayList<T>(content);
+	}
 
-    public SimpleChangableListModel(T ... content) {
-        this.content = new ArrayList<T>(Arrays.asList(content));
-    }
+	public SimpleChangableListModel(T... content) {
+		this.content = new ArrayList<T>(Arrays.asList(content));
+	}
 
-    public T getEntry(int index) {
-        return content.get(index);
-    }
+	public T getEntry(int index) {
+		return content.get(index);
+	}
 
-    public int getNumEntries() {
-        return content.size();
-    }
+	public int getNumEntries() {
+		return content.size();
+	}
 
-    public void addElement(T element) {
-        insertElement(getNumEntries(), element);
-    }
+	public void addElement(T element) {
+		insertElement(getNumEntries(), element);
+	}
 
-    public void addElements(Collection<T> elements) {
-        insertElements(getNumEntries(), elements);
-    }
+	public void addElements(Collection<T> elements) {
+		insertElements(getNumEntries(), elements);
+	}
 
-    public void addElements(T ... elements) {
-        insertElements(getNumEntries(), elements);
-    }
-    
-    public void insertElement(int idx, T element) {
-        content.add(idx, element);
-        fireEntriesInserted(idx, idx);
-    }
+	public void addElements(T... elements) {
+		insertElements(getNumEntries(), elements);
+	}
 
-    public void insertElements(int idx, Collection<T> elements) {
-        content.addAll(idx, elements);
-        fireEntriesInserted(idx, idx+elements.size()-1);
-    }
+	public void insertElement(int idx, T element) {
+		content.add(idx, element);
+		fireEntriesInserted(idx, idx);
+	}
 
-    public void insertElements(int idx, T ... elements) {
-        insertElements(idx, Arrays.asList(elements));
-    }
+	public void insertElements(int idx, Collection<T> elements) {
+		content.addAll(idx, elements);
+		fireEntriesInserted(idx, idx + elements.size() - 1);
+	}
 
-    public T removeElement(int idx) {
-        T result = content.remove(idx);
-        fireEntriesDeleted(idx, idx);
-        return result;
-    }
+	public void insertElements(int idx, T... elements) {
+		insertElements(idx, Arrays.asList(elements));
+	}
 
-    public T setElement(int idx, T element) {
-        T result = content.set(idx, element);
-        fireEntriesChanged(idx, idx);
-        return result;
-    }
+	public T removeElement(int idx) {
+		T result = content.remove(idx);
+		fireEntriesDeleted(idx, idx);
+		return result;
+	}
 
-    public int findElement(Object element) {
-        return content.indexOf(element);
-    }
-    
-    public void clear() {
-        content.clear();
-        fireAllChanged();
-    }
+	public T setElement(int idx, T element) {
+		T result = content.set(idx, element);
+		fireEntriesChanged(idx, idx);
+		return result;
+	}
+
+	public int findElement(Object element) {
+		return content.indexOf(element);
+	}
+
+	public void clear() {
+		content.clear();
+		fireAllChanged();
+	}
 }

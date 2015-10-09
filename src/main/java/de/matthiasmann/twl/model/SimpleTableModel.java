@@ -39,92 +39,96 @@ import java.util.Collection;
  */
 public class SimpleTableModel extends AbstractTableModel {
 
-    private final String[] columnHeaders;
-    private final ArrayList<Object[]> rows;
+	private final String[] columnHeaders;
+	private final ArrayList<Object[]> rows;
 
-    public SimpleTableModel(String[] columnHeaders) {
-        if(columnHeaders.length < 1) {
-            throw new IllegalArgumentException("must have atleast one column");
-        }
-        this.columnHeaders = columnHeaders.clone();
-        this.rows = new ArrayList<Object[]>();
-    }
+	public SimpleTableModel(String[] columnHeaders) {
+		if (columnHeaders.length < 1) {
+			throw new IllegalArgumentException("must have atleast one column");
+		}
+		this.columnHeaders = columnHeaders.clone();
+		this.rows = new ArrayList<Object[]>();
+	}
 
-    public int getNumColumns() {
-        return columnHeaders.length;
-    }
+	public int getNumColumns() {
+		return columnHeaders.length;
+	}
 
-    public String getColumnHeaderText(int column) {
-        return columnHeaders[column];
-    }
+	public String getColumnHeaderText(int column) {
+		return columnHeaders[column];
+	}
 
-    public void setColumnHeaderText(int column, String text) {
-        if(text == null) {
-            throw new NullPointerException("text");
-        }
-        columnHeaders[column] = text;
-        fireColumnHeaderChanged(column);
-    }
+	public void setColumnHeaderText(int column, String text) {
+		if (text == null) {
+			throw new NullPointerException("text");
+		}
+		columnHeaders[column] = text;
+		fireColumnHeaderChanged(column);
+	}
 
-    public int getNumRows() {
-        return rows.size();
-    }
+	public int getNumRows() {
+		return rows.size();
+	}
 
-    public Object getCell(int row, int column) {
-        return rows.get(row)[column];
-    }
+	public Object getCell(int row, int column) {
+		return rows.get(row)[column];
+	}
 
-    public void setCell(int row, int column, Object data) {
-        rows.get(row)[column] = data;
-        fireCellChanged(row, column);
-    }
+	public void setCell(int row, int column, Object data) {
+		rows.get(row)[column] = data;
+		fireCellChanged(row, column);
+	}
 
-    public void addRow(Object ... data) {
-        insertRow(rows.size(), data);
-    }
+	public void addRow(Object... data) {
+		insertRow(rows.size(), data);
+	}
 
-    public void addRows(Collection<Object[]> rows) {
-        insertRows(this.rows.size(), rows);
-    }
+	public void addRows(Collection<Object[]> rows) {
+		insertRows(this.rows.size(), rows);
+	}
 
-    public void insertRow(int index, Object ... data) {
-        rows.add(index, createRowData(data));
-        fireRowsInserted(index, 1);
-    }
+	public void insertRow(int index, Object... data) {
+		rows.add(index, createRowData(data));
+		fireRowsInserted(index, 1);
+	}
 
-    public void insertRows(int index, Collection<Object[]> rows) {
-        if(!rows.isEmpty()) {
-            ArrayList<Object[]> rowData = new ArrayList<Object[]>();
-            for(Object[] row : rows) {
-                rowData.add(createRowData(row));
-            }
-            this.rows.addAll(index, rowData);
-            fireRowsInserted(index, rowData.size());
-        }
-    }
+	public void insertRows(int index, Collection<Object[]> rows) {
+		if (!rows.isEmpty()) {
+			ArrayList<Object[]> rowData = new ArrayList<Object[]>();
+			for (Object[] row : rows) {
+				rowData.add(createRowData(row));
+			}
+			this.rows.addAll(index, rowData);
+			fireRowsInserted(index, rowData.size());
+		}
+	}
 
-    public void deleteRow(int index) {
-        rows.remove(index);
-        fireRowsDeleted(index, 1);
-    }
+	public void deleteRow(int index) {
+		rows.remove(index);
+		fireRowsDeleted(index, 1);
+	}
 
-    public void deleteRows(int index, int count) {
-        int numRows = rows.size();
-        if(index < 0 || count < 0 || index >= numRows || count > (numRows - index)) {
-            throw new IndexOutOfBoundsException("index="+index+" count="+count+" numRows="+numRows);
-        }
-        if(count > 0) {
-            // delete backwards to not copy the rows around which will be deleted anyway
-            for(int i=count ; i-- > 0 ; ) {
-                rows.remove(index + i);
-            }
-            fireRowsDeleted(index, count);
-        }
-    }
-    
-    private Object[] createRowData(Object[] data) {
-        Object[] rowData = new Object[getNumColumns()];
-        System.arraycopy(data, 0, rowData, 0, Math.min(rowData.length, data.length));
-        return rowData;
-    }
+	public void deleteRows(int index, int count) {
+		int numRows = rows.size();
+		if (index < 0 || count < 0 || index >= numRows
+				|| count > (numRows - index)) {
+			throw new IndexOutOfBoundsException("index=" + index + " count="
+					+ count + " numRows=" + numRows);
+		}
+		if (count > 0) {
+			// delete backwards to not copy the rows around which will be
+			// deleted anyway
+			for (int i = count; i-- > 0;) {
+				rows.remove(index + i);
+			}
+			fireRowsDeleted(index, count);
+		}
+	}
+
+	private Object[] createRowData(Object[] data) {
+		Object[] rowData = new Object[getNumColumns()];
+		System.arraycopy(data, 0, rowData, 0,
+				Math.min(rowData.length, data.length));
+		return rowData;
+	}
 }

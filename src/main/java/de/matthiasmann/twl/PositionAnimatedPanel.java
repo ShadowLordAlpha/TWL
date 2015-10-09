@@ -38,243 +38,247 @@ import de.matthiasmann.twl.model.BooleanModel;
  */
 public class PositionAnimatedPanel extends Widget {
 
-    public enum Direction {
-        TOP(0,-1),
-        LEFT(-1,0),
-        BOTTOM(0,1),
-        RIGHT(1,0);
-        
-        final int x;
-        final int y;
-        Direction(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    };
-    
-    private final Widget animatedWidget;
-    private MouseSensitiveRectangle rect;
-    private Direction direction = Direction.TOP;
-    private int moveSpeedIn;
-    private int moveSpeedOut;
-    private int auraSizeX;
-    private int auraSizeY;
-    private boolean forceVisible;
-    private boolean forceJumps;
+	public enum Direction {
+		TOP(0, -1), LEFT(-1, 0), BOTTOM(0, 1), RIGHT(1, 0);
 
-    private BooleanModel forceVisibleModel;
-    private Runnable forceVisibleModelCallback;
-    
-    public PositionAnimatedPanel(Widget animatedWidget) {
-        if(animatedWidget == null) {
-            throw new NullPointerException("animatedWidget");
-        }
-        
-        this.animatedWidget = animatedWidget;
-        
-        setClip(true);
-        add(animatedWidget);
-    }
+		final int x;
+		final int y;
 
-    public Direction getHideDirection() {
-        return direction;
-    }
+		Direction(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	};
 
-    public void setHideDirection(Direction direction) {
-        if(direction == null) {
-            throw new NullPointerException("direction");
-        }
-        this.direction = direction;
-    }
-    
-    public int getMoveSpeedIn() {
-        return moveSpeedIn;
-    }
+	private final Widget animatedWidget;
+	private MouseSensitiveRectangle rect;
+	private Direction direction = Direction.TOP;
+	private int moveSpeedIn;
+	private int moveSpeedOut;
+	private int auraSizeX;
+	private int auraSizeY;
+	private boolean forceVisible;
+	private boolean forceJumps;
 
-    public void setMoveSpeedIn(int moveSpeedIn) {
-        this.moveSpeedIn = moveSpeedIn;
-    }
+	private BooleanModel forceVisibleModel;
+	private Runnable forceVisibleModelCallback;
 
-    public int getMoveSpeedOut() {
-        return moveSpeedOut;
-    }
+	public PositionAnimatedPanel(Widget animatedWidget) {
+		if (animatedWidget == null) {
+			throw new NullPointerException("animatedWidget");
+		}
 
-    public void setMoveSpeedOut(int moveSpeedOut) {
-        this.moveSpeedOut = moveSpeedOut;
-    }
+		this.animatedWidget = animatedWidget;
 
-    public int getAuraSizeX() {
-        return auraSizeX;
-    }
+		setClip(true);
+		add(animatedWidget);
+	}
 
-    public void setAuraSizeX(int auraSizeX) {
-        this.auraSizeX = auraSizeX;
-    }
+	public Direction getHideDirection() {
+		return direction;
+	}
 
-    public int getAuraSizeY() {
-        return auraSizeY;
-    }
+	public void setHideDirection(Direction direction) {
+		if (direction == null) {
+			throw new NullPointerException("direction");
+		}
+		this.direction = direction;
+	}
 
-    public void setAuraSizeY(int auraSizeY) {
-        this.auraSizeY = auraSizeY;
-    }
+	public int getMoveSpeedIn() {
+		return moveSpeedIn;
+	}
 
-    public boolean isForceVisible() {
-        return forceVisible;
-    }
+	public void setMoveSpeedIn(int moveSpeedIn) {
+		this.moveSpeedIn = moveSpeedIn;
+	}
 
-    public void setForceVisible(boolean forceVisible) {
-        this.forceVisible = forceVisible;
-        if(forceVisibleModel != null) {
-            forceVisibleModel.setValue(forceVisible);
-        }
-    }
+	public int getMoveSpeedOut() {
+		return moveSpeedOut;
+	}
 
-    public boolean isForceVisibleJumps() {
-        return forceJumps;
-    }
+	public void setMoveSpeedOut(int moveSpeedOut) {
+		this.moveSpeedOut = moveSpeedOut;
+	}
 
-    public void setForceVisibleJumps(boolean forceJumps) {
-        this.forceJumps = forceJumps;
-    }
+	public int getAuraSizeX() {
+		return auraSizeX;
+	}
 
-    public BooleanModel getForceVisibleModel() {
-        return forceVisibleModel;
-    }
+	public void setAuraSizeX(int auraSizeX) {
+		this.auraSizeX = auraSizeX;
+	}
 
-    public void setForceVisibleModel(BooleanModel forceVisibleModel) {
-        if(this.forceVisibleModel != forceVisibleModel) {
-            if(this.forceVisibleModel != null) {
-                this.forceVisibleModel.removeCallback(forceVisibleModelCallback);
-            }
-            this.forceVisibleModel = forceVisibleModel;
-            if(forceVisibleModel != null) {
-                if(forceVisibleModelCallback == null) {
-                    forceVisibleModelCallback = new ForceVisibleModelCallback();
-                }
-                forceVisibleModel.addCallback(forceVisibleModelCallback);
-                syncWithForceVisibleModel();
-            }
-        }
-    }
+	public int getAuraSizeY() {
+		return auraSizeY;
+	}
 
-    public boolean isHidden() {
-        final int x = animatedWidget.getX();
-        final int y = animatedWidget.getY();
-        return x == getInnerX() + direction.x*animatedWidget.getWidth() &&
-                y == getInnerY() + direction.y*animatedWidget.getHeight();
-    }
+	public void setAuraSizeY(int auraSizeY) {
+		this.auraSizeY = auraSizeY;
+	}
 
-    @Override
-    public int getMinWidth() {
-        return Math.max(super.getMinWidth(), animatedWidget.getMinWidth() + getBorderHorizontal());
-    }
+	public boolean isForceVisible() {
+		return forceVisible;
+	}
 
-    @Override
-    public int getMinHeight() {
-        return Math.max(super.getMinHeight(), animatedWidget.getMinHeight() + getBorderVertical());
-    }
+	public void setForceVisible(boolean forceVisible) {
+		this.forceVisible = forceVisible;
+		if (forceVisibleModel != null) {
+			forceVisibleModel.setValue(forceVisible);
+		}
+	}
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return animatedWidget.getPreferredWidth();
-    }
+	public boolean isForceVisibleJumps() {
+		return forceJumps;
+	}
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return animatedWidget.getPreferredHeight();
-    }
-    
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        setHideDirection(themeInfo.getParameter("hidedirection", Direction.TOP));
-        setMoveSpeedIn(themeInfo.getParameter("speed.in", 2));
-        setMoveSpeedOut(themeInfo.getParameter("speed.out", 1));
-        setAuraSizeX(themeInfo.getParameter("aura.width", 50));
-        setAuraSizeY(themeInfo.getParameter("aura.height", 50));
-        setForceVisibleJumps(themeInfo.getParameter("forceVisibleJumps", false));
-    }
+	public void setForceVisibleJumps(boolean forceJumps) {
+		this.forceJumps = forceJumps;
+	}
 
-    @Override
-    protected void afterAddToGUI(GUI gui) {
-        super.afterAddToGUI(gui);
-        rect = gui.createMouseSenitiveRectangle();
-        setRectSize();
-    }
+	public BooleanModel getForceVisibleModel() {
+		return forceVisibleModel;
+	}
 
-    @Override
-    protected void beforeRemoveFromGUI(GUI gui) {
-        super.beforeRemoveFromGUI(gui);
-        rect = null;
-    }
+	public void setForceVisibleModel(BooleanModel forceVisibleModel) {
+		if (this.forceVisibleModel != forceVisibleModel) {
+			if (this.forceVisibleModel != null) {
+				this.forceVisibleModel
+						.removeCallback(forceVisibleModelCallback);
+			}
+			this.forceVisibleModel = forceVisibleModel;
+			if (forceVisibleModel != null) {
+				if (forceVisibleModelCallback == null) {
+					forceVisibleModelCallback = new ForceVisibleModelCallback();
+				}
+				forceVisibleModel.addCallback(forceVisibleModelCallback);
+				syncWithForceVisibleModel();
+			}
+		}
+	}
 
-    @Override
-    protected void layout() {
-        animatedWidget.setSize(getInnerWidth(), getInnerHeight());
-        setRectSize();
-    }
+	public boolean isHidden() {
+		final int x = animatedWidget.getX();
+		final int y = animatedWidget.getY();
+		return x == getInnerX() + direction.x * animatedWidget.getWidth()
+				&& y == getInnerY() + direction.y * animatedWidget.getHeight();
+	}
 
-    @Override
-    protected void positionChanged() {
-        setRectSize();
-    }
+	@Override
+	public int getMinWidth() {
+		return Math.max(super.getMinWidth(), animatedWidget.getMinWidth()
+				+ getBorderHorizontal());
+	}
 
-    @Override
-    protected void paint(GUI gui) {
-        if(rect != null) {
-            int x = getInnerX();
-            int y = getInnerY();
-            boolean forceOpen = forceVisible || hasOpenPopups();
-            if(forceOpen && forceJumps) {
-                animatedWidget.setPosition(x, y);
-            } else if(forceOpen || rect.isMouseOver()) {
-                // in only needs the direction - not the distance
-                animatedWidget.setPosition(
-                        calcPosIn(animatedWidget.getX(), x, direction.x),
-                        calcPosIn(animatedWidget.getY(), y, direction.y));
-            } else {
-                // out needs the exact distance
-                animatedWidget.setPosition(
-                        calcPosOut(animatedWidget.getX(), x, direction.x*animatedWidget.getWidth()),
-                        calcPosOut(animatedWidget.getY(), y, direction.y*animatedWidget.getHeight()));
-            }
-        }
-        super.paint(gui);
-    }
-    
-    private void setRectSize() {
-        if(rect != null) {
-            rect.setXYWH(getX() - auraSizeX, getY() - auraSizeY,
-                    getWidth() + 2*auraSizeX, getHeight() + 2*auraSizeY);
-        }
-    }
-    
-    private int calcPosIn(int cur, int org, int dir) {
-        if(dir < 0) {
-            return Math.min(org, cur + moveSpeedIn);
-        } else {
-            return Math.max(org, cur - moveSpeedIn);
-        }
-    }
-    
-    private int calcPosOut(int cur, int org, int dist) {
-        if(dist < 0) {
-            return Math.max(org+dist, cur - moveSpeedIn);
-        } else {
-            return Math.min(org+dist, cur + moveSpeedIn);
-        }
-    }
-    
-    void syncWithForceVisibleModel() {
-        setForceVisible(forceVisibleModel.getValue());
-    }
-    
-    class ForceVisibleModelCallback implements Runnable {
-        ForceVisibleModelCallback() {
-        }
-        public void run() {
-            syncWithForceVisibleModel();
-        }
-    }
+	@Override
+	public int getMinHeight() {
+		return Math.max(super.getMinHeight(), animatedWidget.getMinHeight()
+				+ getBorderVertical());
+	}
+
+	@Override
+	public int getPreferredInnerWidth() {
+		return animatedWidget.getPreferredWidth();
+	}
+
+	@Override
+	public int getPreferredInnerHeight() {
+		return animatedWidget.getPreferredHeight();
+	}
+
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		setHideDirection(themeInfo.getParameter("hidedirection", Direction.TOP));
+		setMoveSpeedIn(themeInfo.getParameter("speed.in", 2));
+		setMoveSpeedOut(themeInfo.getParameter("speed.out", 1));
+		setAuraSizeX(themeInfo.getParameter("aura.width", 50));
+		setAuraSizeY(themeInfo.getParameter("aura.height", 50));
+		setForceVisibleJumps(themeInfo.getParameter("forceVisibleJumps", false));
+	}
+
+	@Override
+	protected void afterAddToGUI(GUI gui) {
+		super.afterAddToGUI(gui);
+		rect = gui.createMouseSenitiveRectangle();
+		setRectSize();
+	}
+
+	@Override
+	protected void beforeRemoveFromGUI(GUI gui) {
+		super.beforeRemoveFromGUI(gui);
+		rect = null;
+	}
+
+	@Override
+	protected void layout() {
+		animatedWidget.setSize(getInnerWidth(), getInnerHeight());
+		setRectSize();
+	}
+
+	@Override
+	protected void positionChanged() {
+		setRectSize();
+	}
+
+	@Override
+	protected void paint(GUI gui) {
+		if (rect != null) {
+			int x = getInnerX();
+			int y = getInnerY();
+			boolean forceOpen = forceVisible || hasOpenPopups();
+			if (forceOpen && forceJumps) {
+				animatedWidget.setPosition(x, y);
+			} else if (forceOpen || rect.isMouseOver()) {
+				// in only needs the direction - not the distance
+				animatedWidget.setPosition(
+						calcPosIn(animatedWidget.getX(), x, direction.x),
+						calcPosIn(animatedWidget.getY(), y, direction.y));
+			} else {
+				// out needs the exact distance
+				animatedWidget.setPosition(
+						calcPosOut(animatedWidget.getX(), x, direction.x
+								* animatedWidget.getWidth()),
+						calcPosOut(animatedWidget.getY(), y, direction.y
+								* animatedWidget.getHeight()));
+			}
+		}
+		super.paint(gui);
+	}
+
+	private void setRectSize() {
+		if (rect != null) {
+			rect.setXYWH(getX() - auraSizeX, getY() - auraSizeY, getWidth() + 2
+					* auraSizeX, getHeight() + 2 * auraSizeY);
+		}
+	}
+
+	private int calcPosIn(int cur, int org, int dir) {
+		if (dir < 0) {
+			return Math.min(org, cur + moveSpeedIn);
+		} else {
+			return Math.max(org, cur - moveSpeedIn);
+		}
+	}
+
+	private int calcPosOut(int cur, int org, int dist) {
+		if (dist < 0) {
+			return Math.max(org + dist, cur - moveSpeedIn);
+		} else {
+			return Math.min(org + dist, cur + moveSpeedIn);
+		}
+	}
+
+	void syncWithForceVisibleModel() {
+		setForceVisible(forceVisibleModel.getValue());
+	}
+
+	class ForceVisibleModelCallback implements Runnable {
+		ForceVisibleModelCallback() {
+		}
+
+		public void run() {
+			syncWithForceVisibleModel();
+		}
+	}
 }

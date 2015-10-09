@@ -40,148 +40,148 @@ import de.matthiasmann.twl.renderer.Image;
  */
 public class GridImage implements Image, HasBorder {
 
-    private final Image[] images;
-    private final int[] weightX;
-    private final int[] weightY;
-    private final Border border;
-    private final int width;
-    private final int height;
-    private final int columnWidth[];
-    private final int rowHeight[];
-    private final int weightSumX;
-    private final int weightSumY;
+	private final Image[] images;
+	private final int[] weightX;
+	private final int[] weightY;
+	private final Border border;
+	private final int width;
+	private final int height;
+	private final int columnWidth[];
+	private final int rowHeight[];
+	private final int weightSumX;
+	private final int weightSumY;
 
-    GridImage(Image[] images, int[] weightX, int[] weightY, Border border) {
-        if(weightX.length == 0 || weightY.length == 0) {
-            throw new IllegalArgumentException("zero dimension size not allowed");
-        }
-        assert weightX.length * weightY.length == images.length;
-        this.images = images;
-        this.weightX = weightX;
-        this.weightY = weightY;
-        this.border = border;
-        this.columnWidth = new int[weightX.length];
-        this.rowHeight = new int[weightY.length];
+	GridImage(Image[] images, int[] weightX, int[] weightY, Border border) {
+		if (weightX.length == 0 || weightY.length == 0) {
+			throw new IllegalArgumentException(
+					"zero dimension size not allowed");
+		}
+		assert weightX.length * weightY.length == images.length;
+		this.images = images;
+		this.weightX = weightX;
+		this.weightY = weightY;
+		this.border = border;
+		this.columnWidth = new int[weightX.length];
+		this.rowHeight = new int[weightY.length];
 
-        int widthTmp = 0;
-        for(int x=0 ; x<weightX.length ; x++) {
-            int widthColumn = 0;
-            for(int y=0 ; y<weightY.length ; y++) {
-                widthColumn = Math.max(widthColumn, getImage(x, y).getWidth());
-            }
-            widthTmp += widthColumn;
-            columnWidth[x] = widthColumn;
-        }
-        this.width = widthTmp;
+		int widthTmp = 0;
+		for (int x = 0; x < weightX.length; x++) {
+			int widthColumn = 0;
+			for (int y = 0; y < weightY.length; y++) {
+				widthColumn = Math.max(widthColumn, getImage(x, y).getWidth());
+			}
+			widthTmp += widthColumn;
+			columnWidth[x] = widthColumn;
+		}
+		this.width = widthTmp;
 
-        int heightTmp = 0;
-        for(int y=0 ; y<weightY.length ; y++) {
-            int heightRow = 0;
-            for(int x=0 ; x<weightX.length ; x++) {
-                heightRow = Math.max(heightRow, getImage(x, y).getHeight());
-            }
-            heightTmp += heightRow;
-            rowHeight[y] = heightRow;
-        }
-        this.height = heightTmp;
+		int heightTmp = 0;
+		for (int y = 0; y < weightY.length; y++) {
+			int heightRow = 0;
+			for (int x = 0; x < weightX.length; x++) {
+				heightRow = Math.max(heightRow, getImage(x, y).getHeight());
+			}
+			heightTmp += heightRow;
+			rowHeight[y] = heightRow;
+		}
+		this.height = heightTmp;
 
-        int tmpSumX = 0;
-        for(int weight : weightX) {
-            if(weight < 0) {
-                throw new IllegalArgumentException("negative weight in weightX");
-            }
-            tmpSumX += weight;
-        }
-        weightSumX = tmpSumX;
+		int tmpSumX = 0;
+		for (int weight : weightX) {
+			if (weight < 0) {
+				throw new IllegalArgumentException("negative weight in weightX");
+			}
+			tmpSumX += weight;
+		}
+		weightSumX = tmpSumX;
 
-        int tmpSumY = 0;
-        for(int weight : weightY) {
-            if(weight < 0) {
-                throw new IllegalArgumentException("negative weight in weightY");
-            }
-            tmpSumY += weight;
-        }
-        weightSumY = tmpSumY;
+		int tmpSumY = 0;
+		for (int weight : weightY) {
+			if (weight < 0) {
+				throw new IllegalArgumentException("negative weight in weightY");
+			}
+			tmpSumY += weight;
+		}
+		weightSumY = tmpSumY;
 
-        if(weightSumX <= 0) {
-            throw new IllegalArgumentException("zero weightX not allowed");
-        }
-        if(weightSumY <= 0) {
-            throw new IllegalArgumentException("zero weightX not allowed");
-        }
-    }
+		if (weightSumX <= 0) {
+			throw new IllegalArgumentException("zero weightX not allowed");
+		}
+		if (weightSumY <= 0) {
+			throw new IllegalArgumentException("zero weightX not allowed");
+		}
+	}
 
-    private GridImage(Image[] images, GridImage src) {
-        this.images = images;
-        this.weightX = src.weightX;
-        this.weightY = src.weightY;
-        this.border = src.border;
-        this.columnWidth = src.columnWidth;
-        this.rowHeight = src.rowHeight;
-        this.weightSumX = src.weightSumX;
-        this.weightSumY = src.weightSumY;
-        this.width = src.width;
-        this.height = src.height;
-    }
+	private GridImage(Image[] images, GridImage src) {
+		this.images = images;
+		this.weightX = src.weightX;
+		this.weightY = src.weightY;
+		this.border = src.border;
+		this.columnWidth = src.columnWidth;
+		this.rowHeight = src.rowHeight;
+		this.weightSumX = src.weightSumX;
+		this.weightSumY = src.weightSumY;
+		this.width = src.width;
+		this.height = src.height;
+	}
 
+	public int getWidth() {
+		return width;
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public int getHeight() {
+		return height;
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public void draw(AnimationState as, int x, int y) {
+		draw(as, x, y, width, height);
+	}
 
-    public void draw(AnimationState as, int x, int y) {
-        draw(as, x, y, width, height);
-    }
+	public void draw(AnimationState as, int x, int y, int width, int height) {
+		int deltaY = height - this.height;
+		int remWeightY = weightSumY;
+		for (int yi = 0, idx = 0; yi < weightY.length; yi++) {
+			int heightRow = rowHeight[yi];
+			if (remWeightY > 0) {
+				int partY = deltaY * weightY[yi] / remWeightY;
+				remWeightY -= weightY[yi];
+				heightRow += partY;
+				deltaY -= partY;
+			}
 
-    public void draw(AnimationState as, int x, int y, int width, int height) {
-        int deltaY = height - this.height;
-        int remWeightY = weightSumY;
-        for(int yi=0,idx=0 ; yi<weightY.length ; yi++) {
-            int heightRow = rowHeight[yi];
-            if(remWeightY > 0) {
-                int partY = deltaY * weightY[yi] / remWeightY;
-                remWeightY -= weightY[yi];
-                heightRow += partY;
-                deltaY -= partY;
-            }
+			int tmpX = x;
+			int deltaX = width - this.width;
+			int remWeightX = weightSumX;
+			for (int xi = 0; xi < weightX.length; xi++, idx++) {
+				int widthColumn = columnWidth[xi];
+				if (remWeightX > 0) {
+					int partX = deltaX * weightX[xi] / remWeightX;
+					remWeightX -= weightX[xi];
+					widthColumn += partX;
+					deltaX -= partX;
+				}
 
-            int tmpX = x;
-            int deltaX = width - this.width;
-            int remWeightX = weightSumX;
-            for(int xi=0 ; xi<weightX.length ; xi++,idx++) {
-                int widthColumn = columnWidth[xi];
-                if(remWeightX > 0) {
-                    int partX = deltaX * weightX[xi] / remWeightX;
-                    remWeightX -= weightX[xi];
-                    widthColumn += partX;
-                    deltaX -= partX;
-                }
+				images[idx].draw(as, tmpX, y, widthColumn, heightRow);
+				tmpX += widthColumn;
+			}
 
-                images[idx].draw(as, tmpX, y, widthColumn, heightRow);
-                tmpX += widthColumn;
-            }
+			y += heightRow;
+		}
+	}
 
-            y += heightRow;
-        }
-    }
+	public Border getBorder() {
+		return border;
+	}
 
-    public Border getBorder() {
-        return border;
-    }
+	public Image createTintedVersion(Color color) {
+		Image[] newImages = new Image[images.length];
+		for (int i = 0; i < newImages.length; i++) {
+			newImages[i] = images[i].createTintedVersion(color);
+		}
+		return new GridImage(newImages, this);
+	}
 
-    public Image createTintedVersion(Color color) {
-        Image[] newImages = new Image[images.length];
-        for(int i=0 ; i<newImages.length ; i++) {
-            newImages[i] = images[i].createTintedVersion(color);
-        }
-        return new GridImage(newImages, this);
-    }
-
-    private Image getImage(int x, int y) {
-        return images[x + y * weightX.length];
-    }
+	private Image getImage(int x, int y) {
+		return images[x + y * weightX.length];
+	}
 }

@@ -37,16 +37,22 @@ import de.matthiasmann.twl.Color;
  */
 public interface LineRenderer {
 
-    /**
-     * Draws a line with the specified width and color.
-     * Support for line width other then 1.0 is optional.
-     * 
-     * @param pts An array of xy coordinate pairs
-     * @param numPts Number of points to draw
-     * @param width the line width.
-     * @param color the Color of the line.
-     * @param drawAsLoop true if a line should be rendered from last to first vertex.
-     */
-    public void drawLine(float[] pts, int numPts, float width, Color color, boolean drawAsLoop);
-    
+	/**
+	 * Draws a line with the specified width and color. Support for line width
+	 * other then 1.0 is optional.
+	 * 
+	 * @param pts
+	 *            An array of xy coordinate pairs
+	 * @param numPts
+	 *            Number of points to draw
+	 * @param width
+	 *            the line width.
+	 * @param color
+	 *            the Color of the line.
+	 * @param drawAsLoop
+	 *            true if a line should be rendered from last to first vertex.
+	 */
+	public void drawLine(float[] pts, int numPts, float width, Color color,
+			boolean drawAsLoop);
+
 }

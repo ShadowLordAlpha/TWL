@@ -42,62 +42,63 @@ import java.util.prefs.Preferences;
  */
 public class AppletPreferences extends AbstractPreferences {
 
-    public static Preferences userNodeForPackage(Class<?> clazz) {
-        try {
-            return Preferences.userNodeForPackage(clazz);
-        } catch (AccessControlException ex) {
-            return root.node(clazz.getName().replace('.', '/'));
-        }
-    }
+	public static Preferences userNodeForPackage(Class<?> clazz) {
+		try {
+			return Preferences.userNodeForPackage(clazz);
+		} catch (AccessControlException ex) {
+			return root.node(clazz.getName().replace('.', '/'));
+		}
+	}
 
-    private AppletPreferences(AbstractPreferences parent, String name) {
-        super(parent, name);
-    }
+	private AppletPreferences(AbstractPreferences parent, String name) {
+		super(parent, name);
+	}
 
-    private static final AppletPreferences root = new AppletPreferences(null, "");
-    private final HashMap<String, String> values = new HashMap<String, String>();
-    
-    @Override
-    protected AbstractPreferences childSpi(String name) {
-        // this depends on the kidCache in AbstractPreferences
-        return new AppletPreferences(this, name);
-    }
+	private static final AppletPreferences root = new AppletPreferences(null,
+			"");
+	private final HashMap<String, String> values = new HashMap<String, String>();
 
-    @Override
-    protected String[] childrenNamesSpi() {
-        // this depends on the kidCache in AbstractPreferences
-        return new String[0];
-    }
+	@Override
+	protected AbstractPreferences childSpi(String name) {
+		// this depends on the kidCache in AbstractPreferences
+		return new AppletPreferences(this, name);
+	}
 
-    @Override
-    protected void flushSpi() {
-    }
+	@Override
+	protected String[] childrenNamesSpi() {
+		// this depends on the kidCache in AbstractPreferences
+		return new String[0];
+	}
 
-    @Override
-    protected String getSpi(String key) {
-        return values.get(key);
-    }
+	@Override
+	protected void flushSpi() {
+	}
 
-    @Override
-    protected String[] keysSpi() {
-        return values.keySet().toArray(new String[0]);
-    }
+	@Override
+	protected String getSpi(String key) {
+		return values.get(key);
+	}
 
-    @Override
-    protected void putSpi(String key, String value) {
-        values.put(key, value);
-    }
+	@Override
+	protected String[] keysSpi() {
+		return values.keySet().toArray(new String[0]);
+	}
 
-    @Override
-    protected void removeNodeSpi() {
-    }
+	@Override
+	protected void putSpi(String key, String value) {
+		values.put(key, value);
+	}
 
-    @Override
-    protected void removeSpi(String key) {
-        values.remove(key);
-    }
+	@Override
+	protected void removeNodeSpi() {
+	}
 
-    @Override
-    protected void syncSpi() {
-    }
+	@Override
+	protected void removeSpi(String key) {
+		values.remove(key);
+	}
+
+	@Override
+	protected void syncSpi() {
+	}
 }

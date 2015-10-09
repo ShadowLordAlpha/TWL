@@ -34,42 +34,49 @@ package de.matthiasmann.twl.model;
  *
  * Implementation should not register callbacks on the list model.
  * 
- * @param <T> the data type of the list model
+ * @param <T>
+ *            the data type of the list model
  * @author Matthias Mann
  */
 public interface ListSelectionModel<T> extends IntegerModel {
 
-    /**
-     * The index when nothing is selected
-     */
-    public static final int NO_SELECTION = -1;
-    
-    public ListModel<T> getListModel();
+	/**
+	 * The index when nothing is selected
+	 */
+	public static final int NO_SELECTION = -1;
 
-    /**
-     * Returns the selected entry in the list or null if nothing is selected.
-     * @return the selected entry or null.
-     */
-    public T getSelectedEntry();
+	public ListModel<T> getListModel();
 
-    /**
-     * Selects the specified entry or nothing if the entry was not found.
-     *
-     * This method behaves like {@code setSelectedEntry(entry, NO_SELECTION)}
-     *
-     * @param entry the entry to select - can be null.
-     * @return true if the entry was found
-     * @see #setSelectedEntry(java.lang.Object, int)
-     * @see #NO_SELECTION
-     */
-    public boolean setSelectedEntry(T entry);
+	/**
+	 * Returns the selected entry in the list or null if nothing is selected.
+	 * 
+	 * @return the selected entry or null.
+	 */
+	public T getSelectedEntry();
 
-    /**
-     * Selects the specified entry or the default index if the entry was not found
-     * @param entry the entry to select - can be null.
-     * @param defaultIndex the index to select when the entry was not found
-     * @return true if the entry was found
-     * @see #NO_SELECTION
-     */
-    public boolean setSelectedEntry(T entry, int defaultIndex);
+	/**
+	 * Selects the specified entry or nothing if the entry was not found.
+	 *
+	 * This method behaves like {@code setSelectedEntry(entry, NO_SELECTION)}
+	 *
+	 * @param entry
+	 *            the entry to select - can be null.
+	 * @return true if the entry was found
+	 * @see #setSelectedEntry(java.lang.Object, int)
+	 * @see #NO_SELECTION
+	 */
+	public boolean setSelectedEntry(T entry);
+
+	/**
+	 * Selects the specified entry or the default index if the entry was not
+	 * found
+	 * 
+	 * @param entry
+	 *            the entry to select - can be null.
+	 * @param defaultIndex
+	 *            the index to select when the entry was not found
+	 * @return true if the entry was found
+	 * @see #NO_SELECTION
+	 */
+	public boolean setSelectedEntry(T entry, int defaultIndex);
 }

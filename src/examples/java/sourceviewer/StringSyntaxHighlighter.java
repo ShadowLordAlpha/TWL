@@ -39,60 +39,62 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
  * @author Matthias Mann
  */
 public class StringSyntaxHighlighter {
-    
-    public static final StateKey STATE_COMMENT     = StateKey.get("comment");
-    public static final StateKey STATE_COMMENT_TAG = StateKey.get("commentTag");
-    public static final StateKey STATE_KEYWORD     = StateKey.get("keyword");
-    public static final StateKey STATE_STRING      = StateKey.get("string");
-    private final Callback callback;
-    
-    private final ObservableCharSequence sequence;
-    private final StringAttributes attributes;
 
-    public StringSyntaxHighlighter(ObservableCharSequence sequence, StringAttributes attributes) {
-        this.sequence = sequence;
-        this.attributes = attributes;
-        this.callback = new ObservableCharSequence.Callback() {
-            public void charactersChanged(int start, int oldCount, int newCount) {
-                doHighlight();
-            }
-        };
-        
-        doHighlight();
-    }
-    
-    public void registerCallback() {
-        sequence.addCallback(callback);
-    }
-    
-    public void unregisterCallback() {
-        sequence.removeCallback(callback);
-    }
-    
-    final void doHighlight() {
-        attributes.clearAnimationStates();
-        
-        JavaScanner js = new JavaScanner(sequence);
-        int start = js.getCurrentPosition();
-        JavaScanner.Kind kind;
-        while((kind=js.scan()) != JavaScanner.Kind.EOF) {
-            int pos = js.getCurrentPosition();
-            switch(kind) {
-                case COMMENT:
-                    attributes.setAnimationState(STATE_COMMENT, start, pos, true);
-                    break;
-                case COMMENT_TAG:
-                    attributes.setAnimationState(STATE_COMMENT, start, pos, true);
-                    attributes.setAnimationState(STATE_COMMENT_TAG, start, pos, true);
-                    break;
-                case KEYWORD:
-                    attributes.setAnimationState(STATE_KEYWORD, start, pos, true);
-                    break;
-                case STRING:
-                    attributes.setAnimationState(STATE_STRING, start, pos, true);
-                    break;
-            }
-            start = pos;
-        }
-    }
+	public static final StateKey STATE_COMMENT = StateKey.get("comment");
+	public static final StateKey STATE_COMMENT_TAG = StateKey.get("commentTag");
+	public static final StateKey STATE_KEYWORD = StateKey.get("keyword");
+	public static final StateKey STATE_STRING = StateKey.get("string");
+	private final Callback callback;
+
+	private final ObservableCharSequence sequence;
+	private final StringAttributes attributes;
+
+	public StringSyntaxHighlighter(ObservableCharSequence sequence,
+			StringAttributes attributes) {
+		this.sequence = sequence;
+		this.attributes = attributes;
+		this.callback = new ObservableCharSequence.Callback() {
+			public void charactersChanged(int start, int oldCount, int newCount) {
+				doHighlight();
+			}
+		};
+
+		doHighlight();
+	}
+
+	public void registerCallback() {
+		sequence.addCallback(callback);
+	}
+
+	public void unregisterCallback() {
+		sequence.removeCallback(callback);
+	}
+
+	final void doHighlight() {
+		attributes.clearAnimationStates();
+
+		JavaScanner js = new JavaScanner(sequence);
+		int start = js.getCurrentPosition();
+		JavaScanner.Kind kind;
+		while ((kind = js.scan()) != JavaScanner.Kind.EOF) {
+			int pos = js.getCurrentPosition();
+			switch (kind) {
+			case COMMENT:
+				attributes.setAnimationState(STATE_COMMENT, start, pos, true);
+				break;
+			case COMMENT_TAG:
+				attributes.setAnimationState(STATE_COMMENT, start, pos, true);
+				attributes.setAnimationState(STATE_COMMENT_TAG, start, pos,
+						true);
+				break;
+			case KEYWORD:
+				attributes.setAnimationState(STATE_KEYWORD, start, pos, true);
+				break;
+			case STRING:
+				attributes.setAnimationState(STATE_STRING, start, pos, true);
+				break;
+			}
+			start = pos;
+		}
+	}
 }

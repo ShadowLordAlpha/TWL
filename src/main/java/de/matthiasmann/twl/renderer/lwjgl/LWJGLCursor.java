@@ -29,8 +29,6 @@
  */
 package de.matthiasmann.twl.renderer.lwjgl;
 
-import de.matthiasmann.twl.renderer.MouseCursor;
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -38,6 +36,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
+
+import de.matthiasmann.twl.renderer.MouseCursor;
 
 /**
  *

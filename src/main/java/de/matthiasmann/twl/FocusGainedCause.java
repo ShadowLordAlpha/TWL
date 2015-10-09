@@ -30,26 +30,27 @@
 package de.matthiasmann.twl;
 
 /**
- * The cause for the {@link Widget#keyboardFocusGained(de.matthiasmann.twl.FocusGainedCause, de.matthiasmann.twl.Widget) }
+ * The cause for the
+ * {@link Widget#keyboardFocusGained(de.matthiasmann.twl.FocusGainedCause, de.matthiasmann.twl.Widget) }
  * event.
  *
  * @author Matthias Mann
  */
 public enum FocusGainedCause {
-    /**
-     * Focus transfer caused by focus key (eg TAB)
-     */
-    FOCUS_KEY,
-    /**
-     * Focus transfer caused by mouse down event on the widget
-     */
-    MOUSE_BTNDOWN,
-    /**
-     * A child widget requested focus
-     */
-    CHILD_FOCUSED,
-    /**
-     * {@link Widget#requestKeyboardFocus() } was invoked
-     */
-    MANUAL
+	/**
+	 * Focus transfer caused by focus key (eg TAB)
+	 */
+	FOCUS_KEY,
+	/**
+	 * Focus transfer caused by mouse down event on the widget
+	 */
+	MOUSE_BTNDOWN,
+	/**
+	 * A child widget requested focus
+	 */
+	CHILD_FOCUSED,
+	/**
+	 * {@link Widget#requestKeyboardFocus() } was invoked
+	 */
+	MANUAL
 }

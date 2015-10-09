@@ -43,223 +43,224 @@ import de.matthiasmann.twl.model.FloatModel;
  */
 public class ValueAdjusterFloat extends ValueAdjuster {
 
-    private float value;
-    private float minValue;
-    private float maxValue = 100f;
-    private float dragStartValue;
-    private float stepSize = 1f;
-    private FloatModel model;
-    private Runnable modelCallback;
-    private String format = "%.2f";
-    private Locale locale = Locale.ENGLISH;
+	private float value;
+	private float minValue;
+	private float maxValue = 100f;
+	private float dragStartValue;
+	private float stepSize = 1f;
+	private FloatModel model;
+	private Runnable modelCallback;
+	private String format = "%.2f";
+	private Locale locale = Locale.ENGLISH;
 
-    public ValueAdjusterFloat() {
-        setTheme("valueadjuster");
-        setDisplayText();
-    }
+	public ValueAdjusterFloat() {
+		setTheme("valueadjuster");
+		setDisplayText();
+	}
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public ValueAdjusterFloat(FloatModel model) {
-        setTheme("valueadjuster");
-        setModel(model);
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public ValueAdjusterFloat(FloatModel model) {
+		setTheme("valueadjuster");
+		setModel(model);
+	}
 
-    public float getMaxValue() {
-        return maxValue;
-    }
+	public float getMaxValue() {
+		return maxValue;
+	}
 
-    public float getMinValue() {
-        return minValue;
-    }
+	public float getMinValue() {
+		return minValue;
+	}
 
-    public void setMinMaxValue(float minValue, float maxValue) {
-        if(maxValue < minValue) {
-            throw new IllegalArgumentException("maxValue < minValue");
-        }
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        setValue(value);
-    }
+	public void setMinMaxValue(float minValue, float maxValue) {
+		if (maxValue < minValue) {
+			throw new IllegalArgumentException("maxValue < minValue");
+		}
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		setValue(value);
+	}
 
-    public float getValue() {
-        return value;
-    }
+	public float getValue() {
+		return value;
+	}
 
-    public void setValue(float value) {
-        if(value > maxValue) {
-            value = maxValue;
-        } else if(value < minValue) {
-            value = minValue;
-        }
-        if(this.value != value) {
-            this.value = value;
-            if(model != null) {
-                model.setValue(value);
-            }
-            setDisplayText();
-        }
-    }
+	public void setValue(float value) {
+		if (value > maxValue) {
+			value = maxValue;
+		} else if (value < minValue) {
+			value = minValue;
+		}
+		if (this.value != value) {
+			this.value = value;
+			if (model != null) {
+				model.setValue(value);
+			}
+			setDisplayText();
+		}
+	}
 
-    public float getStepSize() {
-        return stepSize;
-    }
+	public float getStepSize() {
+		return stepSize;
+	}
 
-    /**
-     * Sets the step size for the value adjuster.
-     * It must be &gt; 0.
-     *
-     * Default is 1.0f.
-     *
-     * @param stepSize the new step size
-     * @throws IllegalArgumentException if stepSize is NaN or &lt;= 0.
-     */
-    public void setStepSize(float stepSize) {
-        // NaN always compares as false
-        if(!(stepSize > 0)) {
-            throw new IllegalArgumentException("stepSize");
-        }
-        this.stepSize = stepSize;
-    }
+	/**
+	 * Sets the step size for the value adjuster. It must be &gt; 0.
+	 *
+	 * Default is 1.0f.
+	 *
+	 * @param stepSize
+	 *            the new step size
+	 * @throws IllegalArgumentException
+	 *             if stepSize is NaN or &lt;= 0.
+	 */
+	public void setStepSize(float stepSize) {
+		// NaN always compares as false
+		if (!(stepSize > 0)) {
+			throw new IllegalArgumentException("stepSize");
+		}
+		this.stepSize = stepSize;
+	}
 
-    public FloatModel getModel() {
-        return model;
-    }
+	public FloatModel getModel() {
+		return model;
+	}
 
-    public void setModel(FloatModel model) {
-        if(this.model != model) {
-            removeModelCallback();
-            this.model = model;
-            if(model != null) {
-                this.minValue = model.getMinValue();
-                this.maxValue = model.getMaxValue();
-                addModelCallback();
-            }
-        }
-    }
+	public void setModel(FloatModel model) {
+		if (this.model != model) {
+			removeModelCallback();
+			this.model = model;
+			if (model != null) {
+				this.minValue = model.getMinValue();
+				this.maxValue = model.getMaxValue();
+				addModelCallback();
+			}
+		}
+	}
 
-    public String getFormat() {
-        return format;
-    }
+	public String getFormat() {
+		return format;
+	}
 
-    public void setFormat(String format) throws IllegalFormatException {
-        // test format
-        String.format(locale, format, 42f);
-        this.format = format;
-    }
+	public void setFormat(String format) throws IllegalFormatException {
+		// test format
+		String.format(locale, format, 42f);
+		this.format = format;
+	}
 
-    public Locale getLocale() {
-        return locale;
-    }
+	public Locale getLocale() {
+		return locale;
+	}
 
-    public void setLocale(Locale locale) {
-        if(locale == null) {
-            throw new NullPointerException("locale");
-        }
-        this.locale = locale;
-    }
+	public void setLocale(Locale locale) {
+		if (locale == null) {
+			throw new NullPointerException("locale");
+		}
+		this.locale = locale;
+	}
 
-    @Override
-    protected String onEditStart() {
-        return formatText();
-    }
+	@Override
+	protected String onEditStart() {
+		return formatText();
+	}
 
-    @Override
-    protected boolean onEditEnd(String text) {
-        try {
-            setValue(parseText(text));
-            return true;
-        } catch (ParseException ex) {
-            return false;
-        }
-    }
+	@Override
+	protected boolean onEditEnd(String text) {
+		try {
+			setValue(parseText(text));
+			return true;
+		} catch (ParseException ex) {
+			return false;
+		}
+	}
 
-    @Override
-    protected String validateEdit(String text) {
-        try {
-            parseText(text);
-            return null;
-        } catch (ParseException ex) {
-            return ex.toString();
-        }
-    }
+	@Override
+	protected String validateEdit(String text) {
+		try {
+			parseText(text);
+			return null;
+		} catch (ParseException ex) {
+			return ex.toString();
+		}
+	}
 
-    @Override
-    protected void onEditCanceled() {
-    }
+	@Override
+	protected void onEditCanceled() {
+	}
 
-    @Override
-    protected boolean shouldStartEdit(char ch) {
-        return (ch >= '0' && ch <= '9') || (ch == '-') || (ch == '.');
-    }
+	@Override
+	protected boolean shouldStartEdit(char ch) {
+		return (ch >= '0' && ch <= '9') || (ch == '-') || (ch == '.');
+	}
 
-    @Override
-    protected void onDragStart() {
-        dragStartValue = value;
-    }
+	@Override
+	protected void onDragStart() {
+		dragStartValue = value;
+	}
 
-    @Override
-    protected void onDragUpdate(int dragDelta) {
-        float range = Math.max(1e-4f, Math.abs(getMaxValue() - getMinValue()));
-        setValue(dragStartValue + dragDelta/Math.max(3, getWidth()/range));
-    }
+	@Override
+	protected void onDragUpdate(int dragDelta) {
+		float range = Math.max(1e-4f, Math.abs(getMaxValue() - getMinValue()));
+		setValue(dragStartValue + dragDelta / Math.max(3, getWidth() / range));
+	}
 
-    @Override
-    protected void onDragCancelled() {
-        setValue(dragStartValue);
-    }
+	@Override
+	protected void onDragCancelled() {
+		setValue(dragStartValue);
+	}
 
-    @Override
-    protected void doDecrement() {
-        setValue(value - getStepSize());
-    }
+	@Override
+	protected void doDecrement() {
+		setValue(value - getStepSize());
+	}
 
-    @Override
-    protected void doIncrement() {
-        setValue(value + getStepSize());
-    }
+	@Override
+	protected void doIncrement() {
+		setValue(value + getStepSize());
+	}
 
-    @Override
-    protected String formatText() {
-        return String.format(locale, format, value);
-    }
+	@Override
+	protected String formatText() {
+		return String.format(locale, format, value);
+	}
 
-    protected float parseText(String value) throws ParseException {
-        return NumberFormat.getNumberInstance(locale).parse(value).floatValue();
-    }
+	protected float parseText(String value) throws ParseException {
+		return NumberFormat.getNumberInstance(locale).parse(value).floatValue();
+	}
 
-    protected void syncWithModel() {
-        cancelEdit();
-        this.minValue = model.getMinValue();
-        this.maxValue = model.getMaxValue();
-        this.value = model.getValue();
-        setDisplayText();
-    }
+	protected void syncWithModel() {
+		cancelEdit();
+		this.minValue = model.getMinValue();
+		this.maxValue = model.getMaxValue();
+		this.value = model.getValue();
+		setDisplayText();
+	}
 
-    @Override
-    protected void afterAddToGUI(GUI gui) {
-        super.afterAddToGUI(gui);
-        addModelCallback();
-    }
+	@Override
+	protected void afterAddToGUI(GUI gui) {
+		super.afterAddToGUI(gui);
+		addModelCallback();
+	}
 
-    @Override
-    protected void beforeRemoveFromGUI(GUI gui) {
-        removeModelCallback();
-        super.beforeRemoveFromGUI(gui);
-    }
+	@Override
+	protected void beforeRemoveFromGUI(GUI gui) {
+		removeModelCallback();
+		super.beforeRemoveFromGUI(gui);
+	}
 
-    protected void removeModelCallback() {
-        if(model != null && modelCallback != null) {
-            model.removeCallback(modelCallback);
-        }
-    }
+	protected void removeModelCallback() {
+		if (model != null && modelCallback != null) {
+			model.removeCallback(modelCallback);
+		}
+	}
 
-    protected void addModelCallback() {
-        if(model != null && getGUI() != null) {
-            if(modelCallback == null) {
-                modelCallback = new ModelCallback();
-            }
-            model.addCallback(modelCallback);
-            syncWithModel();
-        }
-    }
+	protected void addModelCallback() {
+		if (model != null && getGUI() != null) {
+			if (modelCallback == null) {
+				modelCallback = new ModelCallback();
+			}
+			model.addCallback(modelCallback);
+			syncWithModel();
+		}
+	}
 }

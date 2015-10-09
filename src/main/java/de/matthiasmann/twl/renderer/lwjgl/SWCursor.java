@@ -40,27 +40,30 @@ import de.matthiasmann.twl.renderer.MouseCursor;
  */
 class SWCursor extends TextureAreaBase implements MouseCursor {
 
-    private final LWJGLTexture texture;
-    private final int hotSpotX;
-    private final int hotSpotY;
-    private final Image imageRef;
+	private final LWJGLTexture texture;
+	private final int hotSpotX;
+	private final int hotSpotY;
+	private final Image imageRef;
 
-    SWCursor(LWJGLTexture texture, int x, int y, int width, int height, int hotSpotX, int hotSpotY, Image imageRef) {
-        super(x, y, width, height, texture.getTexWidth(), texture.getTexHeight());
-        this.texture = texture;
-        this.hotSpotX = hotSpotX;
-        this.hotSpotY = hotSpotY;
-        this.imageRef = imageRef;
-    }
-    
-    void render(int x, int y) {
-        if(imageRef != null) {
-            imageRef.draw(texture.renderer.swCursorAnimState, x-hotSpotX, y-hotSpotY);
-        } else if(texture.bind()) {
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            GL11.glBegin(GL11.GL_QUADS);
-            drawQuad(x-hotSpotX, y-hotSpotY, width, height);
-            GL11.glEnd();
-        }
-    }
+	SWCursor(LWJGLTexture texture, int x, int y, int width, int height,
+			int hotSpotX, int hotSpotY, Image imageRef) {
+		super(x, y, width, height, texture.getTexWidth(), texture
+				.getTexHeight());
+		this.texture = texture;
+		this.hotSpotX = hotSpotX;
+		this.hotSpotY = hotSpotY;
+		this.imageRef = imageRef;
+	}
+
+	void render(int x, int y) {
+		if (imageRef != null) {
+			imageRef.draw(texture.renderer.swCursorAnimState, x - hotSpotX, y
+					- hotSpotY);
+		} else if (texture.bind()) {
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			GL11.glBegin(GL11.GL_QUADS);
+			drawQuad(x - hotSpotX, y - hotSpotY, width, height);
+			GL11.glEnd();
+		}
+	}
 }

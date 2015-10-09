@@ -34,138 +34,143 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 /**
  * base class for drop down comboboxes.
  *
- * Manages layout of label and button and opening the popup.
- * Subclasses have to create and add the label, and add the popup content.
+ * Manages layout of label and button and opening the popup. Subclasses have to
+ * create and add the label, and add the popup content.
  *
  * @author Matthias Mann
  */
 public abstract class ComboBoxBase extends Widget {
 
-    public static final StateKey STATE_COMBOBOX_KEYBOARD_FOCUS = StateKey.get("comboboxKeyboardFocus");
-    
-    protected final Button button;
-    protected final PopupWindow popup;
-    
-    protected ComboBoxBase() {
-        this.button = new Button(getAnimationState());
-        this.popup = new PopupWindow(this) {
-            @Override
-            protected void escapePressed(Event evt) {
-                ComboBoxBase.this.popupEscapePressed(evt);
-            }
-        };
+	public static final StateKey STATE_COMBOBOX_KEYBOARD_FOCUS = StateKey
+			.get("comboboxKeyboardFocus");
 
-        button.addCallback(new Runnable() {
-            public void run() {
-                openPopup();
-            }
-        });
+	protected final Button button;
+	protected final PopupWindow popup;
 
-        add(button);
-        setCanAcceptKeyboardFocus(true);
-        setDepthFocusTraversal(false);
-    }
-    
-    protected abstract Widget getLabel();
+	protected ComboBoxBase() {
+		this.button = new Button(getAnimationState());
+		this.popup = new PopupWindow(this) {
+			@Override
+			protected void escapePressed(Event evt) {
+				ComboBoxBase.this.popupEscapePressed(evt);
+			}
+		};
 
-    protected boolean openPopup() {
-        if(popup.openPopup()) {
-            setPopupSize();
-            return true;
-        }
-        return false;
-    }
+		button.addCallback(new Runnable() {
+			public void run() {
+				openPopup();
+			}
+		});
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return getLabel().getPreferredWidth() + button.getPreferredWidth();
-    }
+		add(button);
+		setCanAcceptKeyboardFocus(true);
+		setDepthFocusTraversal(false);
+	}
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return Math.max(getLabel().getPreferredHeight(), button.getPreferredHeight());
-    }
+	protected abstract Widget getLabel();
 
-    @Override
-    public int getMinWidth() {
-        int minWidth = super.getMinWidth();
-        minWidth = Math.max(minWidth, getLabel().getMinWidth() + button.getMinWidth());
-        return minWidth;
-    }
+	protected boolean openPopup() {
+		if (popup.openPopup()) {
+			setPopupSize();
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public int getMinHeight() {
-        int minInnerHeight = Math.max(getLabel().getMinHeight(), button.getMinHeight());
-        return Math.max(super.getMinHeight(), minInnerHeight + getBorderVertical());
-    }
+	@Override
+	public int getPreferredInnerWidth() {
+		return getLabel().getPreferredWidth() + button.getPreferredWidth();
+	}
 
-    protected void setPopupSize() {
-        int minHeight = popup.getMinHeight();
-        int popupHeight = computeSize(minHeight,
-                popup.getPreferredHeight(),
-                popup.getMaxHeight());
-        int popupMaxBottom = popup.getParent().getInnerBottom();
-        if(getBottom() + minHeight > popupMaxBottom) {
-            if(getY() - popupHeight >= popup.getParent().getInnerY()) {
-                popup.setPosition(getX(), getY() - popupHeight);
-            } else {
-                popup.setPosition(getX(), popupMaxBottom - minHeight);
-            }
-        } else {
-            popup.setPosition(getX(), getBottom());
-        }
-        popupHeight = Math.min(popupHeight, popupMaxBottom - popup.getY());
-        popup.setSize(getWidth(), popupHeight);
-    }
+	@Override
+	public int getPreferredInnerHeight() {
+		return Math.max(getLabel().getPreferredHeight(),
+				button.getPreferredHeight());
+	}
 
-    @Override
-    protected void layout() {
-        int btnWidth = button.getPreferredWidth();
-        int innerHeight = getInnerHeight();
-        int innerX = getInnerX();
-        int innerY = getInnerY();
-        button.setPosition(getInnerRight() - btnWidth, innerY);
-        button.setSize(btnWidth, innerHeight);
-        getLabel().setPosition(innerX, innerY);
-        getLabel().setSize(Math.max(0, button.getX() - innerX), innerHeight);
-    }
+	@Override
+	public int getMinWidth() {
+		int minWidth = super.getMinWidth();
+		minWidth = Math.max(minWidth,
+				getLabel().getMinWidth() + button.getMinWidth());
+		return minWidth;
+	}
 
-    @Override
-    protected void sizeChanged() {
-        super.sizeChanged();
-        if(popup.isOpen()) {
-            setPopupSize();
-        }
-    }
+	@Override
+	public int getMinHeight() {
+		int minInnerHeight = Math.max(getLabel().getMinHeight(),
+				button.getMinHeight());
+		return Math.max(super.getMinHeight(), minInnerHeight
+				+ getBorderVertical());
+	}
 
-    private static void setRecursive(Widget w, StateKey what, boolean state) {
-        w.getAnimationState().setAnimationState(what, state);
-        for(int i=0 ; i<w.getNumChildren() ; ++i) {
-            Widget child = w.getChild(i);
-            setRecursive(child, what, state);
-        }
-    }
+	protected void setPopupSize() {
+		int minHeight = popup.getMinHeight();
+		int popupHeight = computeSize(minHeight, popup.getPreferredHeight(),
+				popup.getMaxHeight());
+		int popupMaxBottom = popup.getParent().getInnerBottom();
+		if (getBottom() + minHeight > popupMaxBottom) {
+			if (getY() - popupHeight >= popup.getParent().getInnerY()) {
+				popup.setPosition(getX(), getY() - popupHeight);
+			} else {
+				popup.setPosition(getX(), popupMaxBottom - minHeight);
+			}
+		} else {
+			popup.setPosition(getX(), getBottom());
+		}
+		popupHeight = Math.min(popupHeight, popupMaxBottom - popup.getY());
+		popup.setSize(getWidth(), popupHeight);
+	}
 
-    @Override
-    protected void keyboardFocusGained() {
-        super.keyboardFocusGained();
-        setRecursive(getLabel(), STATE_COMBOBOX_KEYBOARD_FOCUS, true);
-    }
+	@Override
+	protected void layout() {
+		int btnWidth = button.getPreferredWidth();
+		int innerHeight = getInnerHeight();
+		int innerX = getInnerX();
+		int innerY = getInnerY();
+		button.setPosition(getInnerRight() - btnWidth, innerY);
+		button.setSize(btnWidth, innerHeight);
+		getLabel().setPosition(innerX, innerY);
+		getLabel().setSize(Math.max(0, button.getX() - innerX), innerHeight);
+	}
 
-    @Override
-    protected void keyboardFocusLost() {
-        super.keyboardFocusLost();
-        setRecursive(getLabel(), STATE_COMBOBOX_KEYBOARD_FOCUS, false);
-    }
-    
-    /**
-     * Called when the escape key is pressed in the open popup.
-     * 
-     * The default implementation closes the popup.
-     * 
-     * @param evt the event
-     */
-    protected void popupEscapePressed(Event evt) {
-        popup.closePopup();
-    }
+	@Override
+	protected void sizeChanged() {
+		super.sizeChanged();
+		if (popup.isOpen()) {
+			setPopupSize();
+		}
+	}
+
+	private static void setRecursive(Widget w, StateKey what, boolean state) {
+		w.getAnimationState().setAnimationState(what, state);
+		for (int i = 0; i < w.getNumChildren(); ++i) {
+			Widget child = w.getChild(i);
+			setRecursive(child, what, state);
+		}
+	}
+
+	@Override
+	protected void keyboardFocusGained() {
+		super.keyboardFocusGained();
+		setRecursive(getLabel(), STATE_COMBOBOX_KEYBOARD_FOCUS, true);
+	}
+
+	@Override
+	protected void keyboardFocusLost() {
+		super.keyboardFocusLost();
+		setRecursive(getLabel(), STATE_COMBOBOX_KEYBOARD_FOCUS, false);
+	}
+
+	/**
+	 * Called when the escape key is pressed in the open popup.
+	 * 
+	 * The default implementation closes the popup.
+	 * 
+	 * @param evt
+	 *            the event
+	 */
+	protected void popupEscapePressed(Event evt) {
+		popup.closePopup();
+	}
 }

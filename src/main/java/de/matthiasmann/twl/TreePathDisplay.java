@@ -40,234 +40,241 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  */
 public class TreePathDisplay extends Widget {
 
-    public interface Callback {
-        public void pathElementClicked(TreeTableNode node, TreeTableNode child);
-        public boolean resolvePath(String path);
-    }
-    
-    private final BoxLayout pathBox;
-    private final EditField editField;
-    private Callback[] callbacks;
-    private String separator = "/";
-    private TreeTableNode currentNode;
-    private boolean allowEdit;
+	public interface Callback {
+		public void pathElementClicked(TreeTableNode node, TreeTableNode child);
 
-    public TreePathDisplay() {
-        pathBox = new PathBox();
-        pathBox.setScroll(true);
-        pathBox.setClip(true);
+		public boolean resolvePath(String path);
+	}
 
-        editField = new PathEditField();
-        editField.setVisible(false);
-        
-        add(pathBox);
-        add(editField);
-    }
+	private final BoxLayout pathBox;
+	private final EditField editField;
+	private Callback[] callbacks;
+	private String separator = "/";
+	private TreeTableNode currentNode;
+	private boolean allowEdit;
 
-    public void addCallback(Callback cb) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, cb, Callback.class);
-    }
+	public TreePathDisplay() {
+		pathBox = new PathBox();
+		pathBox.setScroll(true);
+		pathBox.setClip(true);
 
-    public void removeCallback(Callback cb) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
-    }
-    
-    public TreeTableNode getCurrentNode() {
-        return currentNode;
-    }
+		editField = new PathEditField();
+		editField.setVisible(false);
 
-    public void setCurrentNode(TreeTableNode currentNode) {
-        this.currentNode = currentNode;
-        rebuildPathBox();
-    }
+		add(pathBox);
+		add(editField);
+	}
 
-    public String getSeparator() {
-        return separator;
-    }
+	public void addCallback(Callback cb) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, cb,
+				Callback.class);
+	}
 
-    public void setSeparator(String separator) {
-        this.separator = separator;
-        rebuildPathBox();
-    }
+	public void removeCallback(Callback cb) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
+	}
 
-    public boolean isAllowEdit() {
-        return allowEdit;
-    }
+	public TreeTableNode getCurrentNode() {
+		return currentNode;
+	}
 
-    public void setAllowEdit(boolean allowEdit) {
-        this.allowEdit = allowEdit;
-        rebuildPathBox();
-    }
+	public void setCurrentNode(TreeTableNode currentNode) {
+		this.currentNode = currentNode;
+		rebuildPathBox();
+	}
 
-    public void setEditErrorMessage(String msg) {
-        editField.setErrorMessage(msg);
-    }
+	public String getSeparator() {
+		return separator;
+	}
 
-    public EditField getEditField() {
-        return editField;
-    }
-    
-    protected String getTextFromNode(TreeTableNode node) {
-        Object data = node.getData(0);
-        String text = (data != null) ? data.toString() : "";
-        if(text.endsWith(separator)) {
-            // strip of separator
-            text = text.substring(0, text.length() - 1);
-        }
-        return text;
-    }
+	public void setSeparator(String separator) {
+		this.separator = separator;
+		rebuildPathBox();
+	}
 
-    private void rebuildPathBox() {
-        pathBox.removeAllChildren();
-        if(currentNode != null) {
-            recursiveAddNode(currentNode, null);
-        }
-    }
+	public boolean isAllowEdit() {
+		return allowEdit;
+	}
 
-    private void recursiveAddNode(final TreeTableNode node, final TreeTableNode child) {
-        if(node.getParent() != null) {
-            recursiveAddNode(node.getParent(), node);
+	public void setAllowEdit(boolean allowEdit) {
+		this.allowEdit = allowEdit;
+		rebuildPathBox();
+	}
 
-            Button btn = new Button(getTextFromNode(node));
-            btn.setTheme("node");
-            btn.addCallback(new Runnable() {
-                public void run() {
-                    firePathElementClicked(node, child);
-                }
-            });
-            pathBox.add(btn);
+	public void setEditErrorMessage(String msg) {
+		editField.setErrorMessage(msg);
+	}
 
-            Label l = new Label(separator);
-            l.setTheme("separator");
-            if(allowEdit) {
-                l.addCallback(new CallbackWithReason<Label.CallbackReason>() {
-                    public void callback(CallbackReason reason) {
-                        if(reason == CallbackReason.DOUBLE_CLICK) {
-                            editPath(node);
-                        }
-                    }
-                });
-            }
-            pathBox.add(l);
-        }
-    }
+	public EditField getEditField() {
+		return editField;
+	}
 
-    void endEdit() {
-        editField.setVisible(false);
-        requestKeyboardFocus();
-    }
+	protected String getTextFromNode(TreeTableNode node) {
+		Object data = node.getData(0);
+		String text = (data != null) ? data.toString() : "";
+		if (text.endsWith(separator)) {
+			// strip of separator
+			text = text.substring(0, text.length() - 1);
+		}
+		return text;
+	}
 
-    void editPath(TreeTableNode cursorAfterNode) {
-        StringBuilder sb = new StringBuilder();
-        int cursorPos = 0;
-        if(currentNode != null) {
-            cursorPos = recursiveAddPath(sb, currentNode, cursorAfterNode);
-        }
-        editField.setErrorMessage(null);
-        editField.setText(sb.toString());
-        editField.setCursorPos(cursorPos, false);
-        editField.setVisible(true);
-        editField.requestKeyboardFocus();
-    }
+	private void rebuildPathBox() {
+		pathBox.removeAllChildren();
+		if (currentNode != null) {
+			recursiveAddNode(currentNode, null);
+		}
+	}
 
-    private int recursiveAddPath(StringBuilder sb, TreeTableNode node, TreeTableNode cursorAfterNode) {
-        int cursorPos = 0;
-        if(node.getParent() != null) {
-            cursorPos = recursiveAddPath(sb, node.getParent(), cursorAfterNode);
-            sb.append(getTextFromNode(node)).append(separator);
-        }
-        if(node == cursorAfterNode) {
-            return sb.length();
-        } else {
-            return cursorPos;
-        }
-    }
+	private void recursiveAddNode(final TreeTableNode node,
+			final TreeTableNode child) {
+		if (node.getParent() != null) {
+			recursiveAddNode(node.getParent(), node);
 
-    protected boolean fireResolvePath(String text) {
-        if(callbacks != null) {
-            for(Callback cb : callbacks) {
-                if(cb.resolvePath(text)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+			Button btn = new Button(getTextFromNode(node));
+			btn.setTheme("node");
+			btn.addCallback(new Runnable() {
+				public void run() {
+					firePathElementClicked(node, child);
+				}
+			});
+			pathBox.add(btn);
 
-    protected void firePathElementClicked(TreeTableNode node, TreeTableNode child) {
-        if(callbacks != null) {
-            for(Callback cb : callbacks) {
-                cb.pathElementClicked(node, child);
-            }
-        }
-    }
+			Label l = new Label(separator);
+			l.setTheme("separator");
+			if (allowEdit) {
+				l.addCallback(new CallbackWithReason<Label.CallbackReason>() {
+					public void callback(CallbackReason reason) {
+						if (reason == CallbackReason.DOUBLE_CLICK) {
+							editPath(node);
+						}
+					}
+				});
+			}
+			pathBox.add(l);
+		}
+	}
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return pathBox.getPreferredWidth();
-    }
+	void endEdit() {
+		editField.setVisible(false);
+		requestKeyboardFocus();
+	}
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return Math.max(
-                pathBox.getPreferredHeight(),
-                editField.getPreferredHeight());
-    }
+	void editPath(TreeTableNode cursorAfterNode) {
+		StringBuilder sb = new StringBuilder();
+		int cursorPos = 0;
+		if (currentNode != null) {
+			cursorPos = recursiveAddPath(sb, currentNode, cursorAfterNode);
+		}
+		editField.setErrorMessage(null);
+		editField.setText(sb.toString());
+		editField.setCursorPos(cursorPos, false);
+		editField.setVisible(true);
+		editField.requestKeyboardFocus();
+	}
 
-    @Override
-    public int getMinHeight() {
-        int minInnerHeight = Math.max(pathBox.getMinHeight(), editField.getMinHeight());
-        return Math.max(super.getMinHeight(), minInnerHeight + getBorderVertical());
-    }
+	private int recursiveAddPath(StringBuilder sb, TreeTableNode node,
+			TreeTableNode cursorAfterNode) {
+		int cursorPos = 0;
+		if (node.getParent() != null) {
+			cursorPos = recursiveAddPath(sb, node.getParent(), cursorAfterNode);
+			sb.append(getTextFromNode(node)).append(separator);
+		}
+		if (node == cursorAfterNode) {
+			return sb.length();
+		} else {
+			return cursorPos;
+		}
+	}
 
-    @Override
-    protected void layout() {
-        layoutChildFullInnerArea(pathBox);
-        layoutChildFullInnerArea(editField);
-    }
+	protected boolean fireResolvePath(String text) {
+		if (callbacks != null) {
+			for (Callback cb : callbacks) {
+				if (cb.resolvePath(text)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    private class PathBox extends BoxLayout {
-        public PathBox() {
-            super(BoxLayout.Direction.HORIZONTAL);
-        }
+	protected void firePathElementClicked(TreeTableNode node,
+			TreeTableNode child) {
+		if (callbacks != null) {
+			for (Callback cb : callbacks) {
+				cb.pathElementClicked(node, child);
+			}
+		}
+	}
 
-        @Override
-        protected boolean handleEvent(Event evt) {
-            if(evt.isMouseEvent()) {
-                if(evt.getType() == Event.Type.MOUSE_CLICKED && evt.getMouseClickCount() == 2) {
-                    editPath(getCurrentNode());
-                    return true;
-                }
-                return evt.getType() != Event.Type.MOUSE_WHEEL;
-            }
-            return super.handleEvent(evt);
-        }
-    }
+	@Override
+	public int getPreferredInnerWidth() {
+		return pathBox.getPreferredWidth();
+	}
 
-    private class PathEditField extends EditField {
-        @Override
-        protected void keyboardFocusLost() {
-            if(!hasOpenPopups()) {
-                setVisible(false);
-            }
-        }
+	@Override
+	public int getPreferredInnerHeight() {
+		return Math.max(pathBox.getPreferredHeight(),
+				editField.getPreferredHeight());
+	}
 
-        @Override
-        protected void doCallback(int key) {
-            // for auto completion
-            super.doCallback(key);
+	@Override
+	public int getMinHeight() {
+		int minInnerHeight = Math.max(pathBox.getMinHeight(),
+				editField.getMinHeight());
+		return Math.max(super.getMinHeight(), minInnerHeight
+				+ getBorderVertical());
+	}
 
-            switch(key) {
-            case Event.KEY_RETURN:
-                if(fireResolvePath(getText())) {
-                    endEdit();
-                }
-                break;
-            case Event.KEY_ESCAPE:
-                endEdit();
-                break;
-            }
-        }
-    }
+	@Override
+	protected void layout() {
+		layoutChildFullInnerArea(pathBox);
+		layoutChildFullInnerArea(editField);
+	}
+
+	private class PathBox extends BoxLayout {
+		public PathBox() {
+			super(BoxLayout.Direction.HORIZONTAL);
+		}
+
+		@Override
+		protected boolean handleEvent(Event evt) {
+			if (evt.isMouseEvent()) {
+				if (evt.getType() == Event.Type.MOUSE_CLICKED
+						&& evt.getMouseClickCount() == 2) {
+					editPath(getCurrentNode());
+					return true;
+				}
+				return evt.getType() != Event.Type.MOUSE_WHEEL;
+			}
+			return super.handleEvent(evt);
+		}
+	}
+
+	private class PathEditField extends EditField {
+		@Override
+		protected void keyboardFocusLost() {
+			if (!hasOpenPopups()) {
+				setVisible(false);
+			}
+		}
+
+		@Override
+		protected void doCallback(int key) {
+			// for auto completion
+			super.doCallback(key);
+
+			switch (key) {
+			case Event.KEY_RETURN:
+				if (fireResolvePath(getText())) {
+					endEdit();
+				}
+				break;
+			case Event.KEY_ESCAPE:
+				endEdit();
+				break;
+			}
+		}
+	}
 
 }

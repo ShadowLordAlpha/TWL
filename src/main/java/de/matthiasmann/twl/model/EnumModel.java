@@ -34,15 +34,16 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
 /**
  * A generic model for enum values based on a generic enum type.
  * 
- * @param <T> The enum type
+ * @param <T>
+ *            The enum type
  * @author Matthias Mann
  */
 public interface EnumModel<T extends Enum<T>> extends WithRunnableCallback {
 
-    public Class<T> getEnumClass();
-    
-    public T getValue();
+	public Class<T> getEnumClass();
 
-    public void setValue(T value);
-    
+	public T getValue();
+
+	public void setValue(T value);
+
 }

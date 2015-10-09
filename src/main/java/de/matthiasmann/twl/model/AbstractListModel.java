@@ -34,51 +34,53 @@ import de.matthiasmann.twl.utils.CallbackSupport;
 /**
  * Abstract base class to simplify implementating ListModels.
  *
- * @param <T> the type of a list entry
+ * @param <T>
+ *            the type of a list entry
  *
  * @author Matthias Mann
  */
 public abstract class AbstractListModel<T> implements ListModel<T> {
 
-    private ChangeListener[] listeners;
-    
-    public void addChangeListener(ChangeListener listener) {
-        listeners = CallbackSupport.addCallbackToList(listeners, listener, ChangeListener.class);
-    }
+	private ChangeListener[] listeners;
 
-    public void removeChangeListener(ChangeListener listener) {
-        listeners = CallbackSupport.removeCallbackFromList(listeners, listener);
-    }
+	public void addChangeListener(ChangeListener listener) {
+		listeners = CallbackSupport.addCallbackToList(listeners, listener,
+				ChangeListener.class);
+	}
 
-    protected void fireEntriesInserted(int first, int last) {
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.entriesInserted(first, last);
-            }
-        }
-    }
+	public void removeChangeListener(ChangeListener listener) {
+		listeners = CallbackSupport.removeCallbackFromList(listeners, listener);
+	}
 
-    protected void fireEntriesDeleted(int first, int last) {
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.entriesDeleted(first, last);
-            }
-        }
-    }
+	protected void fireEntriesInserted(int first, int last) {
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.entriesInserted(first, last);
+			}
+		}
+	}
 
-    protected void fireEntriesChanged(int first, int last) {
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.entriesChanged(first, last);
-            }
-        }
-    }
+	protected void fireEntriesDeleted(int first, int last) {
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.entriesDeleted(first, last);
+			}
+		}
+	}
 
-    protected void fireAllChanged() {
-        if(listeners != null) {
-            for(ChangeListener cl : listeners) {
-                cl.allChanged();
-            }
-        }
-    }
+	protected void fireEntriesChanged(int first, int last) {
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.entriesChanged(first, last);
+			}
+		}
+	}
+
+	protected void fireAllChanged() {
+		if (listeners != null) {
+			for (ChangeListener cl : listeners) {
+				cl.allChanged();
+			}
+		}
+	}
 }

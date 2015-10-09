@@ -47,107 +47,109 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
  */
 public class StringAttributesTest {
 
-    public StringAttributesTest() {
-    }
+	public StringAttributesTest() {
+	}
 
-    private static final StateKey BLA  = StateKey.get("bla");
-    private static final StateKey BLUB = StateKey.get("blub");
-    private static final StateKey HUGO = StateKey.get("hugo");
-    private static final StateKey BOB  = StateKey.get("bob");
+	private static final StateKey BLA = StateKey.get("bla");
+	private static final StateKey BLUB = StateKey.get("blub");
+	private static final StateKey HUGO = StateKey.get("hugo");
+	private static final StateKey BOB = StateKey.get("bob");
 
-    @Test
-    public void testSimple() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 11);
-    }
+	@Test
+	public void testSimple() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 11);
+	}
 
-    @Test
-    public void testSingleLeft() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        sa.setAnimationState(BLA, 0, 5, true);
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 5, BLA);
-        check(sa, 11);
-    }
+	@Test
+	public void testSingleLeft() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		sa.setAnimationState(BLA, 0, 5, true);
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 5, BLA);
+		check(sa, 11);
+	}
 
-    @Test
-    public void testSingleCenter() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        sa.setAnimationState(HUGO, 4, 7, true);
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 4);
-        check(sa, 7, HUGO);
-        check(sa, 11);
-    }
+	@Test
+	public void testSingleCenter() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		sa.setAnimationState(HUGO, 4, 7, true);
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 4);
+		check(sa, 7, HUGO);
+		check(sa, 11);
+	}
 
-    @Test
-    public void testSingleRight() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        sa.setAnimationState(BOB, 6, 11, true);
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 6);
-        check(sa, 11, BOB);
-    }
+	@Test
+	public void testSingleRight() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		sa.setAnimationState(BOB, 6, 11, true);
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 6);
+		check(sa, 11, BOB);
+	}
 
-    @Test
-    public void testLeftRight() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        sa.setAnimationState(BLA, 0, 5, true);
-        sa.setAnimationState(BOB, 6, 11, true);
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 5, BLA);
-        check(sa, 6);
-        check(sa, 11, BOB);
-    }
+	@Test
+	public void testLeftRight() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		sa.setAnimationState(BLA, 0, 5, true);
+		sa.setAnimationState(BOB, 6, 11, true);
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 5, BLA);
+		check(sa, 6);
+		check(sa, 11, BOB);
+	}
 
-    @Test
-    public void testOverlapping() {
-        StringAttributes sa = new StringAttributes("Hello World");
-        sa.setAnimationState(BLA, 0, 5, true);
-        sa.setAnimationState(HUGO, 4, 7, true);
-        sa.setAnimationState(BOB, 6, 11, true);
-        assertEquals(11, sa.length());
-        sa.setPosition(0);
-        assertEquals(0, sa.getPosition());
-        check(sa, 4, BLA);
-        check(sa, 5, BLA, HUGO);
-        check(sa, 6, HUGO);
-        check(sa, 7, HUGO, BOB);
-        check(sa, 11, BOB);
-    }
+	@Test
+	public void testOverlapping() {
+		StringAttributes sa = new StringAttributes("Hello World");
+		sa.setAnimationState(BLA, 0, 5, true);
+		sa.setAnimationState(HUGO, 4, 7, true);
+		sa.setAnimationState(BOB, 6, 11, true);
+		assertEquals(11, sa.length());
+		sa.setPosition(0);
+		assertEquals(0, sa.getPosition());
+		check(sa, 4, BLA);
+		check(sa, 5, BLA, HUGO);
+		check(sa, 6, HUGO);
+		check(sa, 7, HUGO, BOB);
+		check(sa, 11, BOB);
+	}
 
-    private static void check(StringAttributes sa, int nextPos, StateKey ... activeKeys) {
-        HashSet<StateKey> all = getAllStateKeys();
-        for(StateKey key : activeKeys) {
-            all.remove(key);
-            assertTrue(sa.getAnimationState(key));
-        }
-        for(StateKey key : all) {
-            assertFalse(sa.getAnimationState(key));
-        }
-        assertEquals(nextPos, sa.advance());
-        assertEquals(nextPos, sa.getPosition());
-    }
+	private static void check(StringAttributes sa, int nextPos,
+			StateKey... activeKeys) {
+		HashSet<StateKey> all = getAllStateKeys();
+		for (StateKey key : activeKeys) {
+			all.remove(key);
+			assertTrue(sa.getAnimationState(key));
+		}
+		for (StateKey key : all) {
+			assertFalse(sa.getAnimationState(key));
+		}
+		assertEquals(nextPos, sa.advance());
+		assertEquals(nextPos, sa.getPosition());
+	}
 
-    @SuppressWarnings("unchecked")
-    private static HashSet<StateKey> getAllStateKeys() {
-        try {
-            Field f = StateKey.class.getDeclaredField("keys");
-            f.setAccessible(true);
-            return new HashSet<StateKey>(((HashMap<String, StateKey>)f.get(null)).values());
-        } catch(Exception ex) {
-            throw new AssertionError();
-        }
-    }
+	@SuppressWarnings("unchecked")
+	private static HashSet<StateKey> getAllStateKeys() {
+		try {
+			Field f = StateKey.class.getDeclaredField("keys");
+			f.setAccessible(true);
+			return new HashSet<StateKey>(
+					((HashMap<String, StateKey>) f.get(null)).values());
+		} catch (Exception ex) {
+			throw new AssertionError();
+		}
+	}
 }

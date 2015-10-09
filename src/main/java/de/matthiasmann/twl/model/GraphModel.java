@@ -36,29 +36,32 @@ package de.matthiasmann.twl.model;
  */
 public interface GraphModel {
 
-    /**
-     * Returns the number of lines in this graph.
-     * @return the number of lines in this graph
-     */
-    public int getNumLines();
+	/**
+	 * Returns the number of lines in this graph.
+	 * 
+	 * @return the number of lines in this graph
+	 */
+	public int getNumLines();
 
-    /**
-     * Returns the specified line model.
-     * @param idx The line index. Must be &gt;= 0 and &lt; getNumLines()
-     * @return the specified line model
-     */
-    public GraphLineModel getLine(int idx);
-    
-    /**
-     * The Y axis of the graph is based on min/max values.
-     * The scaling for an axis can be compute from the combined
-     * min/max values or using it's own min/max value.
-     *
-     * The combined min values is the smallest min value of all lines.
-     * The combined max values is the largest max value of all lines.
-     *
-     * @return true if the Y scale is independant or false if it is combined.
-     */
-    public boolean getScaleLinesIndependant();
-    
+	/**
+	 * Returns the specified line model.
+	 * 
+	 * @param idx
+	 *            The line index. Must be &gt;= 0 and &lt; getNumLines()
+	 * @return the specified line model
+	 */
+	public GraphLineModel getLine(int idx);
+
+	/**
+	 * The Y axis of the graph is based on min/max values. The scaling for an
+	 * axis can be compute from the combined min/max values or using it's own
+	 * min/max value.
+	 *
+	 * The combined min values is the smallest min value of all lines. The
+	 * combined max values is the largest max value of all lines.
+	 *
+	 * @return true if the Y scale is independant or false if it is combined.
+	 */
+	public boolean getScaleLinesIndependant();
+
 }

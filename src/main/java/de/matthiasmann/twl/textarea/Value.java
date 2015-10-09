@@ -35,70 +35,67 @@ package de.matthiasmann.twl.textarea;
  * @author Matthias Mann
  */
 public final class Value {
-    public final float value;
-    public final Unit unit;
+	public final float value;
+	public final Unit unit;
 
-    public Value(float value, Unit unit) {
-        this.value = value;
-        this.unit = unit;
+	public Value(float value, Unit unit) {
+		this.value = value;
+		this.unit = unit;
 
-        if(unit == null) {
-            throw new NullPointerException("unit");
-        }
-        if(unit == Unit.AUTO && value != 0f) {
-            throw new IllegalArgumentException("value must be 0 for Unit.AUTO");
-        }
-    }
+		if (unit == null) {
+			throw new NullPointerException("unit");
+		}
+		if (unit == Unit.AUTO && value != 0f) {
+			throw new IllegalArgumentException("value must be 0 for Unit.AUTO");
+		}
+	}
 
-    @Override
-    public String toString() {
-        if(unit == Unit.AUTO) {
-            return unit.getPostfix();
-        }
-        return value + unit.getPostfix();
-    }
+	@Override
+	public String toString() {
+		if (unit == Unit.AUTO) {
+			return unit.getPostfix();
+		}
+		return value + unit.getPostfix();
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof Value) {
-            final Value other = (Value)obj;
-            return (this.value == other.value) && (this.unit == other.unit);
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Value) {
+			final Value other = (Value) obj;
+			return (this.value == other.value) && (this.unit == other.unit);
+		}
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + Float.floatToIntBits(this.value);
-        hash = 17 * hash + this.unit.hashCode();
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 17 * hash + Float.floatToIntBits(this.value);
+		hash = 17 * hash + this.unit.hashCode();
+		return hash;
+	}
 
-    public static final Value ZERO_PX = new Value(0, Unit.PX);
-    public static final Value AUTO = new Value(0, Unit.AUTO);
-    
-    public enum Unit {
-        PX(false, "px"),
-        PT(false, "pt"),
-        EM(true, "em"),
-        EX(true, "ex"),
-        PERCENT(false, "%"),
-        AUTO(false, "auto");
+	public static final Value ZERO_PX = new Value(0, Unit.PX);
+	public static final Value AUTO = new Value(0, Unit.AUTO);
 
-        final boolean fontBased;
-        final String postfix;
-        private Unit(boolean fontBased, String postfix) {
-            this.fontBased = fontBased;
-            this.postfix = postfix;
-        }
+	public enum Unit {
+		PX(false, "px"), PT(false, "pt"), EM(true, "em"), EX(true, "ex"), PERCENT(
+				false, "%"), AUTO(false, "auto");
 
-        public boolean isFontBased() {
-            return fontBased;
-        }
+		final boolean fontBased;
+		final String postfix;
 
-        public String getPostfix() {
-            return postfix;
-        }
-    }
+		private Unit(boolean fontBased, String postfix) {
+			this.fontBased = fontBased;
+			this.postfix = postfix;
+		}
+
+		public boolean isFontBased() {
+			return fontBased;
+		}
+
+		public String getPostfix() {
+			return postfix;
+		}
+	}
 }

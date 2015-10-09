@@ -36,35 +36,35 @@ package de.matthiasmann.twl.model;
  */
 public class EnumListModel<T extends Enum<T>> extends SimpleListModel<T> {
 
-    private final Class<T> enumClass;
-    private final T[] enumValues;
+	private final Class<T> enumClass;
+	private final T[] enumValues;
 
-    public EnumListModel(Class<T> enumClass) {
-        if(!enumClass.isEnum()) {
-            throw new IllegalArgumentException("not an enum class");
-        }
-        this.enumClass = enumClass;
-        this.enumValues = enumClass.getEnumConstants();
-    }
+	public EnumListModel(Class<T> enumClass) {
+		if (!enumClass.isEnum()) {
+			throw new IllegalArgumentException("not an enum class");
+		}
+		this.enumClass = enumClass;
+		this.enumValues = enumClass.getEnumConstants();
+	}
 
-    public Class<T> getEnumClass() {
-        return enumClass;
-    }
+	public Class<T> getEnumClass() {
+		return enumClass;
+	}
 
-    public T getEntry(int index) {
-        return enumValues[index];
-    }
+	public T getEntry(int index) {
+		return enumValues[index];
+	}
 
-    public int getNumEntries() {
-        return enumValues.length;
-    }
+	public int getNumEntries() {
+		return enumValues.length;
+	}
 
-    public int findEntry(T value) {
-        for(int i=0,n=enumValues.length ; i<n ; i++) {
-            if(enumValues[i] == value) {
-                return i;
-            }
-        }
-        return -1;
-    }
+	public int findEntry(T value) {
+		for (int i = 0, n = enumValues.length; i < n; i++) {
+			if (enumValues[i] == value) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

@@ -38,61 +38,60 @@ import java.io.IOException;
  * @author Matthias Mann
  */
 public final class MineFieldSize {
-    
-    public final int width;
-    public final int height;
-    public final int numMines;
 
-    public MineFieldSize(int width, int height, int numMines) {
-        checkUShort(width, "width");
-        checkUShort(height, "height");
-        checkUShort(numMines, "numMines");
-        
-        if(numMines == 0 || numMines > width*height/2) {
-            throw new IllegalArgumentException("numMines");
-        }
-        
-        this.width = width;
-        this.height = height;
-        this.numMines = numMines;
-    }
-    
-    public static MineFieldSize read(DataInputStream dis) throws IOException {
-        int width = dis.readUnsignedShort();
-        int height = dis.readUnsignedShort();
-        int numMines = dis.readUnsignedShort();
-        return new MineFieldSize(width, height, numMines);
-    }
-    
-    public void write(DataOutputStream dos) throws IOException {
-        dos.writeShort((short)width);
-        dos.writeShort((short)height);
-        dos.writeShort((short)numMines);
-    }
+	public final int width;
+	public final int height;
+	public final int numMines;
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + this.width;
-        hash = 23 * hash + this.height;
-        hash = 23 * hash + this.numMines;
-        return hash;
-    }
+	public MineFieldSize(int width, int height, int numMines) {
+		checkUShort(width, "width");
+		checkUShort(height, "height");
+		checkUShort(numMines, "numMines");
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof MineFieldSize) {
-            final MineFieldSize other = (MineFieldSize)obj;
-            return (this.width == other.width) &&
-                    (this.height == other.height) &&
-                    (this.numMines == other.numMines);
-        }
-        return false;
-    }
+		if (numMines == 0 || numMines > width * height / 2) {
+			throw new IllegalArgumentException("numMines");
+		}
 
-    private static void checkUShort(int value, String what) {
-        if(value < 0 || value > 0xFFFF) {
-            throw new IllegalArgumentException(what);
-        }
-    }
+		this.width = width;
+		this.height = height;
+		this.numMines = numMines;
+	}
+
+	public static MineFieldSize read(DataInputStream dis) throws IOException {
+		int width = dis.readUnsignedShort();
+		int height = dis.readUnsignedShort();
+		int numMines = dis.readUnsignedShort();
+		return new MineFieldSize(width, height, numMines);
+	}
+
+	public void write(DataOutputStream dos) throws IOException {
+		dos.writeShort((short) width);
+		dos.writeShort((short) height);
+		dos.writeShort((short) numMines);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 23 * hash + this.width;
+		hash = 23 * hash + this.height;
+		hash = 23 * hash + this.numMines;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MineFieldSize) {
+			final MineFieldSize other = (MineFieldSize) obj;
+			return (this.width == other.width) && (this.height == other.height)
+					&& (this.numMines == other.numMines);
+		}
+		return false;
+	}
+
+	private static void checkUShort(int value, String what) {
+		if (value < 0 || value > 0xFFFF) {
+			throw new IllegalArgumentException(what);
+		}
+	}
 }

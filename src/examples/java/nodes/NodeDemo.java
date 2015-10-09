@@ -29,15 +29,15 @@
  */
 package nodes;
 
-import java.awt.DisplayMode;
-
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import test.TestUtils;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.ScrollPane;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -45,50 +45,62 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class NodeDemo {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(1024, 600));
-            Display.create();
-            Display.setTitle("TWL Node Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Node Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            NodeArea nodeArea = new NodeArea();
-            ScrollPane scrollPane = new ScrollPane(nodeArea);
-            scrollPane.setExpandContentSize(true);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            //renderer.setUseQuadsForLines(true);
-            GUI gui = new GUI(scrollPane, renderer);
+			GLFW.glfwSwapInterval(1); // vsync
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    NodeDemo.class.getResource("nodes.xml"), renderer);
-            gui.applyTheme(theme);
-            gui.update();
-            
-            Node nodeSource = nodeArea.addNode("Source");
-            nodeSource.setPosition(50, 50);
-            Pad nodeSourceColor = nodeSource.addPad("Color", false);
-            Pad nodeSourceAlpha = nodeSource.addPad("Alpha", false);
+			NodeArea nodeArea = new NodeArea();
+			ScrollPane scrollPane = new ScrollPane(nodeArea);
+			scrollPane.setExpandContentSize(true);
 
-            Node nodeSink = nodeArea.addNode("Sink");
-            nodeSink.setPosition(350, 200);
-            Pad nodeSinkColor = nodeSink.addPad("Color", true);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			// renderer.setUseQuadsForLines(true);
+			GUI gui = new GUI(scrollPane, renderer);
 
-            nodeArea.addConnection(nodeSourceColor, nodeSinkColor);
+			ThemeManager theme = ThemeManager.createThemeManager(
+					NodeDemo.class.getResource("nodes.xml"), renderer);
+			gui.applyTheme(theme);
+			gui.update();
 
-            while(!Display.isCloseRequested()) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			Node nodeSource = nodeArea.addNode("Source");
+			nodeSource.setPosition(50, 50);
+			Pad nodeSourceColor = nodeSource.addPad("Color", false);
+			Pad nodeSourceAlpha = nodeSource.addPad("Alpha", false);
 
-                gui.update();
-                Display.update();
-            }
+			Node nodeSink = nodeArea.addNode("Sink");
+			nodeSink.setPosition(350, 200);
+			Pad nodeSinkColor = nodeSink.addPad("Color", true);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			nodeArea.addConnection(nodeSourceColor, nodeSinkColor);
+
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
+				gui.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
+			}
+
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
 }

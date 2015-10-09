@@ -48,90 +48,90 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class SimpleGameMenu extends Widget {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Simple Game Menu Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			Display.setDisplayMode(new DisplayMode(800, 600));
+			Display.create();
+			Display.setTitle("TWL Simple Game Menu Demo");
+			Display.setVSyncEnabled(true);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            SimpleGameMenu gameUI = new SimpleGameMenu();
-            GUI gui = new GUI(gameUI, renderer);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			SimpleGameMenu gameUI = new SimpleGameMenu();
+			GUI gui = new GUI(gameUI, renderer);
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    SimpleGameMenu.class.getResource("simpleGameMenu.xml"), renderer);
-            gui.applyTheme(theme);
+			ThemeManager theme = ThemeManager.createThemeManager(
+					SimpleGameMenu.class.getResource("simpleGameMenu.xml"),
+					renderer);
+			gui.applyTheme(theme);
 
-            while(!Display.isCloseRequested() && !gameUI.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			while (!Display.isCloseRequested() && !gameUI.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-                gui.update();
-                Display.update();
-            }
+				gui.update();
+				Display.update();
+			}
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			gui.destroy();
+			theme.destroy();
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+		Display.destroy();
+	}
 
-    private final FPSCounter fpsCounter;
-    private final Button[] buttons;
+	private final FPSCounter fpsCounter;
+	private final Button[] buttons;
 
-    public boolean quit;
+	public boolean quit;
 
-    public SimpleGameMenu() {
-        buttons = new Button[3];
-        buttons[0] = new Button("Start Game");
-        buttons[1] = new Button("Options");
-        buttons[2] = new Button("Quit");
+	public SimpleGameMenu() {
+		buttons = new Button[3];
+		buttons[0] = new Button("Start Game");
+		buttons[1] = new Button("Options");
+		buttons[2] = new Button("Quit");
 
-        for(int i=0 ; i<buttons.length ; i++) {
-            add(buttons[i]);
-        }
-        
-        fpsCounter = new FPSCounter();
-        add(fpsCounter);
-    }
+		for (int i = 0; i < buttons.length; i++) {
+			add(buttons[i]);
+		}
 
-    private static final int TITLE_HEIGHT = 200;
-    private static final int BUTTON_WIDTH = 300;
-    private static final int BUTTON_HEIGHT = 50;
+		fpsCounter = new FPSCounter();
+		add(fpsCounter);
+	}
 
-    @Override
-    protected void layout() {
-        int centerX = getInnerX() + getInnerWidth()/2;
-        int distY = (getInnerHeight() - TITLE_HEIGHT) / (buttons.length + 1);
+	private static final int TITLE_HEIGHT = 200;
+	private static final int BUTTON_WIDTH = 300;
+	private static final int BUTTON_HEIGHT = 50;
 
-        for(int i=0 ; i<buttons.length ; i++) {
-            buttons[i].setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-            buttons[i].setPosition(centerX - BUTTON_WIDTH/2,
-                    TITLE_HEIGHT + (i+1)*distY - BUTTON_HEIGHT/2);
-        }
+	@Override
+	protected void layout() {
+		int centerX = getInnerX() + getInnerWidth() / 2;
+		int distY = (getInnerHeight() - TITLE_HEIGHT) / (buttons.length + 1);
 
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
-    }
+		for (int i = 0; i < buttons.length; i++) {
+			buttons[i].setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+			buttons[i].setPosition(centerX - BUTTON_WIDTH / 2, TITLE_HEIGHT
+					+ (i + 1) * distY - BUTTON_HEIGHT / 2);
+		}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        switch (evt.getType()) {
-            case KEY_PRESSED:
-                switch (evt.getKeyCode()) {
-                    case Event.KEY_ESCAPE:
-                        quit = true;
-                        return true;
-                }
-        }
-        return false;
-    }
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
+	}
+
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_ESCAPE:
+				quit = true;
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

@@ -35,65 +35,71 @@ import java.util.prefs.Preferences;
 
 /**
  *
- * @param <T> The enum type
+ * @param <T>
+ *            The enum type
  * @author Matthias Mann
  */
-public class PersistentEnumModel<T extends Enum<T>> extends AbstractEnumModel<T> {
+public class PersistentEnumModel<T extends Enum<T>> extends
+		AbstractEnumModel<T> {
 
-    private final Preferences prefs;
-    private final String prefKey;
-    
-    private T value;
+	private final Preferences prefs;
+	private final String prefKey;
 
-    public PersistentEnumModel(Preferences prefs, String prefKey, T defaultValue) {
-        this(prefs, prefKey, defaultValue.getDeclaringClass(), defaultValue);
-    }
-    
-    public PersistentEnumModel(Preferences prefs, String prefKey, Class<T> enumClass, T defaultValue) {
-        super(enumClass);
-        if(prefs == null) {
-            throw new NullPointerException("prefs");
-        }
-        if(prefKey == null) {
-            throw new NullPointerException("prefKey");
-        }
-        if(defaultValue == null) {
-            throw new NullPointerException("value");
-        }
-        this.prefs = prefs;
-        this.prefKey = prefKey;
-        
-        T storedValue = defaultValue;
-        String storedStr = prefs.get(prefKey, null);
-        if(storedStr != null) {
-            try {
-                storedValue = Enum.valueOf(enumClass, storedStr);
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(PersistentEnumModel.class.getName()).log(Level.WARNING, "Unable to parse value '" + storedStr + "' of key '" + prefKey + "' of type " + enumClass, ex);
-            }
-        }
-        setValue(storedValue);
-    }
-    
-    public T getValue() {
-        return value;
-    }
+	private T value;
 
-    public void setValue(T value) {
-        if(value == null) {
-            throw new NullPointerException("value");
-        }
-        if(this.value != value) {
-            this.value = value;
-            storeSetting();
-            doCallback();
-        }
-    }
+	public PersistentEnumModel(Preferences prefs, String prefKey, T defaultValue) {
+		this(prefs, prefKey, defaultValue.getDeclaringClass(), defaultValue);
+	}
 
-    private void storeSetting() {
-        if(prefs != null) {
-            prefs.put(prefKey, value.name());
-        }
-    }
+	public PersistentEnumModel(Preferences prefs, String prefKey,
+			Class<T> enumClass, T defaultValue) {
+		super(enumClass);
+		if (prefs == null) {
+			throw new NullPointerException("prefs");
+		}
+		if (prefKey == null) {
+			throw new NullPointerException("prefKey");
+		}
+		if (defaultValue == null) {
+			throw new NullPointerException("value");
+		}
+		this.prefs = prefs;
+		this.prefKey = prefKey;
+
+		T storedValue = defaultValue;
+		String storedStr = prefs.get(prefKey, null);
+		if (storedStr != null) {
+			try {
+				storedValue = Enum.valueOf(enumClass, storedStr);
+			} catch (IllegalArgumentException ex) {
+				Logger.getLogger(PersistentEnumModel.class.getName()).log(
+						Level.WARNING,
+						"Unable to parse value '" + storedStr + "' of key '"
+								+ prefKey + "' of type " + enumClass, ex);
+			}
+		}
+		setValue(storedValue);
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T value) {
+		if (value == null) {
+			throw new NullPointerException("value");
+		}
+		if (this.value != value) {
+			this.value = value;
+			storeSetting();
+			doCallback();
+		}
+	}
+
+	private void storeSetting() {
+		if (prefs != null) {
+			prefs.put(prefKey, value.name());
+		}
+	}
 
 }

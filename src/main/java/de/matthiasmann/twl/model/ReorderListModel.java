@@ -35,218 +35,219 @@ import java.util.Random;
 /**
  * A reordering list model - forwards changes of the base model.
  * 
- * @param <T> The type of the list entries
+ * @param <T>
+ *            The type of the list entries
  * @author Matthias Mann
  */
 public class ReorderListModel<T> extends AbstractListModel<T> {
 
-    private final ListModel<T> base;
-    private final ListModel.ChangeListener listener;
-    private int[] reorderList;
-    private int size;
+	private final ListModel<T> base;
+	private final ListModel.ChangeListener listener;
+	private int[] reorderList;
+	private int size;
 
-    public ReorderListModel(ListModel<T> base) {
-        this.base = base;
-        this.reorderList = new int[0];
+	public ReorderListModel(ListModel<T> base) {
+		this.base = base;
+		this.reorderList = new int[0];
 
-        this.listener = new ListModel.ChangeListener() {
-            public void entriesInserted(int first, int last) {
-                ReorderListModel.this.entriesInserted(first, last);
-            }
+		this.listener = new ListModel.ChangeListener() {
+			public void entriesInserted(int first, int last) {
+				ReorderListModel.this.entriesInserted(first, last);
+			}
 
-            public void entriesDeleted(int first, int last) {
-                ReorderListModel.this.entriesDeleted(first, last);
-            }
+			public void entriesDeleted(int first, int last) {
+				ReorderListModel.this.entriesDeleted(first, last);
+			}
 
-            public void entriesChanged(int first, int last) {
-            }
+			public void entriesChanged(int first, int last) {
+			}
 
-            public void allChanged() {
-                ReorderListModel.this.buildNewList();
-            }
-        };
-        
-        base.addChangeListener(listener);
-        buildNewList();
-    }
-    
-    public void destroy() {
-        base.removeChangeListener(listener);
-    }
+			public void allChanged() {
+				ReorderListModel.this.buildNewList();
+			}
+		};
 
-    public int getNumEntries() {
-        return size;
-    }
+		base.addChangeListener(listener);
+		buildNewList();
+	}
 
-    public T getEntry(int index) {
-        int remappedIndex = reorderList[index];
-        return base.getEntry(remappedIndex);
-    }
+	public void destroy() {
+		base.removeChangeListener(listener);
+	}
 
-    public Object getEntryTooltip(int index) {
-        int remappedIndex = reorderList[index];
-        return base.getEntryTooltip(remappedIndex);
-    }
+	public int getNumEntries() {
+		return size;
+	}
 
-    public boolean matchPrefix(int index, String prefix) {
-        int remappedIndex = reorderList[index];
-        return base.matchPrefix(remappedIndex, prefix);
-    }
+	public T getEntry(int index) {
+		int remappedIndex = reorderList[index];
+		return base.getEntry(remappedIndex);
+	}
 
-    public int findEntry(Object o) {
-        int[] list = this.reorderList;
-        for(int i=0,n=size ; i<n ; i++) {
-            T entry = base.getEntry(list[i]);
-            if(entry == o || (entry != null && entry.equals(o))) {
-                return i;
-            }
-        }
-        return -1;
-    }
+	public Object getEntryTooltip(int index) {
+		int remappedIndex = reorderList[index];
+		return base.getEntryTooltip(remappedIndex);
+	}
 
-    public void shuffle() {
-        Random r = new Random();
-        for(int i=size ; i>1 ;) {
-            int j = r.nextInt(i--);
-            int temp = reorderList[i];
-            reorderList[i] = reorderList[j];
-            reorderList[j] = temp;
-        }
-        fireAllChanged();
-    }
+	public boolean matchPrefix(int index, String prefix) {
+		int remappedIndex = reorderList[index];
+		return base.matchPrefix(remappedIndex, prefix);
+	}
 
-    public void sort(Comparator<T> c) {
-        // need to use own version of sort because we need to sort a int[] with a sort callback
-        int[] aux = new int[size];
-        System.arraycopy(reorderList, 0, aux, 0, size);
-        mergeSort(aux, reorderList, 0, size, c);
-        fireAllChanged();
-    }
-    
-    /**
-     * Tuning parameter: list size at or below which insertion sort will be
-     * used in preference to mergesort.
-     */
-    private static final int INSERTIONSORT_THRESHOLD = 7;
+	public int findEntry(Object o) {
+		int[] list = this.reorderList;
+		for (int i = 0, n = size; i < n; i++) {
+			T entry = base.getEntry(list[i]);
+			if (entry == o || (entry != null && entry.equals(o))) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
-    /**
-     * Src is the source array that starts at index 0
-     * Dest is the (possibly larger) array destination with a possible offset
-     * low is the index in dest to start sorting
-     * high is the end index in dest to end sorting
-     * off is the offset into src corresponding to low in dest
-     */
-    private void mergeSort(int[] src, int[] dest,
-            int low, int high, Comparator<T> c) {
-        int length = high - low;
+	public void shuffle() {
+		Random r = new Random();
+		for (int i = size; i > 1;) {
+			int j = r.nextInt(i--);
+			int temp = reorderList[i];
+			reorderList[i] = reorderList[j];
+			reorderList[j] = temp;
+		}
+		fireAllChanged();
+	}
 
-        // Insertion sort on smallest arrays
-        if(length < INSERTIONSORT_THRESHOLD) {
-            for(int i = low; i < high; i++) {
-                for(int j = i; j > low && compare(dest, j - 1, j, c) > 0; j--) {
-                    swap(dest, j, j - 1);
-                }
-            }
-            return;
-        }
+	public void sort(Comparator<T> c) {
+		// need to use own version of sort because we need to sort a int[] with
+		// a sort callback
+		int[] aux = new int[size];
+		System.arraycopy(reorderList, 0, aux, 0, size);
+		mergeSort(aux, reorderList, 0, size, c);
+		fireAllChanged();
+	}
 
-        // Recursively sort halves of dest into src
-        int mid = (low + high) >>> 1;
-        mergeSort(dest, src, low, mid, c);
-        mergeSort(dest, src, mid, high, c);
+	/**
+	 * Tuning parameter: list size at or below which insertion sort will be used
+	 * in preference to mergesort.
+	 */
+	private static final int INSERTIONSORT_THRESHOLD = 7;
 
-        // If list is already sorted, just copy from src to dest.  This is an
-        // optimization that results in faster sorts for nearly ordered lists.
-        if(compare(src, mid-1, mid, c) <= 0) {
-            System.arraycopy(src, low, dest, low, length);
-            return;
-        }
+	/**
+	 * Src is the source array that starts at index 0 Dest is the (possibly
+	 * larger) array destination with a possible offset low is the index in dest
+	 * to start sorting high is the end index in dest to end sorting off is the
+	 * offset into src corresponding to low in dest
+	 */
+	private void mergeSort(int[] src, int[] dest, int low, int high,
+			Comparator<T> c) {
+		int length = high - low;
 
-        // Merge sorted halves (now in src) into dest
-        for(int i = low,  p = low,  q = mid; i < high; i++) {
-            if(q >= high || p < mid && compare(src, p, q, c) <= 0) {
-                dest[i] = src[p++];
-            } else {
-                dest[i] = src[q++];
-            }
-        }
-    }
+		// Insertion sort on smallest arrays
+		if (length < INSERTIONSORT_THRESHOLD) {
+			for (int i = low; i < high; i++) {
+				for (int j = i; j > low && compare(dest, j - 1, j, c) > 0; j--) {
+					swap(dest, j, j - 1);
+				}
+			}
+			return;
+		}
 
-    private int compare(int[] list, int a, int b, Comparator<T> c) {
-        int aIdx = list[a];
-        int bIdx = list[b];
-        T objA = base.getEntry(aIdx);
-        T objB = base.getEntry(bIdx);
-        return c.compare(objA, objB);
-    }
+		// Recursively sort halves of dest into src
+		int mid = (low + high) >>> 1;
+		mergeSort(dest, src, low, mid, c);
+		mergeSort(dest, src, mid, high, c);
 
-    /**
-     * Swaps x[a] with x[b].
-     */
-    private static void swap(int x[], int a, int b) {
-        int t = x[a];
-        x[a] = x[b];
-        x[b] = t;
-    }
+		// If list is already sorted, just copy from src to dest. This is an
+		// optimization that results in faster sorts for nearly ordered lists.
+		if (compare(src, mid - 1, mid, c) <= 0) {
+			System.arraycopy(src, low, dest, low, length);
+			return;
+		}
 
-    private void buildNewList() {
-        size = base.getNumEntries();
-        reorderList = new int[size + 1024];
-        for(int i = 0; i < size; i++) {
-            reorderList[i] = i;
-        }
-        fireAllChanged();
-    }
+		// Merge sorted halves (now in src) into dest
+		for (int i = low, p = low, q = mid; i < high; i++) {
+			if (q >= high || p < mid && compare(src, p, q, c) <= 0) {
+				dest[i] = src[p++];
+			} else {
+				dest[i] = src[q++];
+			}
+		}
+	}
 
-    private void entriesInserted(int first, int last) {
-        final int delta = last - first + 1;
-        for(int i = 0; i < size; i++) {
-            if(reorderList[i] >= first) {
-                reorderList[i] += delta;
-            }
-        }
-        if(size + delta > reorderList.length) {
-            int[] newList = new int[Math.max(size*2, size+delta+1024)];
-            System.arraycopy(reorderList, 0, newList, 0, size);
-            reorderList = newList;
-        }
-        int oldSize = size;
-        for(int i = 0; i < delta; i++) {
-            reorderList[size++] = first + i;
-        }
-        fireEntriesInserted(oldSize, size-1);
-    }
+	private int compare(int[] list, int a, int b, Comparator<T> c) {
+		int aIdx = list[a];
+		int bIdx = list[b];
+		T objA = base.getEntry(aIdx);
+		T objB = base.getEntry(bIdx);
+		return c.compare(objA, objB);
+	}
 
-    private void entriesDeleted(int first, int last) {
-        final int delta = last - first + 1;
-        for(int i = 0; i < size; i++) {
-            final int entry = reorderList[i];
-            if(entry >= first) {
-                if(entry <= last) {
-                    // we have to remove entries - enter copy loop
-                    entriesDeletedCopy(first, last, i);
-                    return;
-                }
-                reorderList[i] = entry - delta;
-            }
-        }
-    }
+	/**
+	 * Swaps x[a] with x[b].
+	 */
+	private static void swap(int x[], int a, int b) {
+		int t = x[a];
+		x[a] = x[b];
+		x[b] = t;
+	}
 
-    private void entriesDeletedCopy(int first, int last, int i) {
-        int j, delta = last - first + 1;
-        int oldSize = size;
-        for(j=i ; i<oldSize ; i++) {
-            int entry = reorderList[i];
-            if(entry >= first) {
-                if(entry <= last) {
-                    size--;
-                    fireEntriesDeleted(j, j);
-                    continue;
-                }
-                entry -= delta;
-            }
-            reorderList[j++] = entry;
-        }
-        assert size == j;
-    }
+	private void buildNewList() {
+		size = base.getNumEntries();
+		reorderList = new int[size + 1024];
+		for (int i = 0; i < size; i++) {
+			reorderList[i] = i;
+		}
+		fireAllChanged();
+	}
+
+	private void entriesInserted(int first, int last) {
+		final int delta = last - first + 1;
+		for (int i = 0; i < size; i++) {
+			if (reorderList[i] >= first) {
+				reorderList[i] += delta;
+			}
+		}
+		if (size + delta > reorderList.length) {
+			int[] newList = new int[Math.max(size * 2, size + delta + 1024)];
+			System.arraycopy(reorderList, 0, newList, 0, size);
+			reorderList = newList;
+		}
+		int oldSize = size;
+		for (int i = 0; i < delta; i++) {
+			reorderList[size++] = first + i;
+		}
+		fireEntriesInserted(oldSize, size - 1);
+	}
+
+	private void entriesDeleted(int first, int last) {
+		final int delta = last - first + 1;
+		for (int i = 0; i < size; i++) {
+			final int entry = reorderList[i];
+			if (entry >= first) {
+				if (entry <= last) {
+					// we have to remove entries - enter copy loop
+					entriesDeletedCopy(first, last, i);
+					return;
+				}
+				reorderList[i] = entry - delta;
+			}
+		}
+	}
+
+	private void entriesDeletedCopy(int first, int last, int i) {
+		int j, delta = last - first + 1;
+		int oldSize = size;
+		for (j = i; i < oldSize; i++) {
+			int entry = reorderList[i];
+			if (entry >= first) {
+				if (entry <= last) {
+					size--;
+					fireEntriesDeleted(j, j);
+					continue;
+				}
+				entry -= delta;
+			}
+			reorderList[j++] = entry;
+		}
+		assert size == j;
+	}
 }

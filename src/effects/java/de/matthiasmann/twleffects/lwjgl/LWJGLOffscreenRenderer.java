@@ -64,94 +64,96 @@ import de.matthiasmann.twl.renderer.OffscreenSurface;
  * @author Matthias Mann
  */
 public class LWJGLOffscreenRenderer implements OffscreenRenderer {
-    
-    private final LWJGLEffectsRenderer renderer;
-    
-    LWJGLOffscreenSurface activeSurface;
-    int viewportStartX;
-    int viewportStartY;
-    int viewportHeight;
-    boolean hasScissor;
-    
-    LWJGLOffscreenRenderer(LWJGLEffectsRenderer renderer) {
-        this.renderer = renderer;
-    }
 
-    public OffscreenSurface startOffscreenRendering(Widget widget, OffscreenSurface oldSurface, int x, int y, int width, int height) {
-        if(width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("width or height <= 0");
-        }
-        if(activeSurface != null) {
-            throw new IllegalStateException("offscreen rendering already active");
-        }
-        
-        LWJGLOffscreenSurface surface = (LWJGLOffscreenSurface)oldSurface;
-        if(surface == null) {
-            surface = new LWJGLOffscreenSurface(renderer);
-        }
-        surface.checkNotBound();
-        if(!surface.allocate(width, height)) {
-            surface.destroy();
-            return null;
-        }
-        
-        activeSurface = surface;
-        viewportStartX = x;
-        viewportStartY = y;
-        viewportHeight = height;
-        
-        renderer.startOffscreenRendering();
-        
-        glPushAttrib(GL_VIEWPORT_BIT | GL_TRANSFORM_BIT | GL_COLOR_BUFFER_BIT | GL_SCISSOR_BIT);
-        disableClipRect();
-        glViewport(0, 0, width, height);
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        glOrtho(x, x + width, y + height, y, -1.0, 1.0);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-        glBlendFuncSeparate(
-                GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-                GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        return surface;
-    }
+	private final LWJGLEffectsRenderer renderer;
 
-    public void endOffscreenRendering() {
-        if(activeSurface == null) {
-            throw new IllegalStateException("no offscreen rendering active");
-        }
-        
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glPopAttrib();
-        
-        activeSurface.unbindFBO();
-        activeSurface = null;
-        
-        renderer.endOffscreenRendering();
-    }
-    
-    void disableClipRect() {
-        glDisable(GL_SCISSOR_TEST);
-        hasScissor = false;
-    }
-    
-    void setClipRect(Rect rect) {
-        int x0 = Math.max(0, rect.getX() - viewportStartX);
-        int y0 = Math.max(0, rect.getY() - viewportStartY);
-        int x1 = Math.max(0, rect.getRight() - viewportStartX);
-        int y1 = Math.max(0, rect.getBottom() - viewportStartY);
-        GL11.glScissor(x0, viewportHeight - y1, x1-x0, y1-y0);
-        if(!hasScissor) {
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            hasScissor = true;
-        }
-    }
+	LWJGLOffscreenSurface activeSurface;
+	int viewportStartX;
+	int viewportStartY;
+	int viewportHeight;
+	boolean hasScissor;
+
+	LWJGLOffscreenRenderer(LWJGLEffectsRenderer renderer) {
+		this.renderer = renderer;
+	}
+
+	public OffscreenSurface startOffscreenRendering(Widget widget,
+			OffscreenSurface oldSurface, int x, int y, int width, int height) {
+		if (width <= 0 || height <= 0) {
+			throw new IllegalArgumentException("width or height <= 0");
+		}
+		if (activeSurface != null) {
+			throw new IllegalStateException(
+					"offscreen rendering already active");
+		}
+
+		LWJGLOffscreenSurface surface = (LWJGLOffscreenSurface) oldSurface;
+		if (surface == null) {
+			surface = new LWJGLOffscreenSurface(renderer);
+		}
+		surface.checkNotBound();
+		if (!surface.allocate(width, height)) {
+			surface.destroy();
+			return null;
+		}
+
+		activeSurface = surface;
+		viewportStartX = x;
+		viewportStartY = y;
+		viewportHeight = height;
+
+		renderer.startOffscreenRendering();
+
+		glPushAttrib(GL_VIEWPORT_BIT | GL_TRANSFORM_BIT | GL_COLOR_BUFFER_BIT
+				| GL_SCISSOR_BIT);
+		disableClipRect();
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glOrtho(x, x + width, y + height, y, -1.0, 1.0);
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO,
+				GL_ONE_MINUS_SRC_ALPHA);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		return surface;
+	}
+
+	public void endOffscreenRendering() {
+		if (activeSurface == null) {
+			throw new IllegalStateException("no offscreen rendering active");
+		}
+
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+		glPopAttrib();
+
+		activeSurface.unbindFBO();
+		activeSurface = null;
+
+		renderer.endOffscreenRendering();
+	}
+
+	void disableClipRect() {
+		glDisable(GL_SCISSOR_TEST);
+		hasScissor = false;
+	}
+
+	void setClipRect(Rect rect) {
+		int x0 = Math.max(0, rect.getX() - viewportStartX);
+		int y0 = Math.max(0, rect.getY() - viewportStartY);
+		int x1 = Math.max(0, rect.getRight() - viewportStartX);
+		int y1 = Math.max(0, rect.getBottom() - viewportStartY);
+		GL11.glScissor(x0, viewportHeight - y1, x1 - x0, y1 - y0);
+		if (!hasScissor) {
+			GL11.glEnable(GL11.GL_SCISSOR_TEST);
+			hasScissor = true;
+		}
+	}
 }

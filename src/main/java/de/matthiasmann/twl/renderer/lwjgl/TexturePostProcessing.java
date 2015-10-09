@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
  */
 public interface TexturePostProcessing {
 
-    public void process(ByteBuffer buffer, int stride, int width, int height, LWJGLTexture.Format fmt);
-    
+	public void process(ByteBuffer buffer, int stride, int width, int height,
+			LWJGLTexture.Format fmt);
+
 }

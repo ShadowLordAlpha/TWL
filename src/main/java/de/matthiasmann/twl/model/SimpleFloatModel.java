@@ -32,57 +32,57 @@ package de.matthiasmann.twl.model;
 /**
  * A simple float data model.
  *
- * Out of range values are limited to minValue ... maxValue.
- * If the value is set to NaN then it is converted to minValue.
+ * Out of range values are limited to minValue ... maxValue. If the value is set
+ * to NaN then it is converted to minValue.
  *
  * @author Matthias Mann
  */
 public class SimpleFloatModel extends AbstractFloatModel {
 
-    private final float minValue;
-    private final float maxValue;
-    private float value;
+	private final float minValue;
+	private final float maxValue;
+	private float value;
 
-    public SimpleFloatModel(float minValue, float maxValue, float value) {
-        if(Float.isNaN(minValue)) {
-            throw new IllegalArgumentException("minValue is NaN");
-        }
-        if(Float.isNaN(maxValue)) {
-            throw new IllegalArgumentException("maxValue is NaN");
-        }
-        if(minValue > maxValue) {
-            throw new IllegalArgumentException("minValue > maxValue");
-        }
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.value = limit(value);
-    }
+	public SimpleFloatModel(float minValue, float maxValue, float value) {
+		if (Float.isNaN(minValue)) {
+			throw new IllegalArgumentException("minValue is NaN");
+		}
+		if (Float.isNaN(maxValue)) {
+			throw new IllegalArgumentException("maxValue is NaN");
+		}
+		if (minValue > maxValue) {
+			throw new IllegalArgumentException("minValue > maxValue");
+		}
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		this.value = limit(value);
+	}
 
-    public float getMaxValue() {
-        return maxValue;
-    }
+	public float getMaxValue() {
+		return maxValue;
+	}
 
-    public float getMinValue() {
-        return minValue;
-    }
+	public float getMinValue() {
+		return minValue;
+	}
 
-    public float getValue() {
-        return value;
-    }
+	public float getValue() {
+		return value;
+	}
 
-    public void setValue(float value) {
-        value = limit(value);
-        if(this.value != value) {
-            this.value = value;
-            doCallback();
-        }
-    }
+	public void setValue(float value) {
+		value = limit(value);
+		if (this.value != value) {
+			this.value = value;
+			doCallback();
+		}
+	}
 
-    protected float limit(float value) {
-        if(Float.isNaN(value)) {
-            return minValue;
-        }
-        return Math.max(minValue, Math.min(maxValue, value));
-    }
+	protected float limit(float value) {
+		if (Float.isNaN(value)) {
+			return minValue;
+		}
+		return Math.max(minValue, Math.min(maxValue, value));
+	}
 
 }

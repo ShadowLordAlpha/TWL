@@ -35,19 +35,19 @@ package de.matthiasmann.twl.theme;
  */
 class ThemeChildImpl {
 
-    final ThemeManager manager;
-    final ThemeInfoImpl parent;
+	final ThemeManager manager;
+	final ThemeInfoImpl parent;
 
-    ThemeChildImpl(ThemeManager manager, ThemeInfoImpl parent) {
-        this.manager = manager;
-        this.parent = parent;
-    }
+	ThemeChildImpl(ThemeManager manager, ThemeInfoImpl parent) {
+		this.manager = manager;
+		this.parent = parent;
+	}
 
-    protected String getParentDescription() {
-        if(parent != null) {
-            return ", defined in " + parent.getThemePath();
-        } else {
-            return "";
-        }
-    }
+	protected String getParentDescription() {
+		if (parent != null) {
+			return ", defined in " + parent.getThemePath();
+		} else {
+			return "";
+		}
+	}
 }

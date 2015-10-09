@@ -30,14 +30,15 @@
 package de.matthiasmann.twl;
 
 /**
- * The theme info class contains all theme specific information for a given widget.
+ * The theme info class contains all theme specific information for a given
+ * widget.
  *
  * @author Matthias Mann
  */
 public interface ThemeInfo extends ParameterMap {
 
-    public ThemeInfo getChildTheme(String theme);
+	public ThemeInfo getChildTheme(String theme);
 
-    public String getThemePath();
-    
+	public String getThemePath();
+
 }

@@ -34,9 +34,10 @@ package de.matthiasmann.twl.model;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractIntegerModel extends HasCallback implements IntegerModel {
+public abstract class AbstractIntegerModel extends HasCallback implements
+		IntegerModel {
 
-    protected AbstractIntegerModel() {
-    }
+	protected AbstractIntegerModel() {
+	}
 
 }

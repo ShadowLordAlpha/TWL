@@ -38,8 +38,8 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  */
 public interface BooleanModel extends WithRunnableCallback {
 
-    public boolean getValue();
+	public boolean getValue();
 
-    public void setValue(boolean value);
-    
+	public void setValue(boolean value);
+
 }

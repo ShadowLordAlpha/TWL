@@ -34,29 +34,30 @@ import de.matthiasmann.twl.utils.CallbackSupport;
 /**
  * An abstract base class for Properties. Provides callback handling.
  *
- * @param <T> The type of the property value
+ * @param <T>
+ *            The type of the property value
  * @author Matthias Mann
  */
 public abstract class AbstractProperty<T> implements Property<T> {
 
-    private Runnable[] valueChangedCallbacks;
+	private Runnable[] valueChangedCallbacks;
 
-    public void addValueChangedCallback(Runnable cb) {
-        valueChangedCallbacks = CallbackSupport.addCallbackToList(
-                valueChangedCallbacks, cb, Runnable.class);
-    }
+	public void addValueChangedCallback(Runnable cb) {
+		valueChangedCallbacks = CallbackSupport.addCallbackToList(
+				valueChangedCallbacks, cb, Runnable.class);
+	}
 
-    public void removeValueChangedCallback(Runnable cb) {
-        valueChangedCallbacks = CallbackSupport.removeCallbackFromList(
-                valueChangedCallbacks, cb);
-    }
+	public void removeValueChangedCallback(Runnable cb) {
+		valueChangedCallbacks = CallbackSupport.removeCallbackFromList(
+				valueChangedCallbacks, cb);
+	}
 
-    public boolean hasValueChangedCallbacks() {
-        return valueChangedCallbacks != null;
-    }
-    
-    protected void fireValueChangedCallback() {
-        CallbackSupport.fireCallbacks(valueChangedCallbacks);
-    }
+	public boolean hasValueChangedCallbacks() {
+		return valueChangedCallbacks != null;
+	}
+
+	protected void fireValueChangedCallback() {
+		CallbackSupport.fireCallbacks(valueChangedCallbacks);
+	}
 
 }

@@ -52,61 +52,61 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class TabbedPaneTest {
 
-    public static void main(String[] arg) throws LWJGLException, IOException {
-        Display.setTitle("TWL TabbedPane Example");
-        Display.setDisplayMode(new DisplayMode(800, 600));
-        Display.create(new PixelFormat(0, 0, 0));
-        Display.setVSyncEnabled(true);
+	public static void main(String[] arg) throws LWJGLException, IOException {
+		Display.setTitle("TWL TabbedPane Example");
+		Display.setDisplayMode(new DisplayMode(800, 600));
+		Display.create(new PixelFormat(0, 0, 0));
+		Display.setVSyncEnabled(true);
 
-        final TabbedPane tabbedPane = new TabbedPane();
+		final TabbedPane tabbedPane = new TabbedPane();
 
-        LWJGLRenderer renderer = new LWJGLRenderer();
-        renderer.setUseSWMouseCursors(true);
-        GUI gui = new GUI(tabbedPane, renderer);
+		LWJGLRenderer renderer = new LWJGLRenderer();
+		renderer.setUseSWMouseCursors(true);
+		GUI gui = new GUI(tabbedPane, renderer);
 
-        ThemeManager newTheme = ThemeManager.createThemeManager(
-            SimpleTest.class.getResource("simple_demo.xml"), renderer);
-        gui.applyTheme(newTheme);
-        
-        tabbedPane.addTab("Info", createInfoPane());
-        tabbedPane.addTab("Image", createScrollPane());
-        tabbedPane.addTab("Empty", null);
+		ThemeManager newTheme = ThemeManager.createThemeManager(
+				SimpleTest.class.getResource("simple_demo.xml"), renderer);
+		gui.applyTheme(newTheme);
 
-        while(!Display.isCloseRequested()) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		tabbedPane.addTab("Info", createInfoPane());
+		tabbedPane.addTab("Image", createScrollPane());
+		tabbedPane.addTab("Empty", null);
 
-            gui.update();
-            Display.update();
-        }
+		while (!Display.isCloseRequested()) {
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-        Display.destroy();
-    }
+			gui.update();
+			Display.update();
+		}
 
-    private static Widget createInfoPane() {
-        HTMLTextAreaModel tam = new HTMLTextAreaModel();
-        try {
-            tam.readHTMLFromURL(GUI.class.getResource("license.html"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+		Display.destroy();
+	}
 
-        TextArea ta = new TextArea(tam);
-        ta.setTheme("textarea");
+	private static Widget createInfoPane() {
+		HTMLTextAreaModel tam = new HTMLTextAreaModel();
+		try {
+			tam.readHTMLFromURL(GUI.class.getResource("license.html"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 
-        ScrollPane sp = new ScrollPane(ta);
-        sp.setFixed(ScrollPane.Fixed.HORIZONTAL);
-        sp.setTheme("/license-scrollpane");
+		TextArea ta = new TextArea(tam);
+		ta.setTheme("textarea");
 
-        return sp;
-    }
+		ScrollPane sp = new ScrollPane(ta);
+		sp.setFixed(ScrollPane.Fixed.HORIZONTAL);
+		sp.setTheme("/license-scrollpane");
 
-    private static Widget createScrollPane() {
-        Widget scrolledWidget = new Widget();
-        scrolledWidget.setTheme("/scrollPaneDemoContent");
+		return sp;
+	}
 
-        ScrollPane scrollPane = new ScrollPane(scrolledWidget);
-        scrollPane.setTheme("/scrollpane");
+	private static Widget createScrollPane() {
+		Widget scrolledWidget = new Widget();
+		scrolledWidget.setTheme("/scrollPaneDemoContent");
 
-        return scrollPane;
-    }
+		ScrollPane scrollPane = new ScrollPane(scrolledWidget);
+		scrollPane.setTheme("/scrollpane");
+
+		return scrollPane;
+	}
 }

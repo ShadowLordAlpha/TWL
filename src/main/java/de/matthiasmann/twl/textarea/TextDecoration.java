@@ -35,7 +35,5 @@ package de.matthiasmann.twl.textarea;
  * @author Matthias Mann
  */
 public enum TextDecoration {
-    NONE,
-    UNDERLINE,
-    LINE_THROUGH
+	NONE, UNDERLINE, LINE_THROUGH
 }

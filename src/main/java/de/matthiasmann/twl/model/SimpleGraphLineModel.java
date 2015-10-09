@@ -36,64 +36,64 @@ package de.matthiasmann.twl.model;
  */
 public class SimpleGraphLineModel implements GraphLineModel {
 
-    private String visualStyleName;
-    private float minValue = 0;
-    private float maxValue = 100;
-    private float[] data;
+	private String visualStyleName;
+	private float minValue = 0;
+	private float maxValue = 100;
+	private float[] data;
 
-    public SimpleGraphLineModel(String style, int size, float minValue, float maxValue) {
-        setVisualStyleName(style);
-        this.data = new float[size];
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-    }
+	public SimpleGraphLineModel(String style, int size, float minValue,
+			float maxValue) {
+		setVisualStyleName(style);
+		this.data = new float[size];
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+	}
 
-    public String getVisualStyleName() {
-        return visualStyleName;
-    }
+	public String getVisualStyleName() {
+		return visualStyleName;
+	}
 
-    public void setVisualStyleName(String visualStyleName) {
-        if(visualStyleName.length() < 1) {
-            throw new IllegalArgumentException("Invalid style name");
-        }
-        this.visualStyleName = visualStyleName;
-    }
+	public void setVisualStyleName(String visualStyleName) {
+		if (visualStyleName.length() < 1) {
+			throw new IllegalArgumentException("Invalid style name");
+		}
+		this.visualStyleName = visualStyleName;
+	}
 
-    public int getNumPoints() {
-        return data.length;
-    }
+	public int getNumPoints() {
+		return data.length;
+	}
 
-    public float getPoint(int idx) {
-        return data[idx];
-    }
+	public float getPoint(int idx) {
+		return data[idx];
+	}
 
-    public float getMinValue() {
-        return minValue;
-    }
+	public float getMinValue() {
+		return minValue;
+	}
 
-    public float getMaxValue() {
-        return maxValue;
-    }
+	public float getMaxValue() {
+		return maxValue;
+	}
 
-    public void addPoint(float value) {
-        System.arraycopy(data, 1, data, 0, data.length - 1);
-        data[data.length-1] = value;
-    }
+	public void addPoint(float value) {
+		System.arraycopy(data, 1, data, 0, data.length - 1);
+		data[data.length - 1] = value;
+	}
 
-    public void setMaxValue(float maxValue) {
-        this.maxValue = maxValue;
-    }
+	public void setMaxValue(float maxValue) {
+		this.maxValue = maxValue;
+	}
 
-    public void setMinValue(float minValue) {
-        this.minValue = minValue;
-    }
+	public void setMinValue(float minValue) {
+		this.minValue = minValue;
+	}
 
-    public void setNumPoints(int numPoints) {
-        float[] newData = new float[numPoints];
-        int overlap = Math.min(data.length, numPoints);
-        System.arraycopy(
-                data, data.length - overlap,
-                newData, numPoints - overlap, overlap);
-        this.data = newData;
-    }
+	public void setNumPoints(int numPoints) {
+		float[] newData = new float[numPoints];
+		int overlap = Math.min(data.length, numPoints);
+		System.arraycopy(data, data.length - overlap, newData, numPoints
+				- overlap, overlap);
+		this.data = newData;
+	}
 }

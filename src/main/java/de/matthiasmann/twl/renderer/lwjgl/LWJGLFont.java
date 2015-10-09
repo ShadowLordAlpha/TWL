@@ -49,342 +49,377 @@ import de.matthiasmann.twl.utils.TextUtil;
  */
 public class LWJGLFont implements Font, Font2 {
 
-    static final int STYLE_UNDERLINE   = 1;
-    static final int STYLE_LINETHROUGH = 2;
+	static final int STYLE_UNDERLINE = 1;
+	static final int STYLE_LINETHROUGH = 2;
 
-    private final LWJGLRenderer renderer;
-    private final BitmapFont font;
-    private final FontState[] fontStates;
-    private final StateSelect stateSelect;
-    private int[] multiLineInfo;
+	private final LWJGLRenderer renderer;
+	private final BitmapFont font;
+	private final FontState[] fontStates;
+	private final StateSelect stateSelect;
+	private int[] multiLineInfo;
 
-    LWJGLFont(LWJGLRenderer renderer, BitmapFont font, StateSelect select, FontParameter ... parameterList) {
-        this.renderer = renderer;
-        this.font = font;
-        this.stateSelect = select;
-        this.fontStates = new FontState[parameterList.length];
-        
-        for(int i=0 ; i<parameterList.length ; i++) {
-            fontStates[i] = new FontState(parameterList[i]);
-        }
-    }
+	LWJGLFont(LWJGLRenderer renderer, BitmapFont font, StateSelect select,
+			FontParameter... parameterList) {
+		this.renderer = renderer;
+		this.font = font;
+		this.stateSelect = select;
+		this.fontStates = new FontState[parameterList.length];
 
-    FontState evalFontState(AnimationState as) {
-        return fontStates[stateSelect.evaluate(as)];
-    }
+		for (int i = 0; i < parameterList.length; i++) {
+			fontStates[i] = new FontState(parameterList[i]);
+		}
+	}
 
-    private int[] getMultiLineInfo(int numLines) {
-        if(multiLineInfo == null || multiLineInfo.length < numLines) {
-            multiLineInfo = new int[numLines];
-        }
-        return multiLineInfo;
-    }
+	FontState evalFontState(AnimationState as) {
+		return fontStates[stateSelect.evaluate(as)];
+	}
 
-    public void destroy() {
-        font.destroy();
-    }
+	private int[] getMultiLineInfo(int numLines) {
+		if (multiLineInfo == null || multiLineInfo.length < numLines) {
+			multiLineInfo = new int[numLines];
+		}
+		return multiLineInfo;
+	}
 
-    public boolean isProportional() {
-        return font.isProportional();
-    }
-    
-    public int getSpaceWidth() {
-        return font.getSpaceWidth();
-    }
+	public void destroy() {
+		font.destroy();
+	}
 
-    public int getLineHeight() {
-        return font.getLineHeight();
-    }
+	public boolean isProportional() {
+		return font.isProportional();
+	}
 
-    public int getBaseLine() {
-        return font.getBaseLine();
-    }
+	public int getSpaceWidth() {
+		return font.getSpaceWidth();
+	}
 
-    public int getEM() {
-        return font.getEM();
-    }
+	public int getLineHeight() {
+		return font.getLineHeight();
+	}
 
-    public int getEX() {
-        return font.getEX();
-    }
-    
-    public int drawText(AnimationState as, int x, int y, CharSequence str) {
-        return drawText(as, x, y, str, 0, str.length());
-    }
+	public int getBaseLine() {
+		return font.getBaseLine();
+	}
 
-    public int drawText(AnimationState as, int x, int y, CharSequence str, int start, int end) {
-        FontState fontState = evalFontState(as);
-        x += fontState.offsetX;
-        y += fontState.offsetY;
-        int width;
-        if(!font.prepare()) {
-            return 0;
-        }
-        try {
-            renderer.tintStack.setColor(fontState.color);
-            width = font.drawText(x, y, str, start, end);
-        } finally {
-            font.cleanup();
-        }
-        drawLine(fontState, x, y, width);
-        return width;
-    }
+	public int getEM() {
+		return font.getEM();
+	}
 
-    public int drawMultiLineText(AnimationState as, int x, int y, CharSequence str, int width, HAlignment align) {
-        FontState fontState = evalFontState(as);
-        x += fontState.offsetX;
-        y += fontState.offsetY;
-        int numLines;
-        if(!font.prepare()) {
-            return 0;
-        }
-        try {
-            renderer.tintStack.setColor(fontState.color);
-            numLines = font.drawMultiLineText(x, y, str, width, align);
-        } finally {
-            font.cleanup();
-        }
-        if(fontState.style != 0) {
-            int[] info = getMultiLineInfo(numLines);
-            font.computeMultiLineInfo(str, width, align, info);
-            drawLines(fontState, x, y, info, numLines);
-        }
-        return numLines * font.getLineHeight();
-    }
+	public int getEX() {
+		return font.getEX();
+	}
 
-    void drawLines(FontState fontState, int x, int y, int[] info, int numLines) {
-        if((fontState.style & STYLE_UNDERLINE) != 0) {
-            font.drawMultiLineLines(x, y+font.getBaseLine()+fontState.underlineOffset, info, numLines);
-        }
-        if((fontState.style & STYLE_LINETHROUGH) != 0) {
-            font.drawMultiLineLines(x, y+font.getLineHeight()/2, info, numLines);
-        }
-    }
+	public int drawText(AnimationState as, int x, int y, CharSequence str) {
+		return drawText(as, x, y, str, 0, str.length());
+	}
 
-    void drawLine(FontState fontState, int x, int y, int width) {
-        if((fontState.style & STYLE_UNDERLINE) != 0) {
-            font.drawLine(x, y+font.getBaseLine()+fontState.underlineOffset, x + width);
-        }
-        if((fontState.style & STYLE_LINETHROUGH) != 0) {
-            font.drawLine(x, y+font.getLineHeight()/2, x + width);
-        }
-    }
+	public int drawText(AnimationState as, int x, int y, CharSequence str,
+			int start, int end) {
+		FontState fontState = evalFontState(as);
+		x += fontState.offsetX;
+		y += fontState.offsetY;
+		int width;
+		if (!font.prepare()) {
+			return 0;
+		}
+		try {
+			renderer.tintStack.setColor(fontState.color);
+			width = font.drawText(x, y, str, start, end);
+		} finally {
+			font.cleanup();
+		}
+		drawLine(fontState, x, y, width);
+		return width;
+	}
 
-    public int computeVisibleGlpyhs(CharSequence str, int start, int end, int availWidth) {
-        return font.computeVisibleGlpyhs(str, start, end, availWidth);
-    }
+	public int drawMultiLineText(AnimationState as, int x, int y,
+			CharSequence str, int width, HAlignment align) {
+		FontState fontState = evalFontState(as);
+		x += fontState.offsetX;
+		y += fontState.offsetY;
+		int numLines;
+		if (!font.prepare()) {
+			return 0;
+		}
+		try {
+			renderer.tintStack.setColor(fontState.color);
+			numLines = font.drawMultiLineText(x, y, str, width, align);
+		} finally {
+			font.cleanup();
+		}
+		if (fontState.style != 0) {
+			int[] info = getMultiLineInfo(numLines);
+			font.computeMultiLineInfo(str, width, align, info);
+			drawLines(fontState, x, y, info, numLines);
+		}
+		return numLines * font.getLineHeight();
+	}
 
-    public int computeTextWidth(CharSequence str) {
-        return font.computeTextWidth(str, 0, str.length());
-    }
+	void drawLines(FontState fontState, int x, int y, int[] info, int numLines) {
+		if ((fontState.style & STYLE_UNDERLINE) != 0) {
+			font.drawMultiLineLines(x, y + font.getBaseLine()
+					+ fontState.underlineOffset, info, numLines);
+		}
+		if ((fontState.style & STYLE_LINETHROUGH) != 0) {
+			font.drawMultiLineLines(x, y + font.getLineHeight() / 2, info,
+					numLines);
+		}
+	}
 
-    public int computeTextWidth(CharSequence str, int start, int end) {
-        return font.computeTextWidth(str, start, end);
-    }
+	void drawLine(FontState fontState, int x, int y, int width) {
+		if ((fontState.style & STYLE_UNDERLINE) != 0) {
+			font.drawLine(x,
+					y + font.getBaseLine() + fontState.underlineOffset, x
+							+ width);
+		}
+		if ((fontState.style & STYLE_LINETHROUGH) != 0) {
+			font.drawLine(x, y + font.getLineHeight() / 2, x + width);
+		}
+	}
 
-    public int computeMultiLineTextWidth(CharSequence str) {
-        return font.computeMultiLineTextWidth(str);
-    }
+	public int computeVisibleGlpyhs(CharSequence str, int start, int end,
+			int availWidth) {
+		return font.computeVisibleGlpyhs(str, start, end, availWidth);
+	}
 
-    public FontCache cacheText(FontCache prevCache, CharSequence str) {
-        return cacheText(prevCache, str, 0, str.length());
-    }
+	public int computeTextWidth(CharSequence str) {
+		return font.computeTextWidth(str, 0, str.length());
+	}
 
-    public FontCache cacheText(FontCache prevCache, CharSequence str, int start, int end) {
-        LWJGLFontCache cache = (LWJGLFontCache)prevCache;
-        if(cache == null) {
-            cache = new LWJGLFontCache(renderer, this);
-        }
-        return font.cacheText(cache, str, start, end);
-    }
+	public int computeTextWidth(CharSequence str, int start, int end) {
+		return font.computeTextWidth(str, start, end);
+	}
 
-    public FontCache cacheMultiLineText(FontCache prevCache, CharSequence str, int width, HAlignment align) {
-        LWJGLFontCache cache = (LWJGLFontCache)prevCache;
-        if(cache == null) {
-            cache = new LWJGLFontCache(renderer, this);
-        }
-        return font.cacheMultiLineText(cache, str, width, align);
-    }
+	public int computeMultiLineTextWidth(CharSequence str) {
+		return font.computeMultiLineTextWidth(str);
+	}
 
-    public int drawText(int x, int y, AttributedString attributedString) {
-        return drawText(x, y, attributedString, 0, attributedString.length(), false);
-    }
-    
-    public int drawText(int x, int y, AttributedString attributedString, int start, int end) {
-        return drawText(x, y, attributedString, 0, attributedString.length(), false);
-    }
+	public FontCache cacheText(FontCache prevCache, CharSequence str) {
+		return cacheText(prevCache, str, 0, str.length());
+	}
 
-    public void drawMultiLineText(int x, int y, AttributedString attributedString) {
-        drawText(x, y, attributedString, 0, attributedString.length(), true);
-    }
-    
-    public void drawMultiLineText(int x, int y, AttributedString attributedString, int start, int end) {
-        drawText(x, y, attributedString, start, end, true);
-    }
+	public FontCache cacheText(FontCache prevCache, CharSequence str,
+			int start, int end) {
+		LWJGLFontCache cache = (LWJGLFontCache) prevCache;
+		if (cache == null) {
+			cache = new LWJGLFontCache(renderer, this);
+		}
+		return font.cacheText(cache, str, start, end);
+	}
 
-    private int drawText(int x, int y, AttributedString attributedString, int start, int end, boolean multiLine) {
-        int startX = x;
-        attributedString.setPosition(start);
-        if(!font.prepare()) {
-            return 0;
-        }
-        try {
-            BitmapFont.Glyph lastGlyph = null;
-            do{
-                FontState fontState = evalFontState(attributedString);
-                x += fontState.offsetX;
-                y += fontState.offsetY;
-                int runStart = x;
-                renderer.tintStack.setColor(fontState.color);
-                int nextStop = Math.min(end, attributedString.advance());
-                if(multiLine) {
-                    nextStop = TextUtil.indexOf(attributedString, '\n', start, nextStop);
-                }
-                while(start < nextStop) {
-                    char ch = attributedString.charAt(start++);
-                    BitmapFont.Glyph g = font.getGlyph(ch);
-                    if(g != null) {
-                        if(lastGlyph != null) {
-                            x += lastGlyph.getKerning(ch);
-                        }
-                        lastGlyph = g;
-                        if(g.width > 0) {
-                            g.draw(x, y);
-                        }
-                        x += g.xadvance;
-                    }
-                }
-                drawLine(fontState, x, y, x - runStart);
-                x -= fontState.offsetX;
-                y -= fontState.offsetY;
-                if(multiLine && start < end && attributedString.charAt(start) == '\n') {
-                    attributedString.setPosition(++start);
-                    x = startX;
-                    y += font.getLineHeight();
-                    lastGlyph = null;
-                }
-            }while(start < end);
-        } finally {
-            font.cleanup();
-        }
-        return x - startX;
-    }
+	public FontCache cacheMultiLineText(FontCache prevCache, CharSequence str,
+			int width, HAlignment align) {
+		LWJGLFontCache cache = (LWJGLFontCache) prevCache;
+		if (cache == null) {
+			cache = new LWJGLFontCache(renderer, this);
+		}
+		return font.cacheMultiLineText(cache, str, width, align);
+	}
 
-    public AttributedStringFontCache cacheText(AttributedStringFontCache prevCache, AttributedString attributedString) {
-        return cacheText(prevCache, attributedString, 0, attributedString.length(), false);
-    }
+	public int drawText(int x, int y, AttributedString attributedString) {
+		return drawText(x, y, attributedString, 0, attributedString.length(),
+				false);
+	}
 
-    public AttributedStringFontCache cacheText(AttributedStringFontCache prevCache, AttributedString attributedString, int start, int end) {
-        return cacheText(prevCache, attributedString, start, end, false);
-    }
+	public int drawText(int x, int y, AttributedString attributedString,
+			int start, int end) {
+		return drawText(x, y, attributedString, 0, attributedString.length(),
+				false);
+	}
 
-    public AttributedStringFontCache cacheMultiLineText(AttributedStringFontCache prevCache, AttributedString attributedString) {
-        return cacheText(prevCache, attributedString, 0, attributedString.length(), true);
-    }
+	public void drawMultiLineText(int x, int y,
+			AttributedString attributedString) {
+		drawText(x, y, attributedString, 0, attributedString.length(), true);
+	}
 
-    public AttributedStringFontCache cacheMultiLineText(AttributedStringFontCache prevCache, AttributedString attributedString, int start, int end) {
-        return cacheText(prevCache, attributedString, start, end, true);
-    }
-    
-    private AttributedStringFontCache cacheText(AttributedStringFontCache prevCache, AttributedString attributedString, int start, int end, boolean multiLine) {
-        if(end <= start) {
-            return null;
-        }
-        LWJGLAttributedStringFontCache cache = (LWJGLAttributedStringFontCache)prevCache;
-        if(cache == null) {
-            cache = new LWJGLAttributedStringFontCache(renderer, font);
-        }
-        FloatBuffer va = cache.allocate(end - start);
-        attributedString.setPosition(start);
-        BitmapFont.Glyph lastGlyph = null;
-        int x = 0;
-        int y = 0;
-        int width = 0;
-        do{
-            final FontState fontState = evalFontState(attributedString);
-            
-            x += fontState.offsetX;
-            y += fontState.offsetY;
-            int runLength = 0;
-            int xStart = x;
-            
-            int nextStop = Math.min(end, attributedString.advance());
-            while(nextStop < end && fontState == evalFontState(attributedString)) {
-                nextStop = Math.min(end, attributedString.advance());
-            }
-            
-            if(multiLine) {
-                nextStop = TextUtil.indexOf(attributedString, '\n', start, nextStop);
-            }
-            
-            while(start < nextStop) {
-                char ch = attributedString.charAt(start++);
-                BitmapFont.Glyph g = font.getGlyph(ch);
-                if(g != null) {
-                    if(lastGlyph != null) {
-                        x += lastGlyph.getKerning(ch);
-                    }
-                    lastGlyph = g;
-                    if(g.width > 0 && g.height > 0) {
-                        g.draw(va, x, y);
-                        runLength++;
-                    }
-                    x += g.xadvance;
-                }
-            }
-            
-            x -= fontState.offsetX;
-            y -= fontState.offsetY;
-            
-            if(runLength > 0 || fontState.style != 0) {
-                LWJGLAttributedStringFontCache.Run run = cache.addRun();
-                run.state       = fontState;
-                run.numVertices = runLength * 4;
-                run.x           = xStart;
-                run.xend        = x;
-                run.y           = y;
-            }
-            
-            if(multiLine && start < end && attributedString.charAt(start) == '\n') {
-                attributedString.setPosition(++start);
-                width = Math.max(width, x);
-                x = 0;
-                y += font.getLineHeight();
-                lastGlyph = null;
-            }
-        }while(start < end);
-        
-        if(x > 0) {
-            width = Math.max(width, x);
-            y += font.getLineHeight();
-        }
-        
-        cache.width  = width;
-        cache.height = y;
-        return cache;
-    }
-    
-    static class FontState {
-        final Color color;
-        final int offsetX;
-        final int offsetY;
-        final int style;
-        final int underlineOffset;
-        
-        FontState(FontParameter fontParam) {
-            int lineStyle = 0;
-            if(fontParam.get(FontParameter.UNDERLINE)) {
-                lineStyle |= STYLE_UNDERLINE;
-            }
-            if(fontParam.get(FontParameter.LINETHROUGH)) {
-                lineStyle |= STYLE_LINETHROUGH;
-            }
-            
-            this.color = fontParam.get(FontParameter.COLOR);
-            this.offsetX = fontParam.get(LWJGLRenderer.FONTPARAM_OFFSET_X);
-            this.offsetY = fontParam.get(LWJGLRenderer.FONTPARAM_OFFSET_Y);
-            this.style = lineStyle;
-            this.underlineOffset = fontParam.get(LWJGLRenderer.FONTPARAM_UNDERLINE_OFFSET);
-        }  
-    }
+	public void drawMultiLineText(int x, int y,
+			AttributedString attributedString, int start, int end) {
+		drawText(x, y, attributedString, start, end, true);
+	}
+
+	private int drawText(int x, int y, AttributedString attributedString,
+			int start, int end, boolean multiLine) {
+		int startX = x;
+		attributedString.setPosition(start);
+		if (!font.prepare()) {
+			return 0;
+		}
+		try {
+			BitmapFont.Glyph lastGlyph = null;
+			do {
+				FontState fontState = evalFontState(attributedString);
+				x += fontState.offsetX;
+				y += fontState.offsetY;
+				int runStart = x;
+				renderer.tintStack.setColor(fontState.color);
+				int nextStop = Math.min(end, attributedString.advance());
+				if (multiLine) {
+					nextStop = TextUtil.indexOf(attributedString, '\n', start,
+							nextStop);
+				}
+				while (start < nextStop) {
+					char ch = attributedString.charAt(start++);
+					BitmapFont.Glyph g = font.getGlyph(ch);
+					if (g != null) {
+						if (lastGlyph != null) {
+							x += lastGlyph.getKerning(ch);
+						}
+						lastGlyph = g;
+						if (g.width > 0) {
+							g.draw(x, y);
+						}
+						x += g.xadvance;
+					}
+				}
+				drawLine(fontState, x, y, x - runStart);
+				x -= fontState.offsetX;
+				y -= fontState.offsetY;
+				if (multiLine && start < end
+						&& attributedString.charAt(start) == '\n') {
+					attributedString.setPosition(++start);
+					x = startX;
+					y += font.getLineHeight();
+					lastGlyph = null;
+				}
+			} while (start < end);
+		} finally {
+			font.cleanup();
+		}
+		return x - startX;
+	}
+
+	public AttributedStringFontCache cacheText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString) {
+		return cacheText(prevCache, attributedString, 0,
+				attributedString.length(), false);
+	}
+
+	public AttributedStringFontCache cacheText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString, int start, int end) {
+		return cacheText(prevCache, attributedString, start, end, false);
+	}
+
+	public AttributedStringFontCache cacheMultiLineText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString) {
+		return cacheText(prevCache, attributedString, 0,
+				attributedString.length(), true);
+	}
+
+	public AttributedStringFontCache cacheMultiLineText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString, int start, int end) {
+		return cacheText(prevCache, attributedString, start, end, true);
+	}
+
+	private AttributedStringFontCache cacheText(
+			AttributedStringFontCache prevCache,
+			AttributedString attributedString, int start, int end,
+			boolean multiLine) {
+		if (end <= start) {
+			return null;
+		}
+		LWJGLAttributedStringFontCache cache = (LWJGLAttributedStringFontCache) prevCache;
+		if (cache == null) {
+			cache = new LWJGLAttributedStringFontCache(renderer, font);
+		}
+		FloatBuffer va = cache.allocate(end - start);
+		attributedString.setPosition(start);
+		BitmapFont.Glyph lastGlyph = null;
+		int x = 0;
+		int y = 0;
+		int width = 0;
+		do {
+			final FontState fontState = evalFontState(attributedString);
+
+			x += fontState.offsetX;
+			y += fontState.offsetY;
+			int runLength = 0;
+			int xStart = x;
+
+			int nextStop = Math.min(end, attributedString.advance());
+			while (nextStop < end
+					&& fontState == evalFontState(attributedString)) {
+				nextStop = Math.min(end, attributedString.advance());
+			}
+
+			if (multiLine) {
+				nextStop = TextUtil.indexOf(attributedString, '\n', start,
+						nextStop);
+			}
+
+			while (start < nextStop) {
+				char ch = attributedString.charAt(start++);
+				BitmapFont.Glyph g = font.getGlyph(ch);
+				if (g != null) {
+					if (lastGlyph != null) {
+						x += lastGlyph.getKerning(ch);
+					}
+					lastGlyph = g;
+					if (g.width > 0 && g.height > 0) {
+						g.draw(va, x, y);
+						runLength++;
+					}
+					x += g.xadvance;
+				}
+			}
+
+			x -= fontState.offsetX;
+			y -= fontState.offsetY;
+
+			if (runLength > 0 || fontState.style != 0) {
+				LWJGLAttributedStringFontCache.Run run = cache.addRun();
+				run.state = fontState;
+				run.numVertices = runLength * 4;
+				run.x = xStart;
+				run.xend = x;
+				run.y = y;
+			}
+
+			if (multiLine && start < end
+					&& attributedString.charAt(start) == '\n') {
+				attributedString.setPosition(++start);
+				width = Math.max(width, x);
+				x = 0;
+				y += font.getLineHeight();
+				lastGlyph = null;
+			}
+		} while (start < end);
+
+		if (x > 0) {
+			width = Math.max(width, x);
+			y += font.getLineHeight();
+		}
+
+		cache.width = width;
+		cache.height = y;
+		return cache;
+	}
+
+	static class FontState {
+		final Color color;
+		final int offsetX;
+		final int offsetY;
+		final int style;
+		final int underlineOffset;
+
+		FontState(FontParameter fontParam) {
+			int lineStyle = 0;
+			if (fontParam.get(FontParameter.UNDERLINE)) {
+				lineStyle |= STYLE_UNDERLINE;
+			}
+			if (fontParam.get(FontParameter.LINETHROUGH)) {
+				lineStyle |= STYLE_LINETHROUGH;
+			}
+
+			this.color = fontParam.get(FontParameter.COLOR);
+			this.offsetX = fontParam.get(LWJGLRenderer.FONTPARAM_OFFSET_X);
+			this.offsetY = fontParam.get(LWJGLRenderer.FONTPARAM_OFFSET_Y);
+			this.style = lineStyle;
+			this.underlineOffset = fontParam
+					.get(LWJGLRenderer.FONTPARAM_UNDERLINE_OFFSET);
+		}
+	}
 }

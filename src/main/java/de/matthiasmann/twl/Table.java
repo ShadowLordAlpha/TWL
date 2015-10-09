@@ -45,88 +45,95 @@ import de.matthiasmann.twl.model.TreeTableNode;
  */
 public class Table extends TableBase {
 
-    private final TableModel.ChangeListener modelChangeListener;
-    
-    TableModel model;
+	private final TableModel.ChangeListener modelChangeListener;
 
-    public Table() {
-        this.modelChangeListener = new ModelChangeListener();
-    }
+	TableModel model;
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public Table(TableModel model) {
-        this();
-        setModel(model);
-    }
+	public Table() {
+		this.modelChangeListener = new ModelChangeListener();
+	}
 
-    public TableModel getModel() {
-        return model;
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public Table(TableModel model) {
+		this();
+		setModel(model);
+	}
 
-    public void setModel(TableModel model) {
-        if(this.model != null) {
-            this.model.removeChangeListener(modelChangeListener);
-        }
-        this.columnHeaderModel = model;
-        this.model = model;
-        if(this.model != null) {
-            numRows = model.getNumRows();
-            numColumns = model.getNumColumns();
-            this.model.addChangeListener(modelChangeListener);
-        } else {
-            numRows = 0;
-            numColumns = 0;
-        }
-        modelAllChanged();
-    }
+	public TableModel getModel() {
+		return model;
+	}
 
-    @Override
-    protected Object getCellData(int row, int column, TreeTableNode node) {
-        return model.getCell(row, column);
-    }
+	public void setModel(TableModel model) {
+		if (this.model != null) {
+			this.model.removeChangeListener(modelChangeListener);
+		}
+		this.columnHeaderModel = model;
+		this.model = model;
+		if (this.model != null) {
+			numRows = model.getNumRows();
+			numColumns = model.getNumColumns();
+			this.model.addChangeListener(modelChangeListener);
+		} else {
+			numRows = 0;
+			numColumns = 0;
+		}
+		modelAllChanged();
+	}
 
-    @Override
-    protected TreeTableNode getNodeFromRow(int row) {
-        return null;
-    }
+	@Override
+	protected Object getCellData(int row, int column, TreeTableNode node) {
+		return model.getCell(row, column);
+	}
 
-    @Override
-    protected Object getTooltipContentFromRow(int row, int column) {
-        return model.getTooltipContent(row, column);
-    }
-    
-    class ModelChangeListener implements TableModel.ChangeListener {
-        public void rowsInserted(int idx, int count) {
-            numRows = model.getNumRows();
-            modelRowsInserted(idx, count);
-        }
-        public void rowsDeleted(int idx, int count) {
-            checkRowRange(idx, count);
-            numRows = model.getNumRows();
-            modelRowsDeleted(idx, count);
-        }
-        public void rowsChanged(int idx, int count) {
-            modelRowsChanged(idx, count);
-        }
-        public void columnDeleted(int idx, int count) {
-            checkColumnRange(idx, count);
-            numColumns = model.getNumColumns();
-            modelColumnsDeleted(count, count);
-        }
-        public void columnInserted(int idx, int count) {
-            numColumns = model.getNumColumns();
-            modelColumnsInserted(count, count);
-        }
-        public void columnHeaderChanged(int column) {
-            modelColumnHeaderChanged(column);
-        }
-        public void cellChanged(int row, int column) {
-            modelCellChanged(row, column);
-        }
-        public void allChanged() {
-            numRows = model.getNumRows();
-            numColumns = model.getNumColumns();
-            modelAllChanged();
-        }
-    }
+	@Override
+	protected TreeTableNode getNodeFromRow(int row) {
+		return null;
+	}
+
+	@Override
+	protected Object getTooltipContentFromRow(int row, int column) {
+		return model.getTooltipContent(row, column);
+	}
+
+	class ModelChangeListener implements TableModel.ChangeListener {
+		public void rowsInserted(int idx, int count) {
+			numRows = model.getNumRows();
+			modelRowsInserted(idx, count);
+		}
+
+		public void rowsDeleted(int idx, int count) {
+			checkRowRange(idx, count);
+			numRows = model.getNumRows();
+			modelRowsDeleted(idx, count);
+		}
+
+		public void rowsChanged(int idx, int count) {
+			modelRowsChanged(idx, count);
+		}
+
+		public void columnDeleted(int idx, int count) {
+			checkColumnRange(idx, count);
+			numColumns = model.getNumColumns();
+			modelColumnsDeleted(count, count);
+		}
+
+		public void columnInserted(int idx, int count) {
+			numColumns = model.getNumColumns();
+			modelColumnsInserted(count, count);
+		}
+
+		public void columnHeaderChanged(int column) {
+			modelColumnHeaderChanged(column);
+		}
+
+		public void cellChanged(int row, int column) {
+			modelCellChanged(row, column);
+		}
+
+		public void allChanged() {
+			numRows = model.getNumRows();
+			numColumns = model.getNumColumns();
+			modelAllChanged();
+		}
+	}
 }

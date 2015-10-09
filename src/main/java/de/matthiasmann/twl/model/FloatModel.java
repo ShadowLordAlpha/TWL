@@ -38,12 +38,12 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  */
 public interface FloatModel extends WithRunnableCallback {
 
-    public float getValue();
+	public float getValue();
 
-    public float getMinValue();
+	public float getMinValue();
 
-    public float getMaxValue();
+	public float getMaxValue();
 
-    public void setValue(float value);
-    
+	public void setValue(float value);
+
 }

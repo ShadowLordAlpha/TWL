@@ -45,117 +45,119 @@ import de.matthiasmann.twl.renderer.MouseCursor;
  */
 public class ParameterListImpl extends ThemeChildImpl implements ParameterList {
 
-    final ArrayList<Object> params;
+	final ArrayList<Object> params;
 
-    ParameterListImpl(ThemeManager manager, ThemeInfoImpl parent) {
-        super(manager, parent);
-        this.params = new ArrayList<Object>();
-    }
+	ParameterListImpl(ThemeManager manager, ThemeInfoImpl parent) {
+		super(manager, parent);
+		this.params = new ArrayList<Object>();
+	}
 
-    public int getSize() {
-        return params.size();
-    }
+	public int getSize() {
+		return params.size();
+	}
 
-    public Font getFont(int idx) {
-        Font value = getParameterValue(idx, Font.class);
-        if(value != null) {
-            return value;
-        }
-        return manager.getDefaultFont();
-    }
+	public Font getFont(int idx) {
+		Font value = getParameterValue(idx, Font.class);
+		if (value != null) {
+			return value;
+		}
+		return manager.getDefaultFont();
+	}
 
-    public Image getImage(int idx) {
-        Image img = getParameterValue(idx, Image.class);
-        if(img == ImageManager.NONE) {
-            return null;
-        }
-        return img;
-    }
+	public Image getImage(int idx) {
+		Image img = getParameterValue(idx, Image.class);
+		if (img == ImageManager.NONE) {
+			return null;
+		}
+		return img;
+	}
 
-    public MouseCursor getMouseCursor(int idx) {
-        MouseCursor value = getParameterValue(idx, MouseCursor.class);
-        return value;
-    }
+	public MouseCursor getMouseCursor(int idx) {
+		MouseCursor value = getParameterValue(idx, MouseCursor.class);
+		return value;
+	}
 
-    public ParameterMap getParameterMap(int idx) {
-        ParameterMap value = getParameterValue(idx, ParameterMap.class);
-        if(value == null) {
-            return manager.emptyMap;
-        }
-        return value;
-    }
+	public ParameterMap getParameterMap(int idx) {
+		ParameterMap value = getParameterValue(idx, ParameterMap.class);
+		if (value == null) {
+			return manager.emptyMap;
+		}
+		return value;
+	}
 
-    public ParameterList getParameterList(int idx) {
-        ParameterList value = getParameterValue(idx, ParameterList.class);
-        if(value == null) {
-            return manager.emptyList;
-        }
-        return value;
-    }
+	public ParameterList getParameterList(int idx) {
+		ParameterList value = getParameterValue(idx, ParameterList.class);
+		if (value == null) {
+			return manager.emptyList;
+		}
+		return value;
+	}
 
-    public boolean getParameter(int idx, boolean defaultValue) {
-        Boolean value = getParameterValue(idx, Boolean.class);
-        if(value != null) {
-            return value.booleanValue();
-        }
-        return defaultValue;
-    }
+	public boolean getParameter(int idx, boolean defaultValue) {
+		Boolean value = getParameterValue(idx, Boolean.class);
+		if (value != null) {
+			return value.booleanValue();
+		}
+		return defaultValue;
+	}
 
-    public int getParameter(int idx, int defaultValue) {
-        Integer value = getParameterValue(idx, Integer.class);
-        if(value != null) {
-            return value.intValue();
-        }
-        return defaultValue;
-    }
+	public int getParameter(int idx, int defaultValue) {
+		Integer value = getParameterValue(idx, Integer.class);
+		if (value != null) {
+			return value.intValue();
+		}
+		return defaultValue;
+	}
 
-    public float getParameter(int idx, float defaultValue) {
-        Float value = getParameterValue(idx, Float.class);
-        if(value != null) {
-            return value.floatValue();
-        }
-        return defaultValue;
-    }
+	public float getParameter(int idx, float defaultValue) {
+		Float value = getParameterValue(idx, Float.class);
+		if (value != null) {
+			return value.floatValue();
+		}
+		return defaultValue;
+	}
 
-    public String getParameter(int idx, String defaultValue) {
-        String value = getParameterValue(idx, String.class);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public String getParameter(int idx, String defaultValue) {
+		String value = getParameterValue(idx, String.class);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public Color getParameter(int idx, Color defaultValue) {
-        Color value = getParameterValue(idx, Color.class);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public Color getParameter(int idx, Color defaultValue) {
+		Color value = getParameterValue(idx, Color.class);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public <E extends Enum<E>> E getParameter(int idx, E defaultValue) {
-        Class<E> enumType = defaultValue.getDeclaringClass();
-        E value = getParameterValue(idx, enumType);
-        if(value != null) {
-            return value;
-        }
-        return defaultValue;
-    }
+	public <E extends Enum<E>> E getParameter(int idx, E defaultValue) {
+		Class<E> enumType = defaultValue.getDeclaringClass();
+		E value = getParameterValue(idx, enumType);
+		if (value != null) {
+			return value;
+		}
+		return defaultValue;
+	}
 
-    public Object getParameterValue(int idx) {
-        return params.get(idx);
-    }
+	public Object getParameterValue(int idx) {
+		return params.get(idx);
+	}
 
-    public <T> T getParameterValue(int idx, Class<T> clazz) {
-        Object value = getParameterValue(idx);
-        if(value != null && !clazz.isInstance(value)) {
-            wrongParameterType(idx, clazz, value.getClass());
-            return null;
-        }
-        return clazz.cast(value);
-    }
+	public <T> T getParameterValue(int idx, Class<T> clazz) {
+		Object value = getParameterValue(idx);
+		if (value != null && !clazz.isInstance(value)) {
+			wrongParameterType(idx, clazz, value.getClass());
+			return null;
+		}
+		return clazz.cast(value);
+	}
 
-    protected void wrongParameterType(int idx, Class<?> expectedType, Class<?> foundType) {
-        DebugHook.getDebugHook().wrongParameterType(this, idx, expectedType, foundType, getParentDescription());
-    }
+	protected void wrongParameterType(int idx, Class<?> expectedType,
+			Class<?> foundType) {
+		DebugHook.getDebugHook().wrongParameterType(this, idx, expectedType,
+				foundType, getParentDescription());
+	}
 }

@@ -40,200 +40,204 @@ import java.util.Date;
  */
 public class FileSystemTreeModel extends AbstractTreeTableModel {
 
-    private final FileSystemModel fsm;
-    private final boolean includeLastModified;
+	private final FileSystemModel fsm;
+	private final boolean includeLastModified;
 
-    protected Comparator<Object> sorter;
+	protected Comparator<Object> sorter;
 
-    public FileSystemTreeModel(FileSystemModel fsm, boolean includeLastModified) {
-        this.fsm = fsm;
-        this.includeLastModified = includeLastModified;
+	public FileSystemTreeModel(FileSystemModel fsm, boolean includeLastModified) {
+		this.fsm = fsm;
+		this.includeLastModified = includeLastModified;
 
-        insertRoots();
-    }
+		insertRoots();
+	}
 
-    public FileSystemTreeModel(FileSystemModel fsm) {
-        this(fsm, false);
-    }
+	public FileSystemTreeModel(FileSystemModel fsm) {
+		this(fsm, false);
+	}
 
-    public int getNumColumns() {
-        return includeLastModified ? 2 : 1;
-    }
+	public int getNumColumns() {
+		return includeLastModified ? 2 : 1;
+	}
 
-    public String getColumnHeaderText(int column) {
-        switch(column) {
-            case 0:
-                return "Folder";
-            case 1:
-                return "Last modified";
-            default:
-                return "";
-        }
-    }
+	public String getColumnHeaderText(int column) {
+		switch (column) {
+		case 0:
+			return "Folder";
+		case 1:
+			return "Last modified";
+		default:
+			return "";
+		}
+	}
 
-    public FileSystemModel getFileSystemModel() {
-        return fsm;
-    }
+	public FileSystemModel getFileSystemModel() {
+		return fsm;
+	}
 
-    /**
-     * Removes all nodes from the tree and creates the root nodes
-     */
-    public void insertRoots() {
-        removeAllChildren();
+	/**
+	 * Removes all nodes from the tree and creates the root nodes
+	 */
+	public void insertRoots() {
+		removeAllChildren();
 
-        for(Object root : fsm.listRoots()) {
-            insertChild(new FolderNode(this, fsm, root), getNumChildren());
-        }
-    }
+		for (Object root : fsm.listRoots()) {
+			insertChild(new FolderNode(this, fsm, root), getNumChildren());
+		}
+	}
 
-    public FolderNode getNodeForFolder(Object obj) {
-        Object parent = fsm.getParent(obj);
-        TreeTableNode parentNode;
-        if(parent == null) {
-            parentNode = this;
-        } else {
-            parentNode = getNodeForFolder(parent);
-        }
-        if(parentNode != null) {
-            for(int i=0 ; i<parentNode.getNumChildren() ; i++) {
-                FolderNode node = (FolderNode)parentNode.getChild(i);
-                if(fsm.equals(node.folder, obj)) {
-                    return node;
-                }
-            }
-        }
-        return null;
-    }
+	public FolderNode getNodeForFolder(Object obj) {
+		Object parent = fsm.getParent(obj);
+		TreeTableNode parentNode;
+		if (parent == null) {
+			parentNode = this;
+		} else {
+			parentNode = getNodeForFolder(parent);
+		}
+		if (parentNode != null) {
+			for (int i = 0; i < parentNode.getNumChildren(); i++) {
+				FolderNode node = (FolderNode) parentNode.getChild(i);
+				if (fsm.equals(node.folder, obj)) {
+					return node;
+				}
+			}
+		}
+		return null;
+	}
 
-    public Comparator<Object> getSorter() {
-        return sorter;
-    }
+	public Comparator<Object> getSorter() {
+		return sorter;
+	}
 
-    /**
-     * Sets the sorter used for sorting folders (the root nodes are not sorted).
-     *
-     * Will call insertRoots() when the sorter is changed.
-     *
-     * @see #insertRoots()
-     * @param sorter The new sorter - can be null
-     */
-    public void setSorter(Comparator<Object> sorter) {
-        if(this.sorter != sorter) {
-            this.sorter = sorter;
-            insertRoots();
-        }
-    }
+	/**
+	 * Sets the sorter used for sorting folders (the root nodes are not sorted).
+	 *
+	 * Will call insertRoots() when the sorter is changed.
+	 *
+	 * @see #insertRoots()
+	 * @param sorter
+	 *            The new sorter - can be null
+	 */
+	public void setSorter(Comparator<Object> sorter) {
+		if (this.sorter != sorter) {
+			this.sorter = sorter;
+			insertRoots();
+		}
+	}
 
-    static final FolderNode[] NO_CHILDREN = new FolderNode[0];
-    
-    public static class FolderNode implements TreeTableNode {
-        private final TreeTableNode parent;
-        private final FileSystemModel fsm;
-        final Object folder;
-        FolderNode[] children;
+	static final FolderNode[] NO_CHILDREN = new FolderNode[0];
 
-        protected FolderNode(TreeTableNode parent, FileSystemModel fsm, Object folder) {
-            this.parent = parent;
-            this.fsm = fsm;
-            this.folder = folder;
-        }
+	public static class FolderNode implements TreeTableNode {
+		private final TreeTableNode parent;
+		private final FileSystemModel fsm;
+		final Object folder;
+		FolderNode[] children;
 
-        public Object getFolder() {
-            return folder;
-        }
+		protected FolderNode(TreeTableNode parent, FileSystemModel fsm,
+				Object folder) {
+			this.parent = parent;
+			this.fsm = fsm;
+			this.folder = folder;
+		}
 
-        public Object getData(int column) {
-            switch(column) {
-                case 0:
-                    return fsm.getName(folder);
-                case 1:
-                    return getlastModified();
-                default:
-                    return null;
-            }
-        }
+		public Object getFolder() {
+			return folder;
+		}
 
-        public Object getTooltipContent(int column) {
-            StringBuilder sb = new StringBuilder(fsm.getPath(folder));
-            Date lastModified = getlastModified();
-            if(lastModified != null) {
-                sb.append("\nLast modified: ").append(lastModified);
-            }
-            return sb.toString();
-        }
+		public Object getData(int column) {
+			switch (column) {
+			case 0:
+				return fsm.getName(folder);
+			case 1:
+				return getlastModified();
+			default:
+				return null;
+			}
+		}
 
-        public TreeTableNode getChild(int idx) {
-            return children[idx];
-        }
+		public Object getTooltipContent(int column) {
+			StringBuilder sb = new StringBuilder(fsm.getPath(folder));
+			Date lastModified = getlastModified();
+			if (lastModified != null) {
+				sb.append("\nLast modified: ").append(lastModified);
+			}
+			return sb.toString();
+		}
 
-        public int getChildIndex(TreeTableNode child) {
-            for(int i=0,n=children.length ; i<n ; i++) {
-                if(children[i] == child) {
-                    return i;
-                }
-            }
-            return -1;
-        }
+		public TreeTableNode getChild(int idx) {
+			return children[idx];
+		}
 
-        public int getNumChildren() {
-            if(children == null) {
-                collectChilds();
-            }
-            return children.length;
-        }
+		public int getChildIndex(TreeTableNode child) {
+			for (int i = 0, n = children.length; i < n; i++) {
+				if (children[i] == child) {
+					return i;
+				}
+			}
+			return -1;
+		}
 
-        public TreeTableNode getParent() {
-            return parent;
-        }
+		public int getNumChildren() {
+			if (children == null) {
+				collectChilds();
+			}
+			return children.length;
+		}
 
-        public boolean isLeaf() {
-            return false;
-        }
+		public TreeTableNode getParent() {
+			return parent;
+		}
 
-        public FileSystemTreeModel getTreeModel() {
-            TreeTableNode node = this.parent;
-            TreeTableNode nodeParent;
-            while((nodeParent = node.getParent()) != null) {
-                node = nodeParent;
-            }
-            return (FileSystemTreeModel)node;
-        }
+		public boolean isLeaf() {
+			return false;
+		}
 
-        private void collectChilds() {
-            children = NO_CHILDREN;
-            try {
-                Object[] subFolder = fsm.listFolder(folder, FolderFilter.instance);
-                if(subFolder != null && subFolder.length > 0) {
-                    Comparator<Object> sorter = getTreeModel().sorter;
-                    if(sorter != null) {
-                        Arrays.sort(subFolder, sorter);
-                    }
-                    FolderNode[] newChildren = new FolderNode[subFolder.length];
-                    for(int i=0 ; i<subFolder.length ; i++) {
-                        newChildren[i] = new FolderNode(this, fsm, subFolder[i]);
-                    }
-                    children = newChildren;
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+		public FileSystemTreeModel getTreeModel() {
+			TreeTableNode node = this.parent;
+			TreeTableNode nodeParent;
+			while ((nodeParent = node.getParent()) != null) {
+				node = nodeParent;
+			}
+			return (FileSystemTreeModel) node;
+		}
 
-        private Date getlastModified() {
-            if(parent instanceof FileSystemTreeModel) {
-                // don't call getLastModified on roots - causes bad performance
-                // on windows when a DVD/CD/Floppy has no media inside
-                return null;
-            }
-            return new Date(fsm.getLastModified(folder));
-        }
-    }
+		private void collectChilds() {
+			children = NO_CHILDREN;
+			try {
+				Object[] subFolder = fsm.listFolder(folder,
+						FolderFilter.instance);
+				if (subFolder != null && subFolder.length > 0) {
+					Comparator<Object> sorter = getTreeModel().sorter;
+					if (sorter != null) {
+						Arrays.sort(subFolder, sorter);
+					}
+					FolderNode[] newChildren = new FolderNode[subFolder.length];
+					for (int i = 0; i < subFolder.length; i++) {
+						newChildren[i] = new FolderNode(this, fsm, subFolder[i]);
+					}
+					children = newChildren;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 
-    public static final class FolderFilter implements FileSystemModel.FileFilter {
-        public static final FolderFilter instance = new FolderFilter();
-        
-        public boolean accept(FileSystemModel model, Object file) {
-            return model.isFolder(file);
-        }
-    };
+		private Date getlastModified() {
+			if (parent instanceof FileSystemTreeModel) {
+				// don't call getLastModified on roots - causes bad performance
+				// on windows when a DVD/CD/Floppy has no media inside
+				return null;
+			}
+			return new Date(fsm.getLastModified(folder));
+		}
+	}
+
+	public static final class FolderFilter implements
+			FileSystemModel.FileFilter {
+		public static final FolderFilter instance = new FolderFilter();
+
+		public boolean accept(FileSystemModel model, Object file) {
+			return model.isFolder(file);
+		}
+	};
 }

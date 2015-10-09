@@ -38,177 +38,176 @@ import de.matthiasmann.twl.model.IntegerModel;
  */
 public class ValueAdjusterInt extends ValueAdjuster {
 
-    private int value;
-    private int minValue;
-    private int maxValue = 100;
-    private int dragStartValue;
-    private IntegerModel model;
-    private Runnable modelCallback;
+	private int value;
+	private int minValue;
+	private int maxValue = 100;
+	private int dragStartValue;
+	private IntegerModel model;
+	private Runnable modelCallback;
 
-    public ValueAdjusterInt() {
-        setTheme("valueadjuster");
-        setDisplayText();
-    }
+	public ValueAdjusterInt() {
+		setTheme("valueadjuster");
+		setDisplayText();
+	}
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public ValueAdjusterInt(IntegerModel model) {
-        setTheme("valueadjuster");
-        setModel(model);
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public ValueAdjusterInt(IntegerModel model) {
+		setTheme("valueadjuster");
+		setModel(model);
+	}
 
-    public int getMaxValue() {
-        if(model != null) {
-            maxValue = model.getMaxValue();
-        }
-        return maxValue;
-    }
+	public int getMaxValue() {
+		if (model != null) {
+			maxValue = model.getMaxValue();
+		}
+		return maxValue;
+	}
 
-    public int getMinValue() {
-        if(model != null) {
-            minValue = model.getMinValue();
-        }
-        return minValue;
-    }
+	public int getMinValue() {
+		if (model != null) {
+			minValue = model.getMinValue();
+		}
+		return minValue;
+	}
 
-    public void setMinMaxValue(int minValue, int maxValue) {
-        if(maxValue < minValue) {
-            throw new IllegalArgumentException("maxValue < minValue");
-        }
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        setValue(value);
-    }
+	public void setMinMaxValue(int minValue, int maxValue) {
+		if (maxValue < minValue) {
+			throw new IllegalArgumentException("maxValue < minValue");
+		}
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		setValue(value);
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public int getValue() {
+		return value;
+	}
 
-    public void setValue(int value) {
-        value = Math.max(getMinValue(), Math.min(getMaxValue(), value));
-        if(this.value != value) {
-            this.value = value;
-            if(model != null) {
-                model.setValue(value);
-            }
-            setDisplayText();
-        }
-    }
+	public void setValue(int value) {
+		value = Math.max(getMinValue(), Math.min(getMaxValue(), value));
+		if (this.value != value) {
+			this.value = value;
+			if (model != null) {
+				model.setValue(value);
+			}
+			setDisplayText();
+		}
+	}
 
-    public IntegerModel getModel() {
-        return model;
-    }
+	public IntegerModel getModel() {
+		return model;
+	}
 
-    public void setModel(IntegerModel model) {
-        if(this.model != model) {
-            removeModelCallback();
-            this.model = model;
-            if(model != null) {
-                this.minValue = model.getMinValue();
-                this.maxValue = model.getMaxValue();
-                addModelCallback();
-            }
-        }
-    }
-    
-    
-    @Override
-    protected String onEditStart() {
-        return formatText();
-    }
+	public void setModel(IntegerModel model) {
+		if (this.model != model) {
+			removeModelCallback();
+			this.model = model;
+			if (model != null) {
+				this.minValue = model.getMinValue();
+				this.maxValue = model.getMaxValue();
+				addModelCallback();
+			}
+		}
+	}
 
-    @Override
-    protected boolean onEditEnd(String text) {
-        try {
-            setValue(Integer.parseInt(text));
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
+	@Override
+	protected String onEditStart() {
+		return formatText();
+	}
 
-    @Override
-    protected String validateEdit(String text) {
-        try {
-            Integer.parseInt(text);
-            return null;
-        } catch (NumberFormatException ex) {
-            return ex.toString();
-        }
-    }
+	@Override
+	protected boolean onEditEnd(String text) {
+		try {
+			setValue(Integer.parseInt(text));
+			return true;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
 
-    @Override
-    protected void onEditCanceled() {
-    }
+	@Override
+	protected String validateEdit(String text) {
+		try {
+			Integer.parseInt(text);
+			return null;
+		} catch (NumberFormatException ex) {
+			return ex.toString();
+		}
+	}
 
-    @Override
-    protected boolean shouldStartEdit(char ch) {
-        return (ch >= '0' && ch <= '9') || (ch == '-');
-    }
+	@Override
+	protected void onEditCanceled() {
+	}
 
-    @Override
-    protected void onDragStart() {
-        dragStartValue = value;
-    }
+	@Override
+	protected boolean shouldStartEdit(char ch) {
+		return (ch >= '0' && ch <= '9') || (ch == '-');
+	}
 
-    @Override
-    protected void onDragUpdate(int dragDelta) {
-        int range = Math.max(1, Math.abs(getMaxValue() - getMinValue()));
-        setValue(dragStartValue + dragDelta/Math.max(3, getWidth()/range));
-    }
+	@Override
+	protected void onDragStart() {
+		dragStartValue = value;
+	}
 
-    @Override
-    protected void onDragCancelled() {
-        setValue(dragStartValue);
-    }
+	@Override
+	protected void onDragUpdate(int dragDelta) {
+		int range = Math.max(1, Math.abs(getMaxValue() - getMinValue()));
+		setValue(dragStartValue + dragDelta / Math.max(3, getWidth() / range));
+	}
 
-    @Override
-    protected void doDecrement() {
-        setValue(value - 1);
-    }
+	@Override
+	protected void onDragCancelled() {
+		setValue(dragStartValue);
+	}
 
-    @Override
-    protected void doIncrement() {
-        setValue(value + 1);
-    }
+	@Override
+	protected void doDecrement() {
+		setValue(value - 1);
+	}
 
-    @Override
-    protected String formatText() {
-        return Integer.toString(value);
-    }
+	@Override
+	protected void doIncrement() {
+		setValue(value + 1);
+	}
 
-    protected void syncWithModel() {
-        cancelEdit();
-        this.minValue = model.getMinValue();
-        this.maxValue = model.getMaxValue();
-        this.value = model.getValue();
-        setDisplayText();
-    }
+	@Override
+	protected String formatText() {
+		return Integer.toString(value);
+	}
 
-    @Override
-    protected void afterAddToGUI(GUI gui) {
-        super.afterAddToGUI(gui);
-        addModelCallback();
-    }
+	protected void syncWithModel() {
+		cancelEdit();
+		this.minValue = model.getMinValue();
+		this.maxValue = model.getMaxValue();
+		this.value = model.getValue();
+		setDisplayText();
+	}
 
-    @Override
-    protected void beforeRemoveFromGUI(GUI gui) {
-        removeModelCallback();
-        super.beforeRemoveFromGUI(gui);
-    }
+	@Override
+	protected void afterAddToGUI(GUI gui) {
+		super.afterAddToGUI(gui);
+		addModelCallback();
+	}
 
-    protected void removeModelCallback() {
-        if(model != null && modelCallback != null) {
-            model.removeCallback(modelCallback);
-        }
-    }
+	@Override
+	protected void beforeRemoveFromGUI(GUI gui) {
+		removeModelCallback();
+		super.beforeRemoveFromGUI(gui);
+	}
 
-    protected void addModelCallback() {
-        if(model != null && getGUI() != null) {
-            if(modelCallback == null) {
-                modelCallback = new ModelCallback();
-            }
-            model.addCallback(modelCallback);
-            syncWithModel();
-        }
-    }
+	protected void removeModelCallback() {
+		if (model != null && modelCallback != null) {
+			model.removeCallback(modelCallback);
+		}
+	}
+
+	protected void addModelCallback() {
+		if (model != null && getGUI() != null) {
+			if (modelCallback == null) {
+				modelCallback = new ModelCallback();
+			}
+			model.addCallback(modelCallback);
+			syncWithModel();
+		}
+	}
 }

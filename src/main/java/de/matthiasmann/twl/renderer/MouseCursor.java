@@ -36,13 +36,16 @@ import de.matthiasmann.twl.GUI;
  * @author Matthias Mann
  */
 public interface MouseCursor {
-    
-    /**
-     * An alias for the standard OS mouse cursor.
-     * 
-     * <p>{@link GUI#setCursor() } will replace that with null before
-     * calling {@link Renderer#setCursor(de.matthiasmann.twl.renderer.MouseCursor) }</p>
-     */
-    public static final MouseCursor OS_DEFAULT = new MouseCursor() {};
+
+	/**
+	 * An alias for the standard OS mouse cursor.
+	 * 
+	 * <p>
+	 * {@link GUI#setCursor() } will replace that with null before calling
+	 * {@link Renderer#setCursor(de.matthiasmann.twl.renderer.MouseCursor) }
+	 * </p>
+	 */
+	public static final MouseCursor OS_DEFAULT = new MouseCursor() {
+	};
 
 }

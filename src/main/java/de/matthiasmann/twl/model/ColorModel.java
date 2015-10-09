@@ -38,9 +38,9 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  * @author Matthias Mann
  */
 public interface ColorModel extends WithRunnableCallback {
-    
-    public Color getValue();
-    
-    public void setValue(Color value);
-    
+
+	public Color getValue();
+
+	public void setValue(Color value);
+
 }

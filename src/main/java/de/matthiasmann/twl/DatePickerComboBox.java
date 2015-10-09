@@ -32,6 +32,7 @@ package de.matthiasmann.twl;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
 import de.matthiasmann.twl.model.DateModel;
 
 /**
@@ -41,156 +42,159 @@ import de.matthiasmann.twl.model.DateModel;
  */
 public class DatePickerComboBox extends ComboBoxBase {
 
-    private final ComboboxLabel label;
-    private final DatePicker datePicker;
+	private final ComboboxLabel label;
+	private final DatePicker datePicker;
 
-    public DatePickerComboBox() {
-        this(Locale.getDefault(), DateFormat.getDateInstance());
-    }
-    
-    /**
-     * Constructs a date picker combo box using the specified locale and date format style
-     * @param locale the locale
-     * @param style the date style
-     * @see DateFormat#getDateInstance(int, java.util.Locale) 
-     */
-    public DatePickerComboBox(Locale locale, int style) {
-        this(locale, DateFormat.getDateInstance(style, locale));
-    }
-    
-    public DatePickerComboBox(Locale locale, DateFormat dateFormat) {
-        L l = new L();
-        
-        label = new ComboboxLabel(getAnimationState());
-        label.setTheme("display");
-        label.addCallback(l);
-        
-        datePicker = new DatePicker(locale, dateFormat);
-        datePicker.addCallback(l);
-        
-        popup.add(datePicker);
-        popup.setTheme("datepickercomboboxPopup");
-        
-        button.getModel().addStateCallback(l);
-        
-        add(label);
-    }
+	public DatePickerComboBox() {
+		this(Locale.getDefault(), DateFormat.getDateInstance());
+	}
 
-    public void setModel(DateModel model) {
-        datePicker.setModel(model);
-    }
+	/**
+	 * Constructs a date picker combo box using the specified locale and date
+	 * format style
+	 * 
+	 * @param locale
+	 *            the locale
+	 * @param style
+	 *            the date style
+	 * @see DateFormat#getDateInstance(int, java.util.Locale)
+	 */
+	public DatePickerComboBox(Locale locale, int style) {
+		this(locale, DateFormat.getDateInstance(style, locale));
+	}
 
-    public DateModel getModel() {
-        return datePicker.getModel();
-    }
+	public DatePickerComboBox(Locale locale, DateFormat dateFormat) {
+		L l = new L();
 
-    public void setDateFormat(Locale locale, DateFormat dateFormat) {
-        datePicker.setDateFormat(locale, dateFormat);
-    }
+		label = new ComboboxLabel(getAnimationState());
+		label.setTheme("display");
+		label.addCallback(l);
 
-    public DateFormat getDateFormat() {
-        return datePicker.getDateFormat();
-    }
+		datePicker = new DatePicker(locale, dateFormat);
+		datePicker.addCallback(l);
 
-    public Locale getLocale() {
-        return datePicker.getLocale();
-    }
-    
-    @Override
-    protected ComboboxLabel getLabel() {
-        return label;
-    }
+		popup.add(datePicker);
+		popup.setTheme("datepickercomboboxPopup");
 
-    protected DatePicker getDatePicker() {
-        return datePicker;
-    }
-    
-    @Override
-    protected void setPopupSize() {
-        int minWidth = popup.getMinWidth();
-        int minHeight = popup.getMinHeight();
-        int popupWidth = computeSize(minWidth,
-                popup.getPreferredWidth(),
-                popup.getMaxWidth());
-        int popupHeight = computeSize(minHeight,
-                popup.getPreferredHeight(),
-                popup.getMaxHeight());
-        Widget container = popup.getParent();
-        int popupMaxRight = container.getInnerRight();
-        int popupMaxBottom = container.getInnerBottom();
-        int x = getX();
-        int y = getBottom();
-        if(x + popupWidth > popupMaxRight) {
-            if(getRight() - popupWidth >= container.getInnerX()) {
-                x = getRight() - popupWidth;
-            } else {
-                x = popupMaxRight - minWidth;
-            }
-        }
-        if(y + popupHeight > popupMaxBottom) {
-            if(getY() - popupHeight >= container.getInnerY()) {
-                y = getY() - popupHeight;
-            } else {
-                y = popupMaxBottom - minHeight;
-            }
-        }
-        popupWidth = Math.min(popupWidth, popupMaxRight - x);
-        popupHeight = Math.min(popupHeight, popupMaxBottom - y);
-        popup.setPosition(x, y);
-        popup.setSize(popupWidth, popupHeight);
-    }
-    
-    protected void updateLabel() {
-        label.setText(datePicker.formatDate());
-    }
-    
-    void updateHover() {
-        getAnimationState().setAnimationState(Label.STATE_HOVER,
-                label.hover || button.getModel().isHover());
-    }
+		button.getModel().addStateCallback(l);
 
-    protected class ComboboxLabel extends Label {
-        boolean hover;
+		add(label);
+	}
 
-        public ComboboxLabel(AnimationState animState) {
-            super(animState);
-            setAutoSize(false);
-            setClip(true);
-            setTheme("display");
-        }
+	public void setModel(DateModel model) {
+		datePicker.setModel(model);
+	}
 
-        @Override
-        public int getPreferredInnerHeight() {
-            int prefHeight = super.getPreferredInnerHeight();
-            if(getFont() != null) {
-                prefHeight = Math.max(prefHeight, getFont().getLineHeight());
-            }
-            return prefHeight;
-        }
+	public DateModel getModel() {
+		return datePicker.getModel();
+	}
 
-        @Override
-        protected void handleMouseHover(Event evt) {
-            if(evt.isMouseEvent()) {
-                boolean newHover = evt.getType() != Event.Type.MOUSE_EXITED;
-                if(newHover != hover) {
-                    hover = newHover;
-                    updateHover();
-                }
-            }
-        }
-    }
-    
-    class L implements Runnable, CallbackWithReason<Label.CallbackReason>, DatePicker.Callback {
-        public void run() {
-            updateHover();
-        }
+	public void setDateFormat(Locale locale, DateFormat dateFormat) {
+		datePicker.setDateFormat(locale, dateFormat);
+	}
 
-        public void callback(Label.CallbackReason reason) {
-            openPopup();
-        }
+	public DateFormat getDateFormat() {
+		return datePicker.getDateFormat();
+	}
 
-        public void calendarChanged(Calendar calendar) {
-            updateLabel();
-        }
-    }
+	public Locale getLocale() {
+		return datePicker.getLocale();
+	}
+
+	@Override
+	protected ComboboxLabel getLabel() {
+		return label;
+	}
+
+	protected DatePicker getDatePicker() {
+		return datePicker;
+	}
+
+	@Override
+	protected void setPopupSize() {
+		int minWidth = popup.getMinWidth();
+		int minHeight = popup.getMinHeight();
+		int popupWidth = computeSize(minWidth, popup.getPreferredWidth(),
+				popup.getMaxWidth());
+		int popupHeight = computeSize(minHeight, popup.getPreferredHeight(),
+				popup.getMaxHeight());
+		Widget container = popup.getParent();
+		int popupMaxRight = container.getInnerRight();
+		int popupMaxBottom = container.getInnerBottom();
+		int x = getX();
+		int y = getBottom();
+		if (x + popupWidth > popupMaxRight) {
+			if (getRight() - popupWidth >= container.getInnerX()) {
+				x = getRight() - popupWidth;
+			} else {
+				x = popupMaxRight - minWidth;
+			}
+		}
+		if (y + popupHeight > popupMaxBottom) {
+			if (getY() - popupHeight >= container.getInnerY()) {
+				y = getY() - popupHeight;
+			} else {
+				y = popupMaxBottom - minHeight;
+			}
+		}
+		popupWidth = Math.min(popupWidth, popupMaxRight - x);
+		popupHeight = Math.min(popupHeight, popupMaxBottom - y);
+		popup.setPosition(x, y);
+		popup.setSize(popupWidth, popupHeight);
+	}
+
+	protected void updateLabel() {
+		label.setText(datePicker.formatDate());
+	}
+
+	void updateHover() {
+		getAnimationState().setAnimationState(Label.STATE_HOVER,
+				label.hover || button.getModel().isHover());
+	}
+
+	protected class ComboboxLabel extends Label {
+		boolean hover;
+
+		public ComboboxLabel(AnimationState animState) {
+			super(animState);
+			setAutoSize(false);
+			setClip(true);
+			setTheme("display");
+		}
+
+		@Override
+		public int getPreferredInnerHeight() {
+			int prefHeight = super.getPreferredInnerHeight();
+			if (getFont() != null) {
+				prefHeight = Math.max(prefHeight, getFont().getLineHeight());
+			}
+			return prefHeight;
+		}
+
+		@Override
+		protected void handleMouseHover(Event evt) {
+			if (evt.isMouseEvent()) {
+				boolean newHover = evt.getType() != Event.Type.MOUSE_EXITED;
+				if (newHover != hover) {
+					hover = newHover;
+					updateHover();
+				}
+			}
+		}
+	}
+
+	class L implements Runnable, CallbackWithReason<Label.CallbackReason>,
+			DatePicker.Callback {
+		public void run() {
+			updateHover();
+		}
+
+		public void callback(Label.CallbackReason reason) {
+			openPopup();
+		}
+
+		public void calendarChanged(Calendar calendar) {
+			updateLabel();
+		}
+	}
 }

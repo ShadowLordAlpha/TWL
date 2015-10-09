@@ -39,64 +39,66 @@ import de.matthiasmann.twl.Color;
  * @author Matthias Mann
  */
 public class PersistentColorModel extends HasCallback implements ColorModel {
-    
-    private final Preferences prefs;
-    private final String prefKey;
 
-    private Color value;
-    private IllegalArgumentException initialError;
-    
-    public PersistentColorModel(Preferences prefs, String prefKey, Color defaultValue) {
-        if(prefs == null) {
-            throw new NullPointerException("prefs");
-        }
-        if(prefKey == null) {
-            throw new NullPointerException("prefKey");
-        }
-        if(defaultValue == null) {
-            throw new NullPointerException("defaultValue");
-        }
-        
-        this.prefs = prefs;
-        this.prefKey = prefKey;
-        this.value = defaultValue;
-        
-        try {
-            String text = prefs.get(prefKey, null);
-            if(text != null) {
-                Color aValue = Color.parserColor(text);
-                if(aValue != null) {
-                    value = aValue;
-                } else {
-                    initialError = new IllegalArgumentException("Unknown color name: " + text);
-                }
-            }
-        } catch (IllegalArgumentException ex) {
-            initialError = ex;
-        }
-    }
+	private final Preferences prefs;
+	private final String prefKey;
 
-    public IllegalArgumentException getInitialError() {
-        return initialError;
-    }
-    
-    public void clearInitialError() {
-        initialError = null;
-    }
+	private Color value;
+	private IllegalArgumentException initialError;
 
-    public Color getValue() {
-        return value;
-    }
+	public PersistentColorModel(Preferences prefs, String prefKey,
+			Color defaultValue) {
+		if (prefs == null) {
+			throw new NullPointerException("prefs");
+		}
+		if (prefKey == null) {
+			throw new NullPointerException("prefKey");
+		}
+		if (defaultValue == null) {
+			throw new NullPointerException("defaultValue");
+		}
 
-    public void setValue(Color value) {
-        if(this.value != value) {
-            this.value = value;
-            storeSettings();
-            doCallback();
-        }
-    }
+		this.prefs = prefs;
+		this.prefKey = prefKey;
+		this.value = defaultValue;
 
-    private void storeSettings() {
-        prefs.put(prefKey, value.toString());
-    }
+		try {
+			String text = prefs.get(prefKey, null);
+			if (text != null) {
+				Color aValue = Color.parserColor(text);
+				if (aValue != null) {
+					value = aValue;
+				} else {
+					initialError = new IllegalArgumentException(
+							"Unknown color name: " + text);
+				}
+			}
+		} catch (IllegalArgumentException ex) {
+			initialError = ex;
+		}
+	}
+
+	public IllegalArgumentException getInitialError() {
+		return initialError;
+	}
+
+	public void clearInitialError() {
+		initialError = null;
+	}
+
+	public Color getValue() {
+		return value;
+	}
+
+	public void setValue(Color value) {
+		if (this.value != value) {
+			this.value = value;
+			storeSettings();
+			doCallback();
+		}
+	}
+
+	private void storeSettings() {
+		prefs.put(prefKey, value.toString());
+	}
 }

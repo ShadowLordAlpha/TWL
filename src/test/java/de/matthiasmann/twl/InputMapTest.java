@@ -49,99 +49,100 @@ import org.xmlpull.v1.XmlPullParserException;
  */
 public class InputMapTest {
 
-    private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF8\" standalone=\"yes\"?>\n";
+	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF8\" standalone=\"yes\"?>\n";
 
-    public InputMapTest() {
-    }
+	public InputMapTest() {
+	}
 
-    @Test
-    public void test1() throws Exception {
-        final String input = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"openInventory\">I</action>\n"
-                + "    <action name=\"openQuestLog\">Q</action>\n"
-                + "</inputMapDef>";
-        InputMap im = parse(input);
-        String result = toString(im);
-        assertEquals(input, result);
-    }
+	@Test
+	public void test1() throws Exception {
+		final String input = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"openInventory\">I</action>\n"
+				+ "    <action name=\"openQuestLog\">Q</action>\n"
+				+ "</inputMapDef>";
+		InputMap im = parse(input);
+		String result = toString(im);
+		assertEquals(input, result);
+	}
 
-    @Test
-    public void test2() throws Exception {
-        final String input = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"openInventory\">shift I</action>\n"
-                + "    <action name=\"openQuestLog\">cmd Q</action>\n"
-                + "    <action name=\"quit\">meta X</action>\n"
-                + "    <action name=\"run\">LSHIFT</action>\n"
-                + "    <action name=\"console\">typed î</action>\n"
-                + "</inputMapDef>";
-        InputMap im = parse(input);
-        String result = toString(im);
-        assertEquals(input, result);
-    }
+	@Test
+	public void test2() throws Exception {
+		final String input = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"openInventory\">shift I</action>\n"
+				+ "    <action name=\"openQuestLog\">cmd Q</action>\n"
+				+ "    <action name=\"quit\">meta X</action>\n"
+				+ "    <action name=\"run\">LSHIFT</action>\n"
+				+ "    <action name=\"console\">typed î</action>\n"
+				+ "</inputMapDef>";
+		InputMap im = parse(input);
+		String result = toString(im);
+		assertEquals(input, result);
+	}
 
-    @Test
-    public void testMerge() throws Exception {
-        final String input = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"openInventory\">I</action>\n"
-                + "    <action name=\"openQuestLog\">Q</action>\n"
-                + "</inputMapDef>";
+	@Test
+	public void testMerge() throws Exception {
+		final String input = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"openInventory\">I</action>\n"
+				+ "    <action name=\"openQuestLog\">Q</action>\n"
+				+ "</inputMapDef>";
 
-        InputMap im1 = parse(input);
-        InputMap im2 = im1.addKeyStroke(KeyStroke.parse("Q", "quit"));
+		InputMap im1 = parse(input);
+		InputMap im2 = im1.addKeyStroke(KeyStroke.parse("Q", "quit"));
 
-        final String expected = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"quit\">Q</action>\n"
-                + "    <action name=\"openInventory\">I</action>\n"
-                + "</inputMapDef>";
+		final String expected = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"quit\">Q</action>\n"
+				+ "    <action name=\"openInventory\">I</action>\n"
+				+ "</inputMapDef>";
 
-        String result = toString(im2);
-        assertEquals(expected, result);
-    }
+		String result = toString(im2);
+		assertEquals(expected, result);
+	}
 
-    @Test
-    public void testRemove() throws Exception {
-        final String input = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"openInventory\">I</action>\n"
-                + "    <action name=\"openQuestLog\">Q</action>\n"
-                + "</inputMapDef>";
+	@Test
+	public void testRemove() throws Exception {
+		final String input = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"openInventory\">I</action>\n"
+				+ "    <action name=\"openQuestLog\">Q</action>\n"
+				+ "</inputMapDef>";
 
-        InputMap im1 = parse(input);
-        InputMap im2 = im1.removeKeyStrokes(Collections.singleton(im1.getKeyStrokes()[0]));
+		InputMap im1 = parse(input);
+		InputMap im2 = im1.removeKeyStrokes(Collections.singleton(im1
+				.getKeyStrokes()[0]));
 
-        final String expected = XML_HEADER
-                + "<inputMapDef>\n"
-                + "    <action name=\"openQuestLog\">Q</action>\n"
-                + "</inputMapDef>";
+		final String expected = XML_HEADER + "<inputMapDef>\n"
+				+ "    <action name=\"openQuestLog\">Q</action>\n"
+				+ "</inputMapDef>";
 
-        String result = toString(im2);
-        assertEquals(expected, result);
-    }
+		String result = toString(im2);
+		assertEquals(expected, result);
+	}
 
-    private static String toString(InputMap imi) throws XmlPullParserException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        imi.writeXML(baos);
-        return baos.toString("UTF8");
-    }
-    private static InputMap parse(final String content) throws XmlPullParserException, IOException {
-        URLStreamHandler handler = new URLStreamHandler() {
-            @Override
-            protected URLConnection openConnection(URL u) throws IOException {
-                return new URLConnection(u) {
-                    @Override
-                    public void connect() throws IOException {
-                    }
-                    @Override
-                    public InputStream getInputStream() throws IOException {
-                        return new ByteArrayInputStream(content.getBytes("UTF8"));
-                    }
-                };
-            }
-        };
-        return InputMap.parse(new URL("test", "localhost", 80, "data", handler));
-    }
+	private static String toString(InputMap imi) throws XmlPullParserException,
+			IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		imi.writeXML(baos);
+		return baos.toString("UTF8");
+	}
+
+	private static InputMap parse(final String content)
+			throws XmlPullParserException, IOException {
+		URLStreamHandler handler = new URLStreamHandler() {
+			@Override
+			protected URLConnection openConnection(URL u) throws IOException {
+				return new URLConnection(u) {
+					@Override
+					public void connect() throws IOException {
+					}
+
+					@Override
+					public InputStream getInputStream() throws IOException {
+						return new ByteArrayInputStream(
+								content.getBytes("UTF8"));
+					}
+				};
+			}
+		};
+		return InputMap
+				.parse(new URL("test", "localhost", 80, "data", handler));
+	}
 }

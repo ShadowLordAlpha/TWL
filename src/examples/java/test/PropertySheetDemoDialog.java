@@ -40,23 +40,25 @@ import de.matthiasmann.twl.model.SimplePropertyList;
  */
 public class PropertySheetDemoDialog extends FadeFrame {
 
-    private ScrollPane scrollPane;
+	private ScrollPane scrollPane;
 
-    public PropertySheetDemoDialog() {
-        PropertySheet ps = new PropertySheet();
-        ps.setTheme("/table");
-        ps.getPropertyList().addProperty(new SimpleProperty<String>(String.class, "Name", "Hugo"));
-        SimplePropertyList spl = new SimplePropertyList("Details");
-        spl.addProperty(new SimpleProperty<String>(String.class, "City", "Nowhere"));
-        ps.getPropertyList().addProperty(spl);
+	public PropertySheetDemoDialog() {
+		PropertySheet ps = new PropertySheet();
+		ps.setTheme("/table");
+		ps.getPropertyList().addProperty(
+				new SimpleProperty<String>(String.class, "Name", "Hugo"));
+		SimplePropertyList spl = new SimplePropertyList("Details");
+		spl.addProperty(new SimpleProperty<String>(String.class, "City",
+				"Nowhere"));
+		ps.getPropertyList().addProperty(spl);
 
-        scrollPane = new ScrollPane(ps);
-        scrollPane.setTheme("/tableScrollPane");
-        scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
+		scrollPane = new ScrollPane(ps);
+		scrollPane.setTheme("/tableScrollPane");
+		scrollPane.setFixed(ScrollPane.Fixed.HORIZONTAL);
 
-        setTheme("scrollPaneDemoDialog1");
-        setTitle("Property Sheet");
-        add(scrollPane);
-    }
+		setTheme("scrollPaneDemoDialog1");
+		setTitle("Property Sheet");
+		add(scrollPane);
+	}
 
 }

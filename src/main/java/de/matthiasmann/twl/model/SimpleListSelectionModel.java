@@ -32,69 +32,71 @@ package de.matthiasmann.twl.model;
 /**
  * A simple list selection model
  *
- * @param <T> the data type of the list model
+ * @param <T>
+ *            the data type of the list model
  * @author Matthias Mann
  */
-public class SimpleListSelectionModel<T> extends HasCallback implements ListSelectionModel<T> {
+public class SimpleListSelectionModel<T> extends HasCallback implements
+		ListSelectionModel<T> {
 
-    private final ListModel<T> listModel;
-    private int selected;
+	private final ListModel<T> listModel;
+	private int selected;
 
-    public SimpleListSelectionModel(ListModel<T> listModel) {
-        if(listModel == null) {
-            throw new NullPointerException("listModel");
-        }
-        this.listModel = listModel;
-    }
+	public SimpleListSelectionModel(ListModel<T> listModel) {
+		if (listModel == null) {
+			throw new NullPointerException("listModel");
+		}
+		this.listModel = listModel;
+	}
 
-    public ListModel<T> getListModel() {
-        return listModel;
-    }
+	public ListModel<T> getListModel() {
+		return listModel;
+	}
 
-    public T getSelectedEntry() {
-        if(selected >= 0 && selected < listModel.getNumEntries()) {
-            return listModel.getEntry(selected);
-        } else {
-            return null;
-        }
-    }
+	public T getSelectedEntry() {
+		if (selected >= 0 && selected < listModel.getNumEntries()) {
+			return listModel.getEntry(selected);
+		} else {
+			return null;
+		}
+	}
 
-    public boolean setSelectedEntry(T entry) {
-        return setSelectedEntry(entry, NO_SELECTION);
-    }
+	public boolean setSelectedEntry(T entry) {
+		return setSelectedEntry(entry, NO_SELECTION);
+	}
 
-    public boolean setSelectedEntry(T entry, int defaultIndex) {
-        if(entry != null) {
-            for(int i=0,n=listModel.getNumEntries() ; i<n ; i++) {
-                if(entry.equals(listModel.getEntry(i))) {
-                    setValue(i);
-                    return true;
-                }
-            }
-        }
-        setValue(defaultIndex);
-        return false;
-    }
+	public boolean setSelectedEntry(T entry, int defaultIndex) {
+		if (entry != null) {
+			for (int i = 0, n = listModel.getNumEntries(); i < n; i++) {
+				if (entry.equals(listModel.getEntry(i))) {
+					setValue(i);
+					return true;
+				}
+			}
+		}
+		setValue(defaultIndex);
+		return false;
+	}
 
-    public int getMaxValue() {
-        return listModel.getNumEntries()-1;
-    }
+	public int getMaxValue() {
+		return listModel.getNumEntries() - 1;
+	}
 
-    public int getMinValue() {
-        return NO_SELECTION;
-    }
+	public int getMinValue() {
+		return NO_SELECTION;
+	}
 
-    public int getValue() {
-        return selected;
-    }
+	public int getValue() {
+		return selected;
+	}
 
-    public void setValue(int value) {
-        if(value < NO_SELECTION) {
-            throw new IllegalArgumentException("value");
-        }
-        if(this.selected != value) {
-            this.selected = value;
-            doCallback();
-        }
-    }
+	public void setValue(int value) {
+		if (value < NO_SELECTION) {
+			throw new IllegalArgumentException("value");
+		}
+		if (this.selected != value) {
+			this.selected = value;
+			doCallback();
+		}
+	}
 }

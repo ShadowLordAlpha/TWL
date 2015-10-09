@@ -31,29 +31,30 @@ package de.matthiasmann.twl.model;
 
 /**
  * A simple boolean model
+ * 
  * @author Matthias Mann
  */
 public class SimpleBooleanModel extends HasCallback implements BooleanModel {
 
-    private boolean value;
+	private boolean value;
 
-    public SimpleBooleanModel() {
-        this(false);
-    }
+	public SimpleBooleanModel() {
+		this(false);
+	}
 
-    public SimpleBooleanModel(boolean value) {
-        this.value = value;
-    }
+	public SimpleBooleanModel(boolean value) {
+		this.value = value;
+	}
 
-    public boolean getValue() {
-        return value;
-    }
+	public boolean getValue() {
+		return value;
+	}
 
-    public void setValue(boolean value) {
-        if(this.value != value) {
-            this.value = value;
-            doCallback();
-        }
-    }
+	public void setValue(boolean value) {
+		if (this.value != value) {
+			this.value = value;
+			doCallback();
+		}
+	}
 
 }

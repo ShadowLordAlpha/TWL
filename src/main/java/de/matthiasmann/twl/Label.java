@@ -40,165 +40,172 @@ import de.matthiasmann.twl.utils.TextUtil;
  */
 public class Label extends TextWidget {
 
-    public enum CallbackReason {
-        CLICK,
-        DOUBLE_CLICK
-    };
-    
-    private boolean autoSize = true;
-    private Widget labelFor;
-    private CallbackWithReason<?>[] callbacks;
-    
-    public Label() {
-        this((AnimationState)null, false);
-    }
+	public enum CallbackReason {
+		CLICK, DOUBLE_CLICK
+	};
 
-    /**
-     * Creates a Label with a shared animation state
-     *
-     * @param animState the animation state to share, can be null
-     */
-    public Label(AnimationState animState) {
-        this(animState, false);
-    }
+	private boolean autoSize = true;
+	private Widget labelFor;
+	private CallbackWithReason<?>[] callbacks;
 
-    /**
-     * Creates a Label with a shared or inherited animation state
-     *
-     * @param animState the animation state to share or inherit, can be null
-     * @param inherit true if the animation state should be inherited false for sharing
-     */
-    public Label(AnimationState animState, boolean inherit) {
-        super(animState, inherit);
-    }
+	public Label() {
+		this((AnimationState) null, false);
+	}
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public Label(String text) {
-        this();
-        setText(text);
-    }
+	/**
+	 * Creates a Label with a shared animation state
+	 *
+	 * @param animState
+	 *            the animation state to share, can be null
+	 */
+	public Label(AnimationState animState) {
+		this(animState, false);
+	}
 
-    public void addCallback(CallbackWithReason<CallbackReason> cb) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, cb, CallbackWithReason.class);
-    }
+	/**
+	 * Creates a Label with a shared or inherited animation state
+	 *
+	 * @param animState
+	 *            the animation state to share or inherit, can be null
+	 * @param inherit
+	 *            true if the animation state should be inherited false for
+	 *            sharing
+	 */
+	public Label(AnimationState animState, boolean inherit) {
+		super(animState, inherit);
+	}
 
-    public void removeCallback(CallbackWithReason<CallbackReason> cb) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public Label(String text) {
+		this();
+		setText(text);
+	}
 
-    protected void doCallback(CallbackReason reason) {
-        CallbackSupport.fireCallbacks(callbacks, reason);
-    }
+	public void addCallback(CallbackWithReason<CallbackReason> cb) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, cb,
+				CallbackWithReason.class);
+	}
 
-    public boolean isAutoSize() {
-        return autoSize;
-    }
+	public void removeCallback(CallbackWithReason<CallbackReason> cb) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, cb);
+	}
 
-    public void setAutoSize(boolean autoSize) {
-        this.autoSize = autoSize;
-    }
+	protected void doCallback(CallbackReason reason) {
+		CallbackSupport.fireCallbacks(callbacks, reason);
+	}
 
-    @Override
-    public void setFont(Font font) {
-        super.setFont(font);
-        if(autoSize) {
-            invalidateLayout();
-        }
-    }
+	public boolean isAutoSize() {
+		return autoSize;
+	}
 
-    public String getText() {
-        return super.getCharSequence().toString();
-    }
-    
-    public void setText(String text) {
-        text = TextUtil.notNull(text);
-        if(!text.equals(getText())) {
-            super.setCharSequence(text);
-            if(autoSize) {
-                invalidateLayout();
-            }
-        }
-    }
+	public void setAutoSize(boolean autoSize) {
+		this.autoSize = autoSize;
+	}
 
-    @Override
-    public Object getTooltipContent() {
-        Object toolTipContent = super.getTooltipContent();
-        if(toolTipContent == null && labelFor != null) {
-            return labelFor.getTooltipContent();
-        }
-        return toolTipContent;
-    }
+	@Override
+	public void setFont(Font font) {
+		super.setFont(font);
+		if (autoSize) {
+			invalidateLayout();
+		}
+	}
 
-    public Widget getLabelFor() {
-        return labelFor;
-    }
+	public String getText() {
+		return super.getCharSequence().toString();
+	}
 
-    /**
-     * Sets the associated widget for this label. This will cause the label to
-     * get it's tooltip content from the associated widget and also forward the
-     * keyboard focus to it.
-     *
-     * @param labelFor the associated widget. Can be {@code null}.
-     */
-    public void setLabelFor(Widget labelFor) {
-        if(labelFor == this) {
-            throw new IllegalArgumentException("labelFor == this");
-        }
-        this.labelFor = labelFor;
-    }
+	public void setText(String text) {
+		text = TextUtil.notNull(text);
+		if (!text.equals(getText())) {
+			super.setCharSequence(text);
+			if (autoSize) {
+				invalidateLayout();
+			}
+		}
+	}
 
-    protected void applyThemeLabel(ThemeInfo themeInfo) {
-        String themeText = themeInfo.getParameterValue("text", false, String.class);
-        if(themeText != null) {
-            setText(themeText);
-        }
-    }
+	@Override
+	public Object getTooltipContent() {
+		Object toolTipContent = super.getTooltipContent();
+		if (toolTipContent == null && labelFor != null) {
+			return labelFor.getTooltipContent();
+		}
+		return toolTipContent;
+	}
 
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        applyThemeLabel(themeInfo);
-    }
+	public Widget getLabelFor() {
+		return labelFor;
+	}
 
-    @Override
-    public boolean requestKeyboardFocus() {
-        if(labelFor != null) {
-            return labelFor.requestKeyboardFocus();
-        } else {
-            return super.requestKeyboardFocus();
-        }
-    }
+	/**
+	 * Sets the associated widget for this label. This will cause the label to
+	 * get it's tooltip content from the associated widget and also forward the
+	 * keyboard focus to it.
+	 *
+	 * @param labelFor
+	 *            the associated widget. Can be {@code null}.
+	 */
+	public void setLabelFor(Widget labelFor) {
+		if (labelFor == this) {
+			throw new IllegalArgumentException("labelFor == this");
+		}
+		this.labelFor = labelFor;
+	}
 
-    @Override
-    public int getMinWidth() {
-        return Math.max(super.getMinWidth(), getPreferredWidth());
-    }
+	protected void applyThemeLabel(ThemeInfo themeInfo) {
+		String themeText = themeInfo.getParameterValue("text", false,
+				String.class);
+		if (themeText != null) {
+			setText(themeText);
+		}
+	}
 
-    @Override
-    public int getMinHeight() {
-        return Math.max(super.getMinHeight(), getPreferredHeight());
-    }
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		applyThemeLabel(themeInfo);
+	}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        handleMouseHover(evt);
-        if(evt.isMouseEvent()) {
-            if(evt.getType() == Event.Type.MOUSE_CLICKED) {
-                switch(evt.getMouseClickCount()) {
-                    case 1:
-                        handleClick(false);
-                        break;
-                    case 2:
-                        handleClick(true);
-                        break;
-                }
-            }
-            return evt.getType() != Event.Type.MOUSE_WHEEL;
-        }
-        return false;  
-    }
-    
-    protected void handleClick(boolean doubleClick) {
-        doCallback(doubleClick ? CallbackReason.DOUBLE_CLICK : CallbackReason.CLICK);
-    }
+	@Override
+	public boolean requestKeyboardFocus() {
+		if (labelFor != null) {
+			return labelFor.requestKeyboardFocus();
+		} else {
+			return super.requestKeyboardFocus();
+		}
+	}
+
+	@Override
+	public int getMinWidth() {
+		return Math.max(super.getMinWidth(), getPreferredWidth());
+	}
+
+	@Override
+	public int getMinHeight() {
+		return Math.max(super.getMinHeight(), getPreferredHeight());
+	}
+
+	@Override
+	protected boolean handleEvent(Event evt) {
+		handleMouseHover(evt);
+		if (evt.isMouseEvent()) {
+			if (evt.getType() == Event.Type.MOUSE_CLICKED) {
+				switch (evt.getMouseClickCount()) {
+				case 1:
+					handleClick(false);
+					break;
+				case 2:
+					handleClick(true);
+					break;
+				}
+			}
+			return evt.getType() != Event.Type.MOUSE_WHEEL;
+		}
+		return false;
+	}
+
+	protected void handleClick(boolean doubleClick) {
+		doCallback(doubleClick ? CallbackReason.DOUBLE_CLICK
+				: CallbackReason.CLICK);
+	}
 }

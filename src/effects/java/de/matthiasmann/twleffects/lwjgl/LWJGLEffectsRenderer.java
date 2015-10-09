@@ -29,7 +29,9 @@
  */
 package de.matthiasmann.twleffects.lwjgl;
 
-import sun.java2d.pipe.hw.ContextCapabilities;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+
 import de.matthiasmann.twl.Rect;
 import de.matthiasmann.twl.renderer.OffscreenRenderer;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
@@ -40,49 +42,49 @@ import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
  */
 public class LWJGLEffectsRenderer extends LWJGLRenderer {
 
-    private final LWJGLOffscreenRenderer offscreenRenderer;
-    
-    public LWJGLEffectsRenderer() throws LWJGLException {
-        super();
-        
-        ContextCapabilities caps = GLContext.getCapabilities();
-        if(caps.GL_EXT_framebuffer_object && caps.OpenGL14) {
-            offscreenRenderer = new LWJGLOffscreenRenderer(this);
-        } else {
-            offscreenRenderer = null;
-        }
-    }
+	private final LWJGLOffscreenRenderer offscreenRenderer;
 
-    @Override
-    public OffscreenRenderer getOffscreenRenderer() {
-        return offscreenRenderer;
-    }
+	public LWJGLEffectsRenderer() throws Exception {
 
-    @Override
-    protected void setClipRect() {
-        if(offscreenRenderer != null && offscreenRenderer.activeSurface != null) {
-            setClipRectOffscreen();
-        } else {
-            super.setClipRect();
-        }
-    }
-    
-    protected void setClipRectOffscreen() {
-        final Rect rect = clipRectTemp;
-        if(clipStack.getClipRect(rect)) {
-            offscreenRenderer.setClipRect(rect);
-        } else {
-            offscreenRenderer.disableClipRect();
-        }
-    }
-    
-    protected void startOffscreenRendering() {
-        pushGlobalTintColorReset();
-        clipStack.pushDisable();
-    }
-    
-    protected void endOffscreenRendering() {
-        popGlobalTintColor();
-        clipStack.pop();
-    }
+		GLCapabilities caps = GL.getCapabilities();
+		if (caps.GL_EXT_framebuffer_object && caps.OpenGL14) {
+			offscreenRenderer = new LWJGLOffscreenRenderer(this);
+		} else {
+			offscreenRenderer = null;
+		}
+	}
+
+	@Override
+	public OffscreenRenderer getOffscreenRenderer() {
+		return offscreenRenderer;
+	}
+
+	@Override
+	protected void setClipRect() {
+		if (offscreenRenderer != null
+				&& offscreenRenderer.activeSurface != null) {
+			setClipRectOffscreen();
+		} else {
+			super.setClipRect();
+		}
+	}
+
+	protected void setClipRectOffscreen() {
+		final Rect rect = clipRectTemp;
+		if (clipStack.getClipRect(rect)) {
+			offscreenRenderer.setClipRect(rect);
+		} else {
+			offscreenRenderer.disableClipRect();
+		}
+	}
+
+	protected void startOffscreenRendering() {
+		pushGlobalTintColorReset();
+		clipStack.pushDisable();
+	}
+
+	protected void endOffscreenRendering() {
+		popGlobalTintColor();
+		clipStack.pop();
+	}
 }

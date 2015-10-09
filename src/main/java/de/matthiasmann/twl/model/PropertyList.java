@@ -30,15 +30,15 @@
 package de.matthiasmann.twl.model;
 
 /**
- * This interface is used to create sub properties in a PropertySheet if
- * it is used as value of another Property
+ * This interface is used to create sub properties in a PropertySheet if it is
+ * used as value of another Property
  * 
  * @author Matthias Mann
  */
 public interface PropertyList {
 
-    public int getNumProperties();
+	public int getNumProperties();
 
-    public Property<?> getProperty(int idx);
-    
+	public Property<?> getProperty(int idx);
+
 }

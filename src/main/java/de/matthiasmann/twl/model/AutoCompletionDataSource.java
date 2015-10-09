@@ -36,13 +36,19 @@ package de.matthiasmann.twl.model;
  */
 public interface AutoCompletionDataSource {
 
-    /**
-     * Collects auto completion results
-     *
-     * @param text The new text for which to compute auto completion
-     * @param cursorPos The cursor position for which to compute the auto completion
-     * @param prev The previous AutoCompletionResult - can be used to speed up the computation
-     * @return The AutoCompletionResult object or null if no reults could be found
-     */
-    public AutoCompletionResult collectSuggestions(String text, int cursorPos, AutoCompletionResult prev);
+	/**
+	 * Collects auto completion results
+	 *
+	 * @param text
+	 *            The new text for which to compute auto completion
+	 * @param cursorPos
+	 *            The cursor position for which to compute the auto completion
+	 * @param prev
+	 *            The previous AutoCompletionResult - can be used to speed up
+	 *            the computation
+	 * @return The AutoCompletionResult object or null if no reults could be
+	 *         found
+	 */
+	public AutoCompletionResult collectSuggestions(String text, int cursorPos,
+			AutoCompletionResult prev);
 }

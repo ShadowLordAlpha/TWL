@@ -29,6 +29,12 @@
  */
 package gameui;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
+
+import test.TestUtils;
 import de.matthiasmann.twl.DialogLayout;
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.FPSCounter;
@@ -38,10 +44,6 @@ import de.matthiasmann.twl.RadialPopupMenu;
 import de.matthiasmann.twl.ToggleButton;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import test.TestUtils;
 
 /**
  * A simple game UI demo using DialogLayout
@@ -50,154 +52,149 @@ import test.TestUtils;
  */
 public class GameUIDemo2 extends DialogLayout {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Game UI Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Game UI Demo 2",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            GameUIDemo2 gameUI = new GameUIDemo2();
-            GUI gui = new GUI(gameUI, renderer);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    GameUIDemo2.class.getResource("gameui.xml"), renderer);
-            gui.applyTheme(theme);
+			GLFW.glfwSwapInterval(1); // vsync
 
-            while(!Display.isCloseRequested() && !gameUI.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			GameUIDemo2 gameUI = new GameUIDemo2();
+			GUI gui = new GUI(gameUI, renderer);
 
-                gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
-            }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					GameUIDemo2.class.getResource("gameui.xml"), renderer);
+			gui.applyTheme(theme);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !gameUI.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-    private final ToggleButton[] actionButtons;
-    private final ToggleButton btnPause;
-    private final ToggleButton btnArmageddon;
-    private final FPSCounter fpsCounter;
-    private final Label lastSelectedRadialEntry;
+				gui.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
+				TestUtils.reduceInputLag();
+			}
 
-    public boolean quit;
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
-    private static final String[] ACTION_NAMES = {
-        "pingu-digger",
-        "pingu-miner",
-        "pingu-basher",
-        "pingu-climber",
-        "pingu-floater",
-        "pingu-bomber",
-        "pingu-blocker",
-        "pingu-bridger",
-    };
+	private final ToggleButton[] actionButtons;
+	private final ToggleButton btnPause;
+	private final ToggleButton btnArmageddon;
+	private final FPSCounter fpsCounter;
+	private final Label lastSelectedRadialEntry;
 
-    public GameUIDemo2() {
-        actionButtons = new ToggleButton[ACTION_NAMES.length];
-        for(int i=0 ; i<ACTION_NAMES.length ; i++) {
-            actionButtons[i] = new ToggleButton();
-            actionButtons[i].setTheme(ACTION_NAMES[i]);
-        }
+	public boolean quit;
 
-        btnPause = new ToggleButton();
-        btnPause.setTheme("pause");
+	private static final String[] ACTION_NAMES = { "pingu-digger",
+			"pingu-miner", "pingu-basher", "pingu-climber", "pingu-floater",
+			"pingu-bomber", "pingu-blocker", "pingu-bridger", };
 
-        btnArmageddon = new ToggleButton();
-        btnArmageddon.setTheme("armageddon");
+	public GameUIDemo2() {
+		actionButtons = new ToggleButton[ACTION_NAMES.length];
+		for (int i = 0; i < ACTION_NAMES.length; i++) {
+			actionButtons[i] = new ToggleButton();
+			actionButtons[i].setTheme(ACTION_NAMES[i]);
+		}
 
-        fpsCounter = new FPSCounter();
+		btnPause = new ToggleButton();
+		btnPause.setTheme("pause");
 
-        lastSelectedRadialEntry = new Label();
-        lastSelectedRadialEntry.setText("Right click on the background");
-        add(lastSelectedRadialEntry);
+		btnArmageddon = new ToggleButton();
+		btnArmageddon.setTheme("armageddon");
 
-        // create the groups for the action buttons (aligned top left)
-        Group actionButtonsH = createSequentialGroup()
-                .addGap("actionButtonsLeft")
-                .addGroup(createParallelGroup(actionButtons))
-                .addGap();
-        Group actionButtonsV = createSequentialGroup()
-                .addGap("actionButtonsTop")
-                .addWidgets(actionButtons)
-                .addGap();
+		fpsCounter = new FPSCounter();
 
-        // create the groups for the game control buttons (aligned top right)
-        Group gameCtrlH = createSequentialGroup()
-                .addGap()
-                .addWidget(btnArmageddon)
-                .addWidget(btnPause)
-                .addGap("gameCtrlRight");
-        Group gameCtrlV = createSequentialGroup()
-                .addGap("gameCtrlTop")
-                .addGroup(createParallelGroup(btnArmageddon, btnPause))
-                .addGap();
-        
-        // create the groups for the status display (aligned bottom right)
-        Group statusH = createSequentialGroup()
-                .addGap()
-                .addWidget(fpsCounter)
-                .addGap("statusRight");
-        Group statusV = createSequentialGroup()
-                .addGap()
-                .addWidget(fpsCounter)
-                .addGap("statusBottom");
+		lastSelectedRadialEntry = new Label();
+		lastSelectedRadialEntry.setText("Right click on the background");
+		add(lastSelectedRadialEntry);
 
-        // create the groups for the radial menu message display (aligned bottom center)
-        Group radialMenuMessageH = createSequentialGroup()
-                .addGap()
-                .addWidget(lastSelectedRadialEntry)
-                .addGap();
-        Group radialMenuMessageV = createSequentialGroup()
-                .addGap()
-                .addWidget(lastSelectedRadialEntry)
-                .addGap("statusBottom");
+		// create the groups for the action buttons (aligned top left)
+		Group actionButtonsH = createSequentialGroup()
+				.addGap("actionButtonsLeft")
+				.addGroup(createParallelGroup(actionButtons)).addGap();
+		Group actionButtonsV = createSequentialGroup()
+				.addGap("actionButtonsTop").addWidgets(actionButtons).addGap();
 
-        // now overlay all groups
-        setHorizontalGroup(createParallelGroup(actionButtonsH, gameCtrlH, statusH, radialMenuMessageH));
-        setVerticalGroup(createParallelGroup(actionButtonsV, gameCtrlV, statusV, radialMenuMessageV));
-    }
+		// create the groups for the game control buttons (aligned top right)
+		Group gameCtrlH = createSequentialGroup().addGap()
+				.addWidget(btnArmageddon).addWidget(btnPause)
+				.addGap("gameCtrlRight");
+		Group gameCtrlV = createSequentialGroup().addGap("gameCtrlTop")
+				.addGroup(createParallelGroup(btnArmageddon, btnPause))
+				.addGap();
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        switch (evt.getType()) {
-            case KEY_PRESSED:
-                switch (evt.getKeyCode()) {
-                    case Event.KEY_ESCAPE:
-                        quit = true;
-                        return true;
-                }
-                break;
-            case MOUSE_BTNDOWN:
-                if(evt.getMouseButton() == Event.MOUSE_RBUTTON) {
-                    return createRadialMenu().openPopup(evt);
-                }
-                break;
-        }
-        return evt.isMouseEventNoWheel();
-    }
+		// create the groups for the status display (aligned bottom right)
+		Group statusH = createSequentialGroup().addGap().addWidget(fpsCounter)
+				.addGap("statusRight");
+		Group statusV = createSequentialGroup().addGap().addWidget(fpsCounter)
+				.addGap("statusBottom");
 
-    RadialPopupMenu createRadialMenu() {
-        RadialPopupMenu rpm = new RadialPopupMenu(this);
-        for(int i=0 ; i<10 ; i++) {
-            final int idx = i;
-            rpm.addButton("star", new Runnable() {
-                public void run() {
-                    lastSelectedRadialEntry.setText("Selected " + idx);
-                }
-            });
-        }
-        return rpm;
-    }
+		// create the groups for the radial menu message display (aligned bottom
+		// center)
+		Group radialMenuMessageH = createSequentialGroup().addGap()
+				.addWidget(lastSelectedRadialEntry).addGap();
+		Group radialMenuMessageV = createSequentialGroup().addGap()
+				.addWidget(lastSelectedRadialEntry).addGap("statusBottom");
+
+		// now overlay all groups
+		setHorizontalGroup(createParallelGroup(actionButtonsH, gameCtrlH,
+				statusH, radialMenuMessageH));
+		setVerticalGroup(createParallelGroup(actionButtonsV, gameCtrlV,
+				statusV, radialMenuMessageV));
+	}
+
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_ESCAPE:
+				quit = true;
+				return true;
+			}
+			break;
+		case MOUSE_BTNDOWN:
+			if (evt.getMouseButton() == Event.MOUSE_RBUTTON) {
+				return createRadialMenu().openPopup(evt);
+			}
+			break;
+		}
+		return evt.isMouseEventNoWheel();
+	}
+
+	RadialPopupMenu createRadialMenu() {
+		RadialPopupMenu rpm = new RadialPopupMenu(this);
+		for (int i = 0; i < 10; i++) {
+			final int idx = i;
+			rpm.addButton("star", new Runnable() {
+				public void run() {
+					lastSelectedRadialEntry.setText("Selected " + idx);
+				}
+			});
+		}
+		return rpm;
+	}
 
 }

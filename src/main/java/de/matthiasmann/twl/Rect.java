@@ -36,109 +36,111 @@ package de.matthiasmann.twl;
  */
 public class Rect {
 
-    private int x0;
-    private int y0;
-    private int x1;
-    private int y1;
+	private int x0;
+	private int y0;
+	private int x1;
+	private int y1;
 
-    public Rect() {
-    }
+	public Rect() {
+	}
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public Rect(int x, int y, int w, int h) {
-        setXYWH(x, y, w, h);
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public Rect(int x, int y, int w, int h) {
+		setXYWH(x, y, w, h);
+	}
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public Rect(Rect src) {
-        set(src.getX(), src.getY(), src.getRight(), src.getBottom());
-    }
-    
-    public void setXYWH(int x, int y, int w, int h) {
-        this.x0 = x;
-        this.y0 = y;
-        this.x1 = x + Math.max(0, w);
-        this.y1 = y + Math.max(0, h);
-    }
-    
-    public void set(int x0, int y0, int x1, int y1) {
-        this.x0 = x0;
-        this.y0 = y0;
-        this.x1 = x1;
-        this.y1 = y1;
-    }
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public Rect(Rect src) {
+		set(src.getX(), src.getY(), src.getRight(), src.getBottom());
+	}
 
-    public void set(Rect src) {
-        this.x0 = src.x0;
-        this.y0 = src.y0;
-        this.x1 = src.x1;
-        this.y1 = src.y1;
-    }
-    
-    /**
-     * Computes the intersection of this rectangle with the other rectangle.
-     * If they don't overlapp then this rect will be set to zero width and height.
-     *
-     * @param other The other rectangle to compute the intersection with
-     */
-    public void intersect(Rect other) {
-        x0 = Math.max(x0, other.x0);
-        y0 = Math.max(y0, other.y0);
-        x1 = Math.min(x1, other.x1);
-        y1 = Math.min(y1, other.y1);
-        if(x1 < x0 || y1 < y0) {
-            x1 = x0;
-            y1 = y0;
-        }
-    }
+	public void setXYWH(int x, int y, int w, int h) {
+		this.x0 = x;
+		this.y0 = y;
+		this.x1 = x + Math.max(0, w);
+		this.y1 = y + Math.max(0, h);
+	}
 
-    public boolean isInside(int x, int y) {
-        return (x >= x0) && (y >= y0) && (x < x1) && (y < y1);
-    }
-    
-    public int getX() {
-        return x0;
-    }
+	public void set(int x0, int y0, int x1, int y1) {
+		this.x0 = x0;
+		this.y0 = y0;
+		this.x1 = x1;
+		this.y1 = y1;
+	}
 
-    public int getY() {
-        return y0;
-    }
+	public void set(Rect src) {
+		this.x0 = src.x0;
+		this.y0 = src.y0;
+		this.x1 = src.x1;
+		this.y1 = src.y1;
+	}
 
-    public int getRight() {
-        return x1;
-    }
+	/**
+	 * Computes the intersection of this rectangle with the other rectangle. If
+	 * they don't overlapp then this rect will be set to zero width and height.
+	 *
+	 * @param other
+	 *            The other rectangle to compute the intersection with
+	 */
+	public void intersect(Rect other) {
+		x0 = Math.max(x0, other.x0);
+		y0 = Math.max(y0, other.y0);
+		x1 = Math.min(x1, other.x1);
+		y1 = Math.min(y1, other.y1);
+		if (x1 < x0 || y1 < y0) {
+			x1 = x0;
+			y1 = y0;
+		}
+	}
 
-    public int getBottom() {
-        return y1;
-    }
-    
-    public int getWidth() {
-        return x1 - x0;
-    }
-    
-    public int getHeight() {
-        return y1 - y0;
-    }
-    
-    public int getCenterX() {
-        return (x0 + x1) / 2;
-    }
-    
-    public int getCenterY() {
-        return (y0 + y1) / 2;
-    }
+	public boolean isInside(int x, int y) {
+		return (x >= x0) && (y >= y0) && (x < x1) && (y < y1);
+	}
 
-    public Dimension getSize() {
-        return new Dimension(getWidth(), getHeight());
-    }
+	public int getX() {
+		return x0;
+	}
 
-    public boolean isEmpty() {
-        return x1 <= x0 || y1 <= y0;
-    }
+	public int getY() {
+		return y0;
+	}
 
-    @Override
-    public String toString() {
-        return "Rect[x0=" + x0 + ", y0=" + y0 + ", x1=" + x1 + ", y1=" + y1 + ']';
-    }
+	public int getRight() {
+		return x1;
+	}
+
+	public int getBottom() {
+		return y1;
+	}
+
+	public int getWidth() {
+		return x1 - x0;
+	}
+
+	public int getHeight() {
+		return y1 - y0;
+	}
+
+	public int getCenterX() {
+		return (x0 + x1) / 2;
+	}
+
+	public int getCenterY() {
+		return (y0 + y1) / 2;
+	}
+
+	public Dimension getSize() {
+		return new Dimension(getWidth(), getHeight());
+	}
+
+	public boolean isEmpty() {
+		return x1 <= x0 || y1 <= y0;
+	}
+
+	@Override
+	public String toString() {
+		return "Rect[x0=" + x0 + ", y0=" + y0 + ", x1=" + x1 + ", y1=" + y1
+				+ ']';
+	}
 
 }

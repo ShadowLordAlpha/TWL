@@ -43,101 +43,111 @@ import org.junit.Test;
  */
 public class HTMLTextAreaModelTest {
 
-    public HTMLTextAreaModelTest() {
-    }
+	public HTMLTextAreaModelTest() {
+	}
 
-    @Test
-    public void testSimpleText() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo Welt");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testSimpleText() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo Welt");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testNewLine() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt\nNot a new line");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo Welt\nNot a new line");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testNewLine() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel(
+				"Hallo Welt\nNot a new line");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo Welt\nNot a new line");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testEmptySpan() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo<span/>Welt");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo");
-        assertText(i, "default", "Welt");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testEmptySpan() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo<span/>Welt");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo");
+		assertText(i, "default", "Welt");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testEmptyDiv() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo<div/>Welt");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo");
-        TextAreaModel.BlockElement be = next(i, TextAreaModel.BlockElement.class);
-        assertEquals(TextAreaModel.FloatPosition.NONE, be.getStyle().get(StyleAttribute.FLOAT_POSITION, null));
-        assertFalse(be.iterator().hasNext());
-        assertText(i, "default", "Welt");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testEmptyDiv() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo<div/>Welt");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo");
+		TextAreaModel.BlockElement be = next(i,
+				TextAreaModel.BlockElement.class);
+		assertEquals(TextAreaModel.FloatPosition.NONE,
+				be.getStyle().get(StyleAttribute.FLOAT_POSITION, null));
+		assertFalse(be.iterator().hasNext());
+		assertText(i, "default", "Welt");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testBR() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt<br/>A new line");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo Welt");
-        assertLineBreak(i);
-        assertText(i, "default", "A new line");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testBR() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt<br/>A new line");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo Welt");
+		assertLineBreak(i);
+		assertText(i, "default", "A new line");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testBREmptySpan() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt<br/><span/>A new line");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo Welt");
-        assertLineBreak(i);
-        assertText(i, "default", "A new line");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testBREmptySpan() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel(
+				"Hallo Welt<br/><span/>A new line");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo Welt");
+		assertLineBreak(i);
+		assertText(i, "default", "A new line");
+		assertFalse(i.hasNext());
+	}
 
-    @Test
-    public void testBREmptySpan2() {
-        HTMLTextAreaModel m = new HTMLTextAreaModel("Hallo Welt<span/><br/>A new line");
-        Iterator<TextAreaModel.Element> i1 = m.iterator();
-        Iterator<TextAreaModel.Element> i = assertBlock(i1);
-        assertText(i, "default", "Hallo Welt");
-        assertLineBreak(i);
-        assertText(i, "default", "A new line");
-        assertFalse(i.hasNext());
-    }
+	@Test
+	public void testBREmptySpan2() {
+		HTMLTextAreaModel m = new HTMLTextAreaModel(
+				"Hallo Welt<span/><br/>A new line");
+		Iterator<TextAreaModel.Element> i1 = m.iterator();
+		Iterator<TextAreaModel.Element> i = assertBlock(i1);
+		assertText(i, "default", "Hallo Welt");
+		assertLineBreak(i);
+		assertText(i, "default", "A new line");
+		assertFalse(i.hasNext());
+	}
 
-    private<T extends TextAreaModel.Element> T next(Iterator<TextAreaModel.Element> i, Class<T> clazz) {
-        assertTrue(i.hasNext());
-        TextAreaModel.Element e = i.next();
-        assertTrue(clazz.isInstance(e));
-        return clazz.cast(e);
-    }
+	private <T extends TextAreaModel.Element> T next(
+			Iterator<TextAreaModel.Element> i, Class<T> clazz) {
+		assertTrue(i.hasNext());
+		TextAreaModel.Element e = i.next();
+		assertTrue(clazz.isInstance(e));
+		return clazz.cast(e);
+	}
 
-    private void assertText(Iterator<TextAreaModel.Element> i, String style, String text) {
-        TextAreaModel.TextElement te = next(i, TextAreaModel.TextElement.class);
-        assertEquals(text, te.getText());
-    }
+	private void assertText(Iterator<TextAreaModel.Element> i, String style,
+			String text) {
+		TextAreaModel.TextElement te = next(i, TextAreaModel.TextElement.class);
+		assertEquals(text, te.getText());
+	}
 
-    private Iterator<TextAreaModel.Element> assertBlock(Iterator<TextAreaModel.Element> i) {
-        TextAreaModel.BlockElement be = next(i, TextAreaModel.BlockElement.class);
-        return be.iterator();
-    }
-    
-    private void assertLineBreak(Iterator<TextAreaModel.Element> i) {
-        TextAreaModel.LineBreakElement br = next(i, TextAreaModel.LineBreakElement.class);
-    }
+	private Iterator<TextAreaModel.Element> assertBlock(
+			Iterator<TextAreaModel.Element> i) {
+		TextAreaModel.BlockElement be = next(i,
+				TextAreaModel.BlockElement.class);
+		return be.iterator();
+	}
+
+	private void assertLineBreak(Iterator<TextAreaModel.Element> i) {
+		TextAreaModel.LineBreakElement br = next(i,
+				TextAreaModel.LineBreakElement.class);
+	}
 }

@@ -35,43 +35,43 @@ package de.matthiasmann.twl;
  */
 public class Dimension {
 
-    public static final Dimension ZERO = new Dimension(0, 0);
-    
-    private final int x;
-    private final int y;
+	public static final Dimension ZERO = new Dimension(0, 0);
 
-    public Dimension(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+	private final int x;
+	private final int y;
 
-    public int getX() {
-        return x;
-    }
+	public Dimension(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
 
-    public int getY() {
-        return y;
-    }
+	public int getX() {
+		return x;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final Dimension other = (Dimension)obj;
-        return (this.x == other.x) && (this.y == other.y);
-    }
+	public int getY() {
+		return y;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 71 * hash + this.x;
-        hash = 71 * hash + this.y;
-        return hash;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		final Dimension other = (Dimension) obj;
+		return (this.x == other.x) && (this.y == other.y);
+	}
 
-    @Override
-    public String toString() {
-        return "Dimension[x="+x+", y="+y+"]";
-    }
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 71 * hash + this.x;
+		hash = 71 * hash + this.y;
+		return hash;
+	}
+
+	@Override
+	public String toString() {
+		return "Dimension[x=" + x + ", y=" + y + "]";
+	}
 }

@@ -38,116 +38,121 @@ import de.matthiasmann.twl.Widget;
  * @author Matthias Mann
  */
 public class InventoryPanel extends Widget {
-    
-    private int numSlotsX;
-    private int numSlotsY;
-    private final ItemSlot[] slot;
-    
-    private int slotSpacing;
 
-    private ItemSlot dragSlot;
-    private ItemSlot dropSlot;
-    
-    public InventoryPanel(int numSlotsX, int numSlotsY) {
-        this.numSlotsX = numSlotsX;
-        this.numSlotsY = numSlotsY;
-        this.slot = new ItemSlot[numSlotsX * numSlotsY];
-        
-        ItemSlot.DragListener listener = new ItemSlot.DragListener() {
-            public void dragStarted(ItemSlot slot, Event evt) {
-                InventoryPanel.this.dragStarted(slot, evt);
-            }
-            public void dragging(ItemSlot slot, Event evt) {
-                InventoryPanel.this.dragging(slot, evt);
-            }
-            public void dragStopped(ItemSlot slot, Event evt) {
-                InventoryPanel.this.dragStopped(slot, evt);
-            }
-        };
-        
-        for(int i=0 ; i<slot.length ; i++) {
-            slot[i] = new ItemSlot();
-            slot[i].setListener(listener);
-            add(slot[i]);
-        }
-        
-        slot[0].setItem("red");
-        slot[1].setItem("green");
-        slot[2].setItem("blue");
-        slot[3].setItem("yellow");
-    }
+	private int numSlotsX;
+	private int numSlotsY;
+	private final ItemSlot[] slot;
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return (slot[0].getPreferredWidth() + slotSpacing)*numSlotsX - slotSpacing;
-    }
+	private int slotSpacing;
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return (slot[0].getPreferredHeight() + slotSpacing)*numSlotsY - slotSpacing;
-    }
+	private ItemSlot dragSlot;
+	private ItemSlot dropSlot;
 
-    @Override
-    protected void layout() {
-        int slotWidth  = slot[0].getPreferredWidth();
-        int slotHeight = slot[0].getPreferredHeight();
-        
-        for(int row=0,y=getInnerY(),i=0 ; row<numSlotsY ; row++) {
-            for(int col=0,x=getInnerX() ; col<numSlotsX ; col++,i++) {
-                slot[i].adjustSize();
-                slot[i].setPosition(x, y);
-                x += slotWidth + slotSpacing;
-            }
-            y += slotHeight + slotSpacing;
-        }
-    }
+	public InventoryPanel(int numSlotsX, int numSlotsY) {
+		this.numSlotsX = numSlotsX;
+		this.numSlotsY = numSlotsY;
+		this.slot = new ItemSlot[numSlotsX * numSlotsY];
 
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        slotSpacing = themeInfo.getParameter("slotSpacing", 5);
-    }
-    
-    void dragStarted(ItemSlot slot, Event evt) {
-        if(slot.getItem() != null) {
-            dragSlot = slot;
-            dragging(slot, evt);
-        }
-    }
-    
-    void dragging(ItemSlot slot, Event evt) {
-        if(dragSlot != null) {
-            Widget w = getWidgetAt(evt.getMouseX(), evt.getMouseY());
-            if(w instanceof ItemSlot) {
-                setDropSlot((ItemSlot)w);
-            } else {
-                setDropSlot(null);
-            }
-        }
-    }
-    
-    void dragStopped(ItemSlot slot, Event evt) {
-        if(dragSlot != null) {
-            dragging(slot, evt);
-            if(dropSlot != null && dropSlot.canDrop() && dropSlot != dragSlot) {
-                dropSlot.setItem(dragSlot.getItem());
-                dragSlot.setItem(null);
-            }
-            setDropSlot(null);
-            dragSlot = null;
-        }
-    }
+		ItemSlot.DragListener listener = new ItemSlot.DragListener() {
+			public void dragStarted(ItemSlot slot, Event evt) {
+				InventoryPanel.this.dragStarted(slot, evt);
+			}
 
-    private void setDropSlot(ItemSlot slot) {
-        if(slot != dropSlot) {
-            if(dropSlot != null) {
-                dropSlot.setDropState(false, false);
-            }
-            dropSlot = slot;
-            if(dropSlot != null) {
-                dropSlot.setDropState(true, dropSlot == dragSlot || dropSlot.canDrop());
-            }
-        }
-    }
-    
+			public void dragging(ItemSlot slot, Event evt) {
+				InventoryPanel.this.dragging(slot, evt);
+			}
+
+			public void dragStopped(ItemSlot slot, Event evt) {
+				InventoryPanel.this.dragStopped(slot, evt);
+			}
+		};
+
+		for (int i = 0; i < slot.length; i++) {
+			slot[i] = new ItemSlot();
+			slot[i].setListener(listener);
+			add(slot[i]);
+		}
+
+		slot[0].setItem("red");
+		slot[1].setItem("green");
+		slot[2].setItem("blue");
+		slot[3].setItem("yellow");
+	}
+
+	@Override
+	public int getPreferredInnerWidth() {
+		return (slot[0].getPreferredWidth() + slotSpacing) * numSlotsX
+				- slotSpacing;
+	}
+
+	@Override
+	public int getPreferredInnerHeight() {
+		return (slot[0].getPreferredHeight() + slotSpacing) * numSlotsY
+				- slotSpacing;
+	}
+
+	@Override
+	protected void layout() {
+		int slotWidth = slot[0].getPreferredWidth();
+		int slotHeight = slot[0].getPreferredHeight();
+
+		for (int row = 0, y = getInnerY(), i = 0; row < numSlotsY; row++) {
+			for (int col = 0, x = getInnerX(); col < numSlotsX; col++, i++) {
+				slot[i].adjustSize();
+				slot[i].setPosition(x, y);
+				x += slotWidth + slotSpacing;
+			}
+			y += slotHeight + slotSpacing;
+		}
+	}
+
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		slotSpacing = themeInfo.getParameter("slotSpacing", 5);
+	}
+
+	void dragStarted(ItemSlot slot, Event evt) {
+		if (slot.getItem() != null) {
+			dragSlot = slot;
+			dragging(slot, evt);
+		}
+	}
+
+	void dragging(ItemSlot slot, Event evt) {
+		if (dragSlot != null) {
+			Widget w = getWidgetAt(evt.getMouseX(), evt.getMouseY());
+			if (w instanceof ItemSlot) {
+				setDropSlot((ItemSlot) w);
+			} else {
+				setDropSlot(null);
+			}
+		}
+	}
+
+	void dragStopped(ItemSlot slot, Event evt) {
+		if (dragSlot != null) {
+			dragging(slot, evt);
+			if (dropSlot != null && dropSlot.canDrop() && dropSlot != dragSlot) {
+				dropSlot.setItem(dragSlot.getItem());
+				dragSlot.setItem(null);
+			}
+			setDropSlot(null);
+			dragSlot = null;
+		}
+	}
+
+	private void setDropSlot(ItemSlot slot) {
+		if (slot != dropSlot) {
+			if (dropSlot != null) {
+				dropSlot.setDropState(false, false);
+			}
+			dropSlot = slot;
+			if (dropSlot != null) {
+				dropSlot.setDropState(true,
+						dropSlot == dragSlot || dropSlot.canDrop());
+			}
+		}
+	}
+
 }

@@ -50,365 +50,372 @@ import de.matthiasmann.twl.renderer.Image;
  */
 public class BlockGame extends DialogLayout {
 
-    Image[] blockImages;
-    int blockWidth;
-    int blockHeight;
+	Image[] blockImages;
+	int blockWidth;
+	int blockHeight;
 
-    Timer timer;
-    int nextBlocksAvail;
-    int curBlock;
-    int curRotation;
-    int nextBlock;
-    int curX;
-    int curY;
+	Timer timer;
+	int nextBlocksAvail;
+	int curBlock;
+	int curRotation;
+	int nextBlock;
+	int curX;
+	int curY;
 
-    int score;
-    int rowsCompleted;
-    int level;
-    int speed;
-    int tickCounter;
+	int score;
+	int rowsCompleted;
+	int level;
+	int speed;
+	int tickCounter;
 
-    int moveX;
-    int moveY;
-    int moveRot;
+	int moveX;
+	int moveY;
+	int moveRot;
 
-    private final int nextBlocks[];
-    private final Grid playfield;
-    private final Grid playfieldFixed;
-    private final Grid nextBlockGrid;
-    private final GridWidget playfieldWidget;
-    private final GridWidget nextBlockWidget;
-    private final Label scoreDisplay;
-    private final Label levelDisplay;
-    private final Random random;
+	private final int nextBlocks[];
+	private final Grid playfield;
+	private final Grid playfieldFixed;
+	private final Grid nextBlockGrid;
+	private final GridWidget playfieldWidget;
+	private final GridWidget nextBlockWidget;
+	private final Label scoreDisplay;
+	private final Label levelDisplay;
+	private final Random random;
 
-    public BlockGame() {
-        this.nextBlocks = new int[BLOCKS.length * 2];
-        this.playfield = new Grid(10, 22);
-        this.playfieldFixed = new Grid(10, 22);
-        this.nextBlockGrid = new Grid(4, 4);
-        this.playfieldWidget = new GridWidget(playfield, 2);
-        this.nextBlockWidget = new GridWidget(nextBlockGrid, 0);
-        this.scoreDisplay = new Label();
-        this.levelDisplay = new Label();
-        this.random = new Random();
+	public BlockGame() {
+		this.nextBlocks = new int[BLOCKS.length * 2];
+		this.playfield = new Grid(10, 22);
+		this.playfieldFixed = new Grid(10, 22);
+		this.nextBlockGrid = new Grid(4, 4);
+		this.playfieldWidget = new GridWidget(playfield, 2);
+		this.nextBlockWidget = new GridWidget(nextBlockGrid, 0);
+		this.scoreDisplay = new Label();
+		this.levelDisplay = new Label();
+		this.random = new Random();
 
-        Label lScore = new Label("Score");
-        lScore.setLabelFor(scoreDisplay);
+		Label lScore = new Label("Score");
+		lScore.setLabelFor(scoreDisplay);
 
-        Label lLevel = new Label("Level");
-        lLevel.setLabelFor(levelDisplay);
+		Label lLevel = new Label("Level");
+		lLevel.setLabelFor(levelDisplay);
 
-        setHorizontalGroup(createSequentialGroup()
-                .addWidget(playfieldWidget)
-                .addGroup(createParallelGroup()
-                    .addWidget(nextBlockWidget, Alignment.RIGHT)
-                    .addGroup(createSequentialGroup()
-                        .addGroup(createParallelGroup()
-                            .addWidget(lScore)
-                            .addWidget(lLevel))
-                        .addGroup(createParallelGroup()
-                            .addWidget(scoreDisplay)
-                            .addWidget(levelDisplay)))));
-        
-        setVerticalGroup(createParallelGroup()
-                .addWidget(playfieldWidget)
-                .addGroup(createSequentialGroup()
-                    .addWidget(nextBlockWidget)
-                    .addGroup(createParallelGroup()
-                        .addWidget(lScore)
-                        .addWidget(scoreDisplay))
-                    .addGroup(createParallelGroup()
-                        .addWidget(lLevel)
-                        .addWidget(levelDisplay))
-                    .addGap()));
+		setHorizontalGroup(createSequentialGroup().addWidget(playfieldWidget)
+				.addGroup(
+						createParallelGroup().addWidget(nextBlockWidget,
+								Alignment.RIGHT).addGroup(
+								createSequentialGroup().addGroup(
+										createParallelGroup().addWidget(lScore)
+												.addWidget(lLevel)).addGroup(
+										createParallelGroup().addWidget(
+												scoreDisplay).addWidget(
+												levelDisplay)))));
 
-        level = 1;
+		setVerticalGroup(createParallelGroup().addWidget(playfieldWidget)
+				.addGroup(
+						createSequentialGroup()
+								.addWidget(nextBlockWidget)
+								.addGroup(
+										createParallelGroup().addWidget(lScore)
+												.addWidget(scoreDisplay))
+								.addGroup(
+										createParallelGroup().addWidget(lLevel)
+												.addWidget(levelDisplay))
+								.addGap()));
 
-        nextBlock = genNextBlock();
-        nextBlock();
+		level = 1;
 
-        setCanAcceptKeyboardFocus(true);
-        updateScore();
-    }
+		nextBlock = genNextBlock();
+		nextBlock();
 
-    @Override
-    protected void applyTheme(ThemeInfo themeInfo) {
-        super.applyTheme(themeInfo);
-        applyThemeGame(themeInfo);
-        invalidateLayout();
-    }
+		setCanAcceptKeyboardFocus(true);
+		updateScore();
+	}
 
-    protected void applyThemeGame(ThemeInfo themeInfo) {
-        ParameterList plImages = themeInfo.getParameterList("blockImages");
-        blockImages = new Image[plImages.getSize()];
-        blockWidth = 0;
-        blockHeight = 0;
-        for(int i=0 ; i<plImages.getSize() ; i++) {
-            Image img = plImages.getImage(i);
-            blockImages[i] = img;
-            if(img != null) {
-                blockWidth = Math.max(blockWidth, img.getWidth());
-                blockHeight = Math.max(blockHeight, img.getHeight());
-            }
-        }
-    }
+	@Override
+	protected void applyTheme(ThemeInfo themeInfo) {
+		super.applyTheme(themeInfo);
+		applyThemeGame(themeInfo);
+		invalidateLayout();
+	}
 
-    @Override
-    protected void afterAddToGUI(GUI gui) {
-        super.afterAddToGUI(gui);
-        timer = gui.createTimer();
-        timer.setContinuous(true);
-        timer.setCallback(new Runnable() {
-            public void run() {
-                gameTick();
-            }
-        });
-        timer.setDelay(100);
-        timer.start();
-    }
+	protected void applyThemeGame(ThemeInfo themeInfo) {
+		ParameterList plImages = themeInfo.getParameterList("blockImages");
+		blockImages = new Image[plImages.getSize()];
+		blockWidth = 0;
+		blockHeight = 0;
+		for (int i = 0; i < plImages.getSize(); i++) {
+			Image img = plImages.getImage(i);
+			blockImages[i] = img;
+			if (img != null) {
+				blockWidth = Math.max(blockWidth, img.getWidth());
+				blockHeight = Math.max(blockHeight, img.getHeight());
+			}
+		}
+	}
 
-    @Override
-    protected void beforeRemoveFromGUI(GUI gui) {
-        super.beforeRemoveFromGUI(gui);
-        timer.stop();
-        timer = null;
-    }
+	@Override
+	protected void afterAddToGUI(GUI gui) {
+		super.afterAddToGUI(gui);
+		timer = gui.createTimer();
+		timer.setContinuous(true);
+		timer.setCallback(new Runnable() {
+			public void run() {
+				gameTick();
+			}
+		});
+		timer.setDelay(100);
+		timer.start();
+	}
 
-    private int genNextBlock() {
-        if(nextBlocksAvail == 0) {
-            nextBlocksAvail = nextBlocks.length;
-            for(int i=0 ; i<nextBlocksAvail ; i++) {
-                nextBlocks[i] = i % BLOCKS.length;
-            }
-            for(int i=0 ; i<nextBlocksAvail ; i++) {
-                int j = random.nextInt(nextBlocksAvail);
-                int t = nextBlocks[i];
-                nextBlocks[i] = nextBlocks[j];
-                nextBlocks[j] = t;
-            }
-        }
-        return nextBlocks[--nextBlocksAvail];
-    }
+	@Override
+	protected void beforeRemoveFromGUI(GUI gui) {
+		super.beforeRemoveFromGUI(gui);
+		timer.stop();
+		timer = null;
+	}
 
-    private void nextBlock() {
-        curBlock = nextBlock;
-        curX = 4;
-        curY = 0;
-        curRotation = 0;
-        nextBlock = genNextBlock();
-        nextBlockGrid.clear();
-        nextBlockGrid.placeBlock(0, 0, BLOCKS[nextBlock][0], nextBlock+1);
-        speed = Math.max(1, 11 - level);
-    }
+	private int genNextBlock() {
+		if (nextBlocksAvail == 0) {
+			nextBlocksAvail = nextBlocks.length;
+			for (int i = 0; i < nextBlocksAvail; i++) {
+				nextBlocks[i] = i % BLOCKS.length;
+			}
+			for (int i = 0; i < nextBlocksAvail; i++) {
+				int j = random.nextInt(nextBlocksAvail);
+				int t = nextBlocks[i];
+				nextBlocks[i] = nextBlocks[j];
+				nextBlocks[j] = t;
+			}
+		}
+		return nextBlocks[--nextBlocksAvail];
+	}
 
-    private void updateScore() {
-        scoreDisplay.setText(Integer.toString(score));
-        levelDisplay.setText(Integer.toString(level));
-        invalidateLayout();
-    }
+	private void nextBlock() {
+		curBlock = nextBlock;
+		curX = 4;
+		curY = 0;
+		curRotation = 0;
+		nextBlock = genNextBlock();
+		nextBlockGrid.clear();
+		nextBlockGrid.placeBlock(0, 0, BLOCKS[nextBlock][0], nextBlock + 1);
+		speed = Math.max(1, 11 - level);
+	}
 
-    void gameTick() {
-        if(++tickCounter > speed) {
-            tickCounter = 0;
-            moveY = 1;
-        }
-        
-        int[] blockBits = BLOCKS[curBlock];
+	private void updateScore() {
+		scoreDisplay.setText(Integer.toString(score));
+		levelDisplay.setText(Integer.toString(level));
+		invalidateLayout();
+	}
 
-        if(moveRot != 0) {
-            int nextRot = (curRotation + moveRot) % blockBits.length;
-            if(playfieldFixed.canPlaceBlock(curX, curY, blockBits[nextRot])) {
-                curRotation = nextRot;
-            } else if(playfieldFixed.canPlaceBlock(curX+1, curY, blockBits[nextRot])) {//Tries to wall kick to the right
-                curX++;
-                curRotation = nextRot;
-            } else if(playfieldFixed.canPlaceBlock(curX-1, curY, blockBits[nextRot])) {//Tries to wall kick to the left
-                curX--;
-                curRotation = nextRot;
-            }
-            moveX = 0;
-        }
+	void gameTick() {
+		if (++tickCounter > speed) {
+			tickCounter = 0;
+			moveY = 1;
+		}
 
-        if(moveX != 0 && playfieldFixed.canPlaceBlock(curX+moveX, curY, blockBits[curRotation])) {
-            curX += moveX;
-        }
+		int[] blockBits = BLOCKS[curBlock];
 
-        if(moveY > 0) {
-            if(playfieldFixed.canPlaceBlock(curX, curY+moveY, blockBits[curRotation])) {
-                curY += moveY;
-            } else {
-                playfieldFixed.placeBlock(curX, curY, blockBits[curRotation], curBlock+1);
-                int rows = playfieldFixed.removeRows();
-                if(rows > 0) {
-                    rowsCompleted += rows;
-                    level = 1 + rowsCompleted / 10;
-                    score += rows*rows * level;
-                    updateScore();
-                }
-                nextBlock();
-            }
-        }
+		if (moveRot != 0) {
+			int nextRot = (curRotation + moveRot) % blockBits.length;
+			if (playfieldFixed.canPlaceBlock(curX, curY, blockBits[nextRot])) {
+				curRotation = nextRot;
+			} else if (playfieldFixed.canPlaceBlock(curX + 1, curY,
+					blockBits[nextRot])) {// Tries to wall kick to the right
+				curX++;
+				curRotation = nextRot;
+			} else if (playfieldFixed.canPlaceBlock(curX - 1, curY,
+					blockBits[nextRot])) {// Tries to wall kick to the left
+				curX--;
+				curRotation = nextRot;
+			}
+			moveX = 0;
+		}
 
-        playfield.copyFrom(playfieldFixed);
-        playfield.placeBlock(curX, curY, BLOCKS[curBlock][curRotation], curBlock+1);
+		if (moveX != 0
+				&& playfieldFixed.canPlaceBlock(curX + moveX, curY,
+						blockBits[curRotation])) {
+			curX += moveX;
+		}
 
-        moveRot = 0;
-        moveX = 0;
-        moveY = 0;
-    }
+		if (moveY > 0) {
+			if (playfieldFixed.canPlaceBlock(curX, curY + moveY,
+					blockBits[curRotation])) {
+				curY += moveY;
+			} else {
+				playfieldFixed.placeBlock(curX, curY, blockBits[curRotation],
+						curBlock + 1);
+				int rows = playfieldFixed.removeRows();
+				if (rows > 0) {
+					rowsCompleted += rows;
+					level = 1 + rowsCompleted / 10;
+					score += rows * rows * level;
+					updateScore();
+				}
+				nextBlock();
+			}
+		}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
+		playfield.copyFrom(playfieldFixed);
+		playfield.placeBlock(curX, curY, BLOCKS[curBlock][curRotation],
+				curBlock + 1);
 
-        switch(evt.getType()) {
-        case KEY_PRESSED:
-            switch(evt.getKeyCode()) {
-            case Event.KEY_UP:
-                moveRot = 1;
-                return true;
-            case Event.KEY_LEFT:
-                moveX = -1;
-                return true;
-            case Event.KEY_RIGHT:
-                moveX = 1;
-                return true;
-            case Event.KEY_DOWN:
-                moveY = 1;
-                return true;
-            }
-            break;
-        }
+		moveRot = 0;
+		moveX = 0;
+		moveY = 0;
+	}
 
-        return false;
-    }
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
 
-    static final int BLOCKS[][] = {
-        {0x0F00, 0x4444},                   // ID
-        {0x0330},                           // OD
-        {0x0710, 0x3220, 0x0470, 0x2260},   // LD
-        {0x0740, 0x2230, 0x0170, 0x6220},   // JD
-        {0x0720, 0x2320, 0x0270, 0x2620},   // TD
-        {0x0630, 0x1320},                   // SD
-        {0x0360, 0x4620},                   // ZD
-    };
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_UP:
+				moveRot = 1;
+				return true;
+			case Event.KEY_LEFT:
+				moveX = -1;
+				return true;
+			case Event.KEY_RIGHT:
+				moveX = 1;
+				return true;
+			case Event.KEY_DOWN:
+				moveY = 1;
+				return true;
+			}
+			break;
+		}
 
-    static class Grid {
-        protected final int[] grid;
-        protected final int width;
-        protected final int height;
+		return false;
+	}
 
-        public Grid(int width, int height) {
-            this.grid = new int[height * width];
-            this.width = width;
-            this.height = height;
-        }
+	static final int BLOCKS[][] = { { 0x0F00, 0x4444 }, // ID
+			{ 0x0330 }, // OD
+			{ 0x0710, 0x3220, 0x0470, 0x2260 }, // LD
+			{ 0x0740, 0x2230, 0x0170, 0x6220 }, // JD
+			{ 0x0720, 0x2320, 0x0270, 0x2620 }, // TD
+			{ 0x0630, 0x1320 }, // SD
+			{ 0x0360, 0x4620 }, // ZD
+	};
 
-        public void copyFrom(Grid src) {
-            System.arraycopy(src.grid, 0, grid, 0, grid.length);
-        }
+	static class Grid {
+		protected final int[] grid;
+		protected final int width;
+		protected final int height;
 
-        public void clear() {
-            Arrays.fill(grid, 0);
-        }
+		public Grid(int width, int height) {
+			this.grid = new int[height * width];
+			this.width = width;
+			this.height = height;
+		}
 
-        public boolean canPlaceBlock(int x, int y, int block) {
-            for(int iy=0 ; iy<4 ; iy++) {
-                for(int ix=0 ; ix<4 ; ix++) {
-                    int mask = 1 << (ix + 12 - 4*iy);
-                    if((block & mask) != 0) {
-                        if(y+iy < 0 || y+iy >= height || x+ix < 0 || x+ix >= width) {
-                            return false;
-                        }
-                        int idx = x + ix + (y + iy) * width;
-                        if(grid[idx] != 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
+		public void copyFrom(Grid src) {
+			System.arraycopy(src.grid, 0, grid, 0, grid.length);
+		}
 
-        public void placeBlock(int x, int y, int block, int color) {
-            for(int iy=0 ; iy<4 ; iy++) {
-                for(int ix=0 ; ix<4 ; ix++) {
-                    int mask = 1 << (ix + 12 - 4*iy);
-                    if((block & mask) != 0) {
-                        int idx = x + ix + (y + iy) * width;
-                        grid[idx] = color;
-                    }
-                }
-            }
-        }
+		public void clear() {
+			Arrays.fill(grid, 0);
+		}
 
-        public int removeRows() {
-            int rdst = height;
-            for(int rsrc=height ; rsrc-->0 ;) {
-                boolean isFull = true;
-                for(int c=0,idx=rsrc*width ; c<width ; c++) {
-                    if(grid[idx++] == 0) {
-                        isFull = false;
-                        break;
-                    }
-                }
+		public boolean canPlaceBlock(int x, int y, int block) {
+			for (int iy = 0; iy < 4; iy++) {
+				for (int ix = 0; ix < 4; ix++) {
+					int mask = 1 << (ix + 12 - 4 * iy);
+					if ((block & mask) != 0) {
+						if (y + iy < 0 || y + iy >= height || x + ix < 0
+								|| x + ix >= width) {
+							return false;
+						}
+						int idx = x + ix + (y + iy) * width;
+						if (grid[idx] != 0) {
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		}
 
-                if(!isFull) {
-                    rdst--;
-                    if(rsrc != rdst) {
-                        System.arraycopy(grid, rsrc*width, grid, rdst*width, width);
-                    }
-                }
-            }
-            if(rdst > 0) {
-                Arrays.fill(grid, 0, rdst*width, 0);
-            }
-            return rdst;
-        }
-    }
+		public void placeBlock(int x, int y, int block, int color) {
+			for (int iy = 0; iy < 4; iy++) {
+				for (int ix = 0; ix < 4; ix++) {
+					int mask = 1 << (ix + 12 - 4 * iy);
+					if ((block & mask) != 0) {
+						int idx = x + ix + (y + iy) * width;
+						grid[idx] = color;
+					}
+				}
+			}
+		}
 
-    class GridWidget extends Widget {
-        private final Grid tg;
-        private final int skipRows;
+		public int removeRows() {
+			int rdst = height;
+			for (int rsrc = height; rsrc-- > 0;) {
+				boolean isFull = true;
+				for (int c = 0, idx = rsrc * width; c < width; c++) {
+					if (grid[idx++] == 0) {
+						isFull = false;
+						break;
+					}
+				}
 
-        public GridWidget(Grid tg, int skipRows) {
-            this.tg = tg;
-            this.skipRows = skipRows;
-        }
+				if (!isFull) {
+					rdst--;
+					if (rsrc != rdst) {
+						System.arraycopy(grid, rsrc * width, grid,
+								rdst * width, width);
+					}
+				}
+			}
+			if (rdst > 0) {
+				Arrays.fill(grid, 0, rdst * width, 0);
+			}
+			return rdst;
+		}
+	}
 
-        @Override
-        protected void paintWidget(GUI gui) {
-            if(blockImages != null) {
-                int y = getInnerY();
-                for(int r=skipRows ; r<tg.height ; r++) {
-                    int idx = r * tg.width;
-                    int x = getInnerX();
-                    for(int c=0 ; c<tg.width ; c++) {
-                        int color = tg.grid[idx++];
-                        if(color < blockImages.length) {
-                            Image img = blockImages[color];
-                            if(img != null) {
-                                img.draw(getAnimationState(), x, y);
-                            }
-                        }
-                        x += blockWidth;
-                    }
-                    y += blockHeight;
-                }
-            }
-        }
+	class GridWidget extends Widget {
+		private final Grid tg;
+		private final int skipRows;
 
-        @Override
-        public int getPreferredInnerWidth() {
-            return tg.width * blockWidth;
-        }
+		public GridWidget(Grid tg, int skipRows) {
+			this.tg = tg;
+			this.skipRows = skipRows;
+		}
 
-        @Override
-        public int getPreferredInnerHeight() {
-            return (tg.height - skipRows) * blockHeight;
-        }
-    }
+		@Override
+		protected void paintWidget(GUI gui) {
+			if (blockImages != null) {
+				int y = getInnerY();
+				for (int r = skipRows; r < tg.height; r++) {
+					int idx = r * tg.width;
+					int x = getInnerX();
+					for (int c = 0; c < tg.width; c++) {
+						int color = tg.grid[idx++];
+						if (color < blockImages.length) {
+							Image img = blockImages[color];
+							if (img != null) {
+								img.draw(getAnimationState(), x, y);
+							}
+						}
+						x += blockWidth;
+					}
+					y += blockHeight;
+				}
+			}
+		}
+
+		@Override
+		public int getPreferredInnerWidth() {
+			return tg.width * blockWidth;
+		}
+
+		@Override
+		public int getPreferredInnerHeight() {
+			return (tg.height - skipRows) * blockHeight;
+		}
+	}
 }

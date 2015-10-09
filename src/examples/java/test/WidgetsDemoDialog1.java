@@ -58,156 +58,169 @@ import de.matthiasmann.twl.model.SimpleIntegerModel;
  */
 public class WidgetsDemoDialog1 extends FadeFrame {
 
-    private IntegerModel mSpeed;
-    private ProgressBar progressBar;
+	private IntegerModel mSpeed;
+	private ProgressBar progressBar;
 
-    private int progress;
-    private int timeout = 100;
-    private boolean onoff = true;
-    private Random r = new Random();
-    
-    public WidgetsDemoDialog1() {
-        Label l1 = new Label("new Entry");
-        final EditField e1 = new EditField();
-        e1.setText("edit me");
-        e1.setMaxTextLength(40);
-        l1.setLabelFor(e1);
+	private int progress;
+	private int timeout = 100;
+	private boolean onoff = true;
+	private Random r = new Random();
 
-        Label l2 = new Label("Me");
-        EditField e2 = new EditField();
-        e2.setText("too!");
-        e2.setMaxTextLength(40);
-        e2.setPasswordMasking(true);
-        l2.setLabelFor(e2);
+	public WidgetsDemoDialog1() {
+		Label l1 = new Label("new Entry");
+		final EditField e1 = new EditField();
+		e1.setText("edit me");
+		e1.setMaxTextLength(40);
+		l1.setLabelFor(e1);
 
-        final SimpleChangableListModel<String> lm = new SimpleChangableListModel<String>(
-                "Entry 1", "Entry 2", "Entry 3", "Another one", "ok, one more");
+		Label l2 = new Label("Me");
+		EditField e2 = new EditField();
+		e2.setText("too!");
+		e2.setMaxTextLength(40);
+		e2.setPasswordMasking(true);
+		l2.setLabelFor(e2);
 
-        final Button addBtn = new Button("Add to list");
-        addBtn.addCallback(new Runnable() {
-            public void run() {
-                lm.addElement(e1.getText());
-            }
-        });
-        addBtn.setTooltipContent("Adds the text from the edit field to the list box");
+		final SimpleChangableListModel<String> lm = new SimpleChangableListModel<String>(
+				"Entry 1", "Entry 2", "Entry 3", "Another one", "ok, one more");
 
-        e1.addCallback(new EditField.Callback() {
-            public void callback(int key) {
-                addBtn.setEnabled(e1.getTextLength() > 0);
-            }
-        });
+		final Button addBtn = new Button("Add to list");
+		addBtn.addCallback(new Runnable() {
+			public void run() {
+				lm.addElement(e1.getText());
+			}
+		});
+		addBtn.setTooltipContent("Adds the text from the edit field to the list box");
 
-        e1.setAutoCompletion(new AutoCompletionDataSource() {
-            public AutoCompletionResult collectSuggestions(String text, int cursorPos, AutoCompletionResult prev) {
-                text = text.substring(0, cursorPos);
-                ArrayList<String> result = new ArrayList<String>();
-                for(int i=0 ; i<lm.getNumEntries() ; i++) {
-                    if(lm.matchPrefix(i, text)) {
-                        result.add(lm.getEntry(i));
-                    }
-                }
-                if(result.isEmpty()) {
-                    return null;
-                }
-                return new SimpleAutoCompletionResult(text, 0, result);
-            }
-        });
+		e1.addCallback(new EditField.Callback() {
+			public void callback(int key) {
+				addBtn.setEnabled(e1.getTextLength() > 0);
+			}
+		});
 
-        final EditField e3 = new EditField();
-        e3.setText("This is a multi line Editfield\nTry it :)");
-        e3.setMultiLine(true);
+		e1.setAutoCompletion(new AutoCompletionDataSource() {
+			public AutoCompletionResult collectSuggestions(String text,
+					int cursorPos, AutoCompletionResult prev) {
+				text = text.substring(0, cursorPos);
+				ArrayList<String> result = new ArrayList<String>();
+				for (int i = 0; i < lm.getNumEntries(); i++) {
+					if (lm.matchPrefix(i, text)) {
+						result.add(lm.getEntry(i));
+					}
+				}
+				if (result.isEmpty()) {
+					return null;
+				}
+				return new SimpleAutoCompletionResult(text, 0, result);
+			}
+		});
 
-        ScrollPane sp = new ScrollPane(e3);
-        sp.setFixed(ScrollPane.Fixed.HORIZONTAL);
-        sp.setExpandContentSize(true);
+		final EditField e3 = new EditField();
+		e3.setText("This is a multi line Editfield\nTry it :)");
+		e3.setMultiLine(true);
 
-        final SimpleChangableListModel<StyleItem> lmStyle = new SimpleChangableListModel<StyleItem>(
-                new StyleItem("progressbar", "Simple"),
-                new StyleItem("progressbar-glow", "Glow"),
-                new StyleItem("progressbar-glow-anim", "Animated"));
+		ScrollPane sp = new ScrollPane(e3);
+		sp.setFixed(ScrollPane.Fixed.HORIZONTAL);
+		sp.setExpandContentSize(true);
 
-        progressBar = new ProgressBar();
+		final SimpleChangableListModel<StyleItem> lmStyle = new SimpleChangableListModel<StyleItem>(
+				new StyleItem("progressbar", "Simple"), new StyleItem(
+						"progressbar-glow", "Glow"), new StyleItem(
+						"progressbar-glow-anim", "Animated"));
 
-        ListBox<String> lb = new ListBox<String>(lm);
+		progressBar = new ProgressBar();
 
-        final ToggleButton tb = new ToggleButton("");
-        tb.setTheme("checkbox");
-        tb.setActive(true);
-        tb.setTooltipContent("Toggles the Frame title on/off");
-        tb.addCallback(new Runnable() {
-            public void run() {
-                if(tb.isActive()) {
-                    setTheme(SimpleTest.WITH_TITLE);
-                } else {
-                    setTheme(SimpleTest.WITHOUT_TITLE);
-                }
-                reapplyTheme();
-            }
-        });
+		ListBox<String> lb = new ListBox<String>(lm);
 
-        Label tbLabel = new Label("show title");
-        tbLabel.setLabelFor(tb);
+		final ToggleButton tb = new ToggleButton("");
+		tb.setTheme("checkbox");
+		tb.setActive(true);
+		tb.setTooltipContent("Toggles the Frame title on/off");
+		tb.addCallback(new Runnable() {
+			public void run() {
+				if (tb.isActive()) {
+					setTheme(SimpleTest.WITH_TITLE);
+				} else {
+					setTheme(SimpleTest.WITHOUT_TITLE);
+				}
+				reapplyTheme();
+			}
+		});
 
-        final ComboBox<StyleItem> cb = new ComboBox<StyleItem>(lmStyle);
-        cb.addCallback(new Runnable() {
-            public void run() {
-                int idx = cb.getSelected();
-                progressBar.setTheme(lmStyle.getEntry(idx).theme);
-                progressBar.reapplyTheme();
-            }
-        });
-        cb.setSelected(2);
-        cb.setComputeWidthFromModel(true);
+		Label tbLabel = new Label("show title");
+		tbLabel.setLabelFor(tb);
 
-        mSpeed = new SimpleIntegerModel(0, 100, 10);
-        ValueAdjusterInt vai = new ValueAdjusterInt(mSpeed);
-        Label l4 = new Label("Progressbar speed");
-        l4.setLabelFor(vai);
+		final ComboBox<StyleItem> cb = new ComboBox<StyleItem>(lmStyle);
+		cb.addCallback(new Runnable() {
+			public void run() {
+				int idx = cb.getSelected();
+				progressBar.setTheme(lmStyle.getEntry(idx).theme);
+				progressBar.reapplyTheme();
+			}
+		});
+		cb.setSelected(2);
+		cb.setComputeWidthFromModel(true);
 
-        ToggleButton[] optionBtns = new ToggleButton[4];
-        SimpleIntegerModel optionModel = new SimpleIntegerModel(1, optionBtns.length, 1);
-        for(int i=0 ; i<optionBtns.length ; i++) {
-            optionBtns[i] = new ToggleButton(new OptionBooleanModel(optionModel, i+1));
-            optionBtns[i].setText(Integer.toString(i+1));
-            optionBtns[i].setTheme("radiobutton");
-        }
+		mSpeed = new SimpleIntegerModel(0, 100, 10);
+		ValueAdjusterInt vai = new ValueAdjusterInt(mSpeed);
+		Label l4 = new Label("Progressbar speed");
+		l4.setLabelFor(vai);
 
-        DialogLayout box = new DialogLayout();
-        box.setTheme("/optionsdialog"); // the '/' causes this theme to start at the root again
-        box.setHorizontalGroup(box.createParallelGroup().addGroup(
-                box.createSequentialGroup(
-                    box.createParallelGroup(l1, l2, l4),
-                    box.createParallelGroup().addGroup(box.createSequentialGroup(e1, addBtn)).addWidgets(e2, vai))).
-                addWidget(progressBar).addWidget(lb).
-                addWidget(sp).
-                addGroup(box.createSequentialGroup(cb).addGap()).
-                addGroup(box.createSequentialGroup(optionBtns).addGap()).
-                addGroup(box.createSequentialGroup().addGap().addWidgets(tbLabel, tb)));
-        box.setVerticalGroup(box.createSequentialGroup().
-                addGroup(box.createParallelGroup(l1, e1, addBtn)).
-                addGroup(box.createParallelGroup(l2, e2)).
-                addGroup(box.createParallelGroup(l4, vai)).
-                addWidgets(progressBar, lb, sp, cb).
-                addGroup(box.createParallelGroup(optionBtns)).
-                addGroup(box.createParallelGroup(tbLabel, tb)));
+		ToggleButton[] optionBtns = new ToggleButton[4];
+		SimpleIntegerModel optionModel = new SimpleIntegerModel(1,
+				optionBtns.length, 1);
+		for (int i = 0; i < optionBtns.length; i++) {
+			optionBtns[i] = new ToggleButton(new OptionBooleanModel(
+					optionModel, i + 1));
+			optionBtns[i].setText(Integer.toString(i + 1));
+			optionBtns[i].setTheme("radiobutton");
+		}
 
-        setTheme(SimpleTest.WITH_TITLE);
-        add(box);
-        setTitle("TWL Example");
-    }
+		DialogLayout box = new DialogLayout();
+		box.setTheme("/optionsdialog"); // the '/' causes this theme to start at
+										// the root again
+		box.setHorizontalGroup(box
+				.createParallelGroup()
+				.addGroup(
+						box.createSequentialGroup(
+								box.createParallelGroup(l1, l2, l4),
+								box.createParallelGroup()
+										.addGroup(
+												box.createSequentialGroup(e1,
+														addBtn))
+										.addWidgets(e2, vai)))
+				.addWidget(progressBar)
+				.addWidget(lb)
+				.addWidget(sp)
+				.addGroup(box.createSequentialGroup(cb).addGap())
+				.addGroup(box.createSequentialGroup(optionBtns).addGap())
+				.addGroup(
+						box.createSequentialGroup().addGap()
+								.addWidgets(tbLabel, tb)));
+		box.setVerticalGroup(box.createSequentialGroup()
+				.addGroup(box.createParallelGroup(l1, e1, addBtn))
+				.addGroup(box.createParallelGroup(l2, e2))
+				.addGroup(box.createParallelGroup(l4, vai))
+				.addWidgets(progressBar, lb, sp, cb)
+				.addGroup(box.createParallelGroup(optionBtns))
+				.addGroup(box.createParallelGroup(tbLabel, tb)));
 
-    @Override
-    protected void paint(GUI gui) {
-        super.paint(gui);
+		setTheme(SimpleTest.WITH_TITLE);
+		add(box);
+		setTitle("TWL Example");
+	}
 
-        if(onoff) {
-            progressBar.setValue(progress / 5000f);
-            progress = (progress+mSpeed.getValue()) % 5000;
-        }
-        if(--timeout == 0) {
-            onoff ^= true;
-            timeout = 100 + r.nextInt(200);
-        }
-    }
+	@Override
+	protected void paint(GUI gui) {
+		super.paint(gui);
+
+		if (onoff) {
+			progressBar.setValue(progress / 5000f);
+			progress = (progress + mSpeed.getValue()) % 5000;
+		}
+		if (--timeout == 0) {
+			onoff ^= true;
+			timeout = 100 + r.nextInt(200);
+		}
+	}
 
 }

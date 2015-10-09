@@ -39,171 +39,180 @@ import java.beans.PropertyChangeSupport;
  */
 public abstract class MenuElement {
 
-    private String name;
-    private String theme;
-    private boolean enabled = true;
-    private Object tooltipContent;
-    private PropertyChangeSupport pcs;
-    private Alignment alignment;
+	private String name;
+	private String theme;
+	private boolean enabled = true;
+	private Object tooltipContent;
+	private PropertyChangeSupport pcs;
+	private Alignment alignment;
 
-    public MenuElement() {
-    }
+	public MenuElement() {
+	}
 
-    public MenuElement(String name) {
-        this.name = name;
-    }
+	public MenuElement(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public MenuElement setName(String name) {
-        String oldName = this.name;
-        this.name = name;
-        firePropertyChange("name", oldName, name);
-        return this;
-    }
+	public MenuElement setName(String name) {
+		String oldName = this.name;
+		this.name = name;
+		firePropertyChange("name", oldName, name);
+		return this;
+	}
 
-    public String getTheme() {
-        return theme;
-    }
+	public String getTheme() {
+		return theme;
+	}
 
-    public MenuElement setTheme(String theme) {
-        String oldTheme = this.theme;
-        this.theme = theme;
-        firePropertyChange("theme", oldTheme, theme);
-        return this;
-    }
+	public MenuElement setTheme(String theme) {
+		String oldTheme = this.theme;
+		this.theme = theme;
+		firePropertyChange("theme", oldTheme, theme);
+		return this;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public MenuElement setEnabled(boolean enabled) {
-        boolean oldEnabled = this.enabled;
-        this.enabled = enabled;
-        firePropertyChange("enabled", oldEnabled, enabled);
-        return this;
-    }
+	public MenuElement setEnabled(boolean enabled) {
+		boolean oldEnabled = this.enabled;
+		this.enabled = enabled;
+		firePropertyChange("enabled", oldEnabled, enabled);
+		return this;
+	}
 
-    public Object getTooltipContent() {
-        return tooltipContent;
-    }
+	public Object getTooltipContent() {
+		return tooltipContent;
+	}
 
-    public MenuElement setTooltipContent(Object tooltip) {
-        Object oldTooltip = this.tooltipContent;
-        this.tooltipContent = tooltip;
-        firePropertyChange("tooltipContent", oldTooltip, tooltip);
-        return this;
-    }
+	public MenuElement setTooltipContent(Object tooltip) {
+		Object oldTooltip = this.tooltipContent;
+		this.tooltipContent = tooltip;
+		firePropertyChange("tooltipContent", oldTooltip, tooltip);
+		return this;
+	}
 
-    public Alignment getAlignment() {
-        return alignment;
-    }
+	public Alignment getAlignment() {
+		return alignment;
+	}
 
-    /**
-     * Sets the alignment used for this element in the menubar.
-     * The default value is {@code null} which means that the class based
-     * default is used.
-     * 
-     * @param alignment the alignment or null.
-     * @return this
-     * @see Menu#setClassAlignment(java.lang.Class, de.matthiasmann.twl.Alignment) 
-     * @see Menu#getClassAlignment(java.lang.Class) 
-     */
-    public MenuElement setAlignment(Alignment alignment) {
-        Alignment oldAlignment = this.alignment;
-        this.alignment = alignment;
-        firePropertyChange("alignment", oldAlignment, alignment);
-        return this;
-    }
+	/**
+	 * Sets the alignment used for this element in the menubar. The default
+	 * value is {@code null} which means that the class based default is used.
+	 * 
+	 * @param alignment
+	 *            the alignment or null.
+	 * @return this
+	 * @see Menu#setClassAlignment(java.lang.Class,
+	 *      de.matthiasmann.twl.Alignment)
+	 * @see Menu#getClassAlignment(java.lang.Class)
+	 */
+	public MenuElement setAlignment(Alignment alignment) {
+		Alignment oldAlignment = this.alignment;
+		this.alignment = alignment;
+		firePropertyChange("alignment", oldAlignment, alignment);
+		return this;
+	}
 
-    protected abstract Widget createMenuWidget(MenuManager mm, int level);
+	protected abstract Widget createMenuWidget(MenuManager mm, int level);
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if(pcs == null) {
-            pcs = new PropertyChangeSupport(this);
-        }
-        pcs.addPropertyChangeListener(listener);
-    }
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		if (pcs == null) {
+			pcs = new PropertyChangeSupport(this);
+		}
+		pcs.addPropertyChangeListener(listener);
+	}
 
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        if(pcs == null) {
-            pcs = new PropertyChangeSupport(this);
-        }
-        pcs.addPropertyChangeListener(propertyName, listener);
-    }
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		if (pcs == null) {
+			pcs = new PropertyChangeSupport(this);
+		}
+		pcs.addPropertyChangeListener(propertyName, listener);
+	}
 
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        if(pcs != null) {
-            pcs.removePropertyChangeListener(propertyName, listener);
-        }
-    }
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		if (pcs != null) {
+			pcs.removePropertyChangeListener(propertyName, listener);
+		}
+	}
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        if(pcs != null) {
-            pcs.removePropertyChangeListener(listener);
-        }
-    }
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		if (pcs != null) {
+			pcs.removePropertyChangeListener(listener);
+		}
+	}
 
-    protected void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-        if(pcs != null) {
-            pcs.firePropertyChange(propertyName, oldValue, newValue);
-        }
-    }
+	protected void firePropertyChange(String propertyName, boolean oldValue,
+			boolean newValue) {
+		if (pcs != null) {
+			pcs.firePropertyChange(propertyName, oldValue, newValue);
+		}
+	}
 
-    protected void firePropertyChange(String propertyName, int oldValue, int newValue) {
-        if(pcs != null) {
-            pcs.firePropertyChange(propertyName, oldValue, newValue);
-        }
-    }
+	protected void firePropertyChange(String propertyName, int oldValue,
+			int newValue) {
+		if (pcs != null) {
+			pcs.firePropertyChange(propertyName, oldValue, newValue);
+		}
+	}
 
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        if(pcs != null) {
-            pcs.firePropertyChange(propertyName, oldValue, newValue);
-        }
-    }
+	protected void firePropertyChange(String propertyName, Object oldValue,
+			Object newValue) {
+		if (pcs != null) {
+			pcs.firePropertyChange(propertyName, oldValue, newValue);
+		}
+	}
 
-    /**
-     * Helper method to apply the theme from the menu element to the widget
-     * if it was set, otherwise the defaultTheme is used.
-     * @param w the Widget to which the theme should be applied
-     * @param defaultTheme the defaultTheme when none was set 
-     */
-    protected void setWidgetTheme(Widget w, String defaultTheme) {
-        if(theme != null) {
-            w.setTheme(theme);
-        } else {
-            w.setTheme(defaultTheme);
-        }
-    }
+	/**
+	 * Helper method to apply the theme from the menu element to the widget if
+	 * it was set, otherwise the defaultTheme is used.
+	 * 
+	 * @param w
+	 *            the Widget to which the theme should be applied
+	 * @param defaultTheme
+	 *            the defaultTheme when none was set
+	 */
+	protected void setWidgetTheme(Widget w, String defaultTheme) {
+		if (theme != null) {
+			w.setTheme(theme);
+		} else {
+			w.setTheme(defaultTheme);
+		}
+	}
 
-    class MenuBtn extends Button implements PropertyChangeListener {
-        public MenuBtn() {
-            sync();
-        }
+	class MenuBtn extends Button implements PropertyChangeListener {
+		public MenuBtn() {
+			sync();
+		}
 
-        @Override
-        protected void afterAddToGUI(GUI gui) {
-            super.afterAddToGUI(gui);
-            MenuElement.this.addPropertyChangeListener(this);
-        }
+		@Override
+		protected void afterAddToGUI(GUI gui) {
+			super.afterAddToGUI(gui);
+			MenuElement.this.addPropertyChangeListener(this);
+		}
 
-        @Override
-        protected void beforeRemoveFromGUI(GUI gui) {
-            MenuElement.this.removePropertyChangeListener(this);
-            super.beforeRemoveFromGUI(gui);
-        }
+		@Override
+		protected void beforeRemoveFromGUI(GUI gui) {
+			MenuElement.this.removePropertyChangeListener(this);
+			super.beforeRemoveFromGUI(gui);
+		}
 
-        public void propertyChange(PropertyChangeEvent evt) {
-            sync();
-        }
+		public void propertyChange(PropertyChangeEvent evt) {
+			sync();
+		}
 
-        protected void sync() {
-            setEnabled(MenuElement.this.isEnabled());
-            setTooltipContent(MenuElement.this.getTooltipContent());
-            setText(MenuElement.this.getName());
-        }
-    }
+		protected void sync() {
+			setEnabled(MenuElement.this.isEnabled());
+			setTooltipContent(MenuElement.this.getTooltipContent());
+			setText(MenuElement.this.getName());
+		}
+	}
 
 }

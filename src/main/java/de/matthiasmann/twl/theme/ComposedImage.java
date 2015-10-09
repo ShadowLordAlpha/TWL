@@ -35,49 +35,50 @@ import de.matthiasmann.twl.renderer.AnimationState;
 import de.matthiasmann.twl.renderer.Image;
 
 /**
- * A image composed by layering several images. Layer 0 is the base and drawn first.
+ * A image composed by layering several images. Layer 0 is the base and drawn
+ * first.
  *
  * @author Matthias Mann
  */
 class ComposedImage implements Image, HasBorder {
 
-    private final Image[] layers;
-    private final Border border;
+	private final Image[] layers;
+	private final Border border;
 
-    public ComposedImage(Image[] layers, Border border) {
-        super();
-        this.layers = layers;
-        this.border = border;
-    }
+	public ComposedImage(Image[] layers, Border border) {
+		super();
+		this.layers = layers;
+		this.border = border;
+	}
 
-    public void draw(AnimationState as, int x, int y) {
-        draw(as, x, y, getWidth(), getHeight());
-    }
+	public void draw(AnimationState as, int x, int y) {
+		draw(as, x, y, getWidth(), getHeight());
+	}
 
-    public void draw(AnimationState as, int x, int y, int width, int height) {
-        for(Image layer : layers) {
-            layer.draw(as, x, y, width, height);
-        }
-    }
+	public void draw(AnimationState as, int x, int y, int width, int height) {
+		for (Image layer : layers) {
+			layer.draw(as, x, y, width, height);
+		}
+	}
 
-    public int getHeight() {
-        return layers[0].getHeight();
-    }
+	public int getHeight() {
+		return layers[0].getHeight();
+	}
 
-    public int getWidth() {
-        return layers[0].getWidth();
-    }
+	public int getWidth() {
+		return layers[0].getWidth();
+	}
 
-    public Border getBorder() {
-        return border;
-    }
+	public Border getBorder() {
+		return border;
+	}
 
-    public Image createTintedVersion(Color color) {
-        Image[] newLayers = new Image[layers.length];
-        for(int i=0 ; i<newLayers.length ; i++) {
-            newLayers[i] = layers[i].createTintedVersion(color);
-        }
-        return new ComposedImage(newLayers, border);
-    }
+	public Image createTintedVersion(Color color) {
+		Image[] newLayers = new Image[layers.length];
+		for (int i = 0; i < newLayers.length; i++) {
+			newLayers[i] = layers[i].createTintedVersion(color);
+		}
+		return new ComposedImage(newLayers, border);
+	}
 
 }

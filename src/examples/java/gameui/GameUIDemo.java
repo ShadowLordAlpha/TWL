@@ -29,10 +29,12 @@
  */
 package gameui;
 
-import java.awt.DisplayMode;
 import java.util.ArrayList;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import test.TestUtils;
 import de.matthiasmann.twl.Event;
@@ -45,7 +47,6 @@ import de.matthiasmann.twl.WheelWidget;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.model.SimpleChangableListModel;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.textarea.TextAreaModel.Display;
 import de.matthiasmann.twl.theme.ThemeManager;
 
 /**
@@ -54,169 +55,175 @@ import de.matthiasmann.twl.theme.ThemeManager;
  */
 public class GameUIDemo extends Widget {
 
-    public static void main(String[] args) {
-        try {
-            Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            Display.setTitle("TWL Game UI Demo");
-            Display.setVSyncEnabled(true);
+	public static void main(String[] args) {
+		try {
+			if (GLFW.glfwInit() != GL11.GL_TRUE) {
+				System.err.println("Failed To Initilize GLFW!");
+				System.exit(-1);
+			}
+			long window = GLFW.glfwCreateWindow(800, 600, "TWL Game UI Demo",
+					MemoryUtil.NULL, MemoryUtil.NULL);
 
-            LWJGLRenderer renderer = new LWJGLRenderer();
-            GameUIDemo gameUI = new GameUIDemo();
-            GUI gui = new GUI(gameUI, renderer);
+			if (window == MemoryUtil.NULL) {
+				System.err.println("Failed To Create Window!");
+				System.exit(-1);
+			}
+			GLFW.glfwMakeContextCurrent(window);
+			GL.createCapabilities();
 
-            ThemeManager theme = ThemeManager.createThemeManager(
-                    GameUIDemo.class.getResource("gameui.xml"), renderer);
-            gui.applyTheme(theme);
+			GLFW.glfwSwapInterval(1); // vsync
 
-            while(!Display.isCloseRequested() && !gameUI.quit) {
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			LWJGLRenderer renderer = new LWJGLRenderer();
+			GameUIDemo gameUI = new GameUIDemo();
+			GUI gui = new GUI(gameUI, renderer);
 
-                gui.update();
-                Display.update();
-                TestUtils.reduceInputLag();
-            }
+			ThemeManager theme = ThemeManager.createThemeManager(
+					GameUIDemo.class.getResource("gameui.xml"), renderer);
+			gui.applyTheme(theme);
 
-            gui.destroy();
-            theme.destroy();
-        } catch (Exception ex) {
-            TestUtils.showErrMsg(ex);
-        }
-        Display.destroy();
-    }
+			while (!(GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE)
+					&& !gameUI.quit) {
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-    private final ToggleButton[] actionButtons;
-    private final ToggleButton btnPause;
-    private final ToggleButton btnArmageddon;
-    private final FPSCounter fpsCounter;
-    private final Label lastSelectedRadialEntry;
+				gui.update();
+				GLFW.glfwPollEvents();
+				GLFW.glfwSwapBuffers(window);
+				TestUtils.reduceInputLag();
+			}
 
-    private final SimpleChangableListModel<String> digits;
-    private final ArrayList<WheelWidget<String>> wheels;
-    
-    public boolean quit;
+			gui.destroy();
+			theme.destroy();
+			GLFW.glfwDestroyWindow(window);
+		} catch (Exception ex) {
+			TestUtils.showErrMsg(ex);
+		}
+	}
 
-    private static final String[] ACTION_NAMES = {
-        "pingu-digger",
-        "pingu-miner",
-        "pingu-basher",
-        "pingu-climber",
-        "pingu-floater",
-        "pingu-bomber",
-        "pingu-blocker",
-        "pingu-bridger",
-    };
+	private final ToggleButton[] actionButtons;
+	private final ToggleButton btnPause;
+	private final ToggleButton btnArmageddon;
+	private final FPSCounter fpsCounter;
+	private final Label lastSelectedRadialEntry;
 
-    public GameUIDemo() {
-        actionButtons = new ToggleButton[ACTION_NAMES.length];
-        for(int i=0 ; i<ACTION_NAMES.length ; i++) {
-            actionButtons[i] = new ToggleButton();
-            actionButtons[i].setTheme(ACTION_NAMES[i]);
-            add(actionButtons[i]);
-        }
+	private final SimpleChangableListModel<String> digits;
+	private final ArrayList<WheelWidget<String>> wheels;
 
-        btnPause = new ToggleButton();
-        btnPause.setTheme("pause");
-        add(btnPause);
+	public boolean quit;
 
-        btnArmageddon = new ToggleButton();
-        btnArmageddon.setTheme("armageddon");
-        add(btnArmageddon);
+	private static final String[] ACTION_NAMES = { "pingu-digger",
+			"pingu-miner", "pingu-basher", "pingu-climber", "pingu-floater",
+			"pingu-bomber", "pingu-blocker", "pingu-bridger", };
 
-        fpsCounter = new FPSCounter();
-        add(fpsCounter);
+	public GameUIDemo() {
+		actionButtons = new ToggleButton[ACTION_NAMES.length];
+		for (int i = 0; i < ACTION_NAMES.length; i++) {
+			actionButtons[i] = new ToggleButton();
+			actionButtons[i].setTheme(ACTION_NAMES[i]);
+			add(actionButtons[i]);
+		}
 
-        lastSelectedRadialEntry = new Label();
-        lastSelectedRadialEntry.setText("Right click on the background");
-        add(lastSelectedRadialEntry);
-        
-        digits = new SimpleChangableListModel<String>("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
-        wheels = new ArrayList<WheelWidget<String>>();
-        for(int i=0 ; i<4 ; i++) {
-            WheelWidget<String> wheel = new WheelWidget<String>(digits);
-            wheels.add(wheel);
-            wheel.setCyclic(true);
-            add(wheel);
-        }
-    }
+		btnPause = new ToggleButton();
+		btnPause.setTheme("pause");
+		add(btnPause);
 
-    @Override
-    protected void layout() {
-        int x = 10;
-        int y = 40;
-        
-        for(ToggleButton b : actionButtons) {
-            b.setPosition(x, y);
-            b.adjustSize();
-            y += b.getHeight() + 5;
-        }
+		btnArmageddon = new ToggleButton();
+		btnArmageddon.setTheme("armageddon");
+		add(btnArmageddon);
 
-        x = getInnerWidth() - 10;
-        y = 10;
+		fpsCounter = new FPSCounter();
+		add(fpsCounter);
 
-        btnPause.adjustSize();
-        x -= btnPause.getWidth() + 5;
-        btnPause.setPosition(x, y);
+		lastSelectedRadialEntry = new Label();
+		lastSelectedRadialEntry.setText("Right click on the background");
+		add(lastSelectedRadialEntry);
 
-        btnArmageddon.adjustSize();
-        x -= btnArmageddon.getWidth() + 5;
-        btnArmageddon.setPosition(x, y);
+		digits = new SimpleChangableListModel<String>("0", "1", "2", "3", "4",
+				"5", "6", "7", "8", "9");
+		wheels = new ArrayList<WheelWidget<String>>();
+		for (int i = 0; i < 4; i++) {
+			WheelWidget<String> wheel = new WheelWidget<String>(digits);
+			wheels.add(wheel);
+			wheel.setCyclic(true);
+			add(wheel);
+		}
+	}
 
-        fpsCounter.adjustSize();
-        fpsCounter.setPosition(
-                getInnerWidth() - fpsCounter.getWidth(),
-                getInnerHeight() - fpsCounter.getHeight());
+	@Override
+	protected void layout() {
+		int x = 10;
+		int y = 40;
 
-        lastSelectedRadialEntry.adjustSize();
-        lastSelectedRadialEntry.setPosition(
-                getInnerWidth()/2 - lastSelectedRadialEntry.getWidth()/2,
-                getInnerBottom() - lastSelectedRadialEntry.getHeight());
-        
-        int wheelsWidth = 0;
-        for(WheelWidget<String> wheel : wheels) {
-            wheel.adjustSize();
-            wheelsWidth += wheel.getWidth();
-        }
-        x = getInnerX() + (getInnerWidth()-wheelsWidth)/2;
-        y = getInnerY() + (getInnerHeight()-wheels.get(0).getHeight())/2;
-        for(WheelWidget<String> wheel : wheels) {
-            wheel.setPosition(x, y);
-            x += wheel.getWidth();
-        }
-    }
+		for (ToggleButton b : actionButtons) {
+			b.setPosition(x, y);
+			b.adjustSize();
+			y += b.getHeight() + 5;
+		}
 
-    @Override
-    protected boolean handleEvent(Event evt) {
-        if(super.handleEvent(evt)) {
-            return true;
-        }
-        switch (evt.getType()) {
-            case KEY_PRESSED:
-                switch (evt.getKeyCode()) {
-                    case Event.KEY_ESCAPE:
-                        quit = true;
-                        return true;
-                }
-                break;
-            case MOUSE_BTNDOWN:
-                if(evt.getMouseButton() == Event.MOUSE_RBUTTON) {
-                    return createRadialMenu().openPopup(evt);
-                }
-                break;
-        }
-        return evt.isMouseEventNoWheel();
-    }
+		x = getInnerWidth() - 10;
+		y = 10;
 
-    RadialPopupMenu createRadialMenu() {
-        RadialPopupMenu rpm = new RadialPopupMenu(this);
-        for(int i=0 ; i<10 ; i++) {
-            final int idx = i;
-            rpm.addButton("star", new Runnable() {
-                public void run() {
-                    lastSelectedRadialEntry.setText("Selected " + idx);
-                }
-            });
-        }
-        return rpm;
-    }
+		btnPause.adjustSize();
+		x -= btnPause.getWidth() + 5;
+		btnPause.setPosition(x, y);
+
+		btnArmageddon.adjustSize();
+		x -= btnArmageddon.getWidth() + 5;
+		btnArmageddon.setPosition(x, y);
+
+		fpsCounter.adjustSize();
+		fpsCounter.setPosition(getInnerWidth() - fpsCounter.getWidth(),
+				getInnerHeight() - fpsCounter.getHeight());
+
+		lastSelectedRadialEntry.adjustSize();
+		lastSelectedRadialEntry.setPosition(getInnerWidth() / 2
+				- lastSelectedRadialEntry.getWidth() / 2, getInnerBottom()
+				- lastSelectedRadialEntry.getHeight());
+
+		int wheelsWidth = 0;
+		for (WheelWidget<String> wheel : wheels) {
+			wheel.adjustSize();
+			wheelsWidth += wheel.getWidth();
+		}
+		x = getInnerX() + (getInnerWidth() - wheelsWidth) / 2;
+		y = getInnerY() + (getInnerHeight() - wheels.get(0).getHeight()) / 2;
+		for (WheelWidget<String> wheel : wheels) {
+			wheel.setPosition(x, y);
+			x += wheel.getWidth();
+		}
+	}
+
+	@Override
+	protected boolean handleEvent(Event evt) {
+		if (super.handleEvent(evt)) {
+			return true;
+		}
+		switch (evt.getType()) {
+		case KEY_PRESSED:
+			switch (evt.getKeyCode()) {
+			case Event.KEY_ESCAPE:
+				quit = true;
+				return true;
+			}
+			break;
+		case MOUSE_BTNDOWN:
+			if (evt.getMouseButton() == Event.MOUSE_RBUTTON) {
+				return createRadialMenu().openPopup(evt);
+			}
+			break;
+		}
+		return evt.isMouseEventNoWheel();
+	}
+
+	RadialPopupMenu createRadialMenu() {
+		RadialPopupMenu rpm = new RadialPopupMenu(this);
+		for (int i = 0; i < 10; i++) {
+			final int idx = i;
+			rpm.addButton("star", new Runnable() {
+				public void run() {
+					lastSelectedRadialEntry.setText("Selected " + idx);
+				}
+			});
+		}
+		return rpm;
+	}
 }

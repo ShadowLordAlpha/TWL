@@ -38,16 +38,22 @@ import de.matthiasmann.twl.Color;
  * @author Matthias Mann
  */
 public interface QueriablePixels {
-   
-    /**
-     * Returns the color value of the spicified pixel
-     * @param x the X coordinate
-     * @param y the Y coordinate
-     * @return the ARGB value
-     * @throws IllegalArgumentException when the coordinates are out of bounds
-     * @throws UnsupportedOperationException when the internal representation does not support querying the pixel data
-     * @see Color#toARGB() 
-     */
-    public int getPixelValue(int x, int y);
-    
+
+	/**
+	 * Returns the color value of the spicified pixel
+	 * 
+	 * @param x
+	 *            the X coordinate
+	 * @param y
+	 *            the Y coordinate
+	 * @return the ARGB value
+	 * @throws IllegalArgumentException
+	 *             when the coordinates are out of bounds
+	 * @throws UnsupportedOperationException
+	 *             when the internal representation does not support querying
+	 *             the pixel data
+	 * @see Color#toARGB()
+	 */
+	public int getPixelValue(int x, int y);
+
 }

@@ -32,40 +32,43 @@ package de.matthiasmann.twl.model;
 /**
  * A generic MRU (most recently used) list model.
  *
- * @param <T> the data type stored in this MRU model
+ * @param <T>
+ *            the data type stored in this MRU model
  *
  * @author Matthias Mann
  */
 public interface MRUListModel<T> extends ListModel<T> {
 
-    /**
-     * Returns the maximum number of entries stored in this MRU list
-     * @return the maximum number of entries stored in this MRU list
-     */
-    public int getMaxEntries();
-    
-    public int getNumEntries();
+	/**
+	 * Returns the maximum number of entries stored in this MRU list
+	 * 
+	 * @return the maximum number of entries stored in this MRU list
+	 */
+	public int getMaxEntries();
 
-    public T getEntry(int index);
+	public int getNumEntries();
 
-    /**
-     * Adds an entry to this MRU model. If the entry is already in the MRU list,
-     * then it is moved to the from.
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     * 
-     * @param entry the entry
-     */
-    public void addEntry(T entry);
+	public T getEntry(int index);
 
-    /**
-     * Removes the entry at the given index
-     *
-     * @param index
-     */
-    public void removeEntry(int index);
+	/**
+	 * Adds an entry to this MRU model. If the entry is already in the MRU list,
+	 * then it is moved to the from.
+	 *
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 * 
+	 * @param entry
+	 *            the entry
+	 */
+	public void addEntry(T entry);
 
-    public void addChangeListener(ListModel.ChangeListener listener);
+	/**
+	 * Removes the entry at the given index
+	 *
+	 * @param index
+	 */
+	public void removeEntry(int index);
 
-    public void removeChangeListener(ListModel.ChangeListener listener);
+	public void addChangeListener(ListModel.ChangeListener listener);
+
+	public void removeChangeListener(ListModel.ChangeListener listener);
 }

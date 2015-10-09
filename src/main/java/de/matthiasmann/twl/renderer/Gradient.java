@@ -37,96 +37,93 @@ import de.matthiasmann.twl.Color;
  * Info class used to construct a gradient image
  * 
  * @author Matthias Mann
- * @see Renderer#createGradient(de.matthiasmann.twl.renderer.Gradient) 
+ * @see Renderer#createGradient(de.matthiasmann.twl.renderer.Gradient)
  */
 public class Gradient {
-    
-    public enum Type {
-        HORIZONTAL,
-        VERTICAL
-    }
 
-    public enum Wrap {
-        SCALE,
-        CLAMP,
-        REPEAT,
-        MIRROR
-    }
-    
-    private final Type type;
-    private Wrap wrap;
-    private final ArrayList<Stop> stops;
+	public enum Type {
+		HORIZONTAL, VERTICAL
+	}
 
-    public Gradient(Type type) {
-        if(type == null) {
-            throw new NullPointerException("type");
-        }
-        this.type = type;
-        this.wrap = Wrap.SCALE;
-        this.stops = new ArrayList<Stop>();
-    }
+	public enum Wrap {
+		SCALE, CLAMP, REPEAT, MIRROR
+	}
 
-    public Type getType() {
-        return type;
-    }
+	private final Type type;
+	private Wrap wrap;
+	private final ArrayList<Stop> stops;
 
-    public void setWrap(Wrap wrap) {
-        if(wrap == null) {
-            throw new NullPointerException("wrap");
-        }
-        this.wrap = wrap;
-    }
+	public Gradient(Type type) {
+		if (type == null) {
+			throw new NullPointerException("type");
+		}
+		this.type = type;
+		this.wrap = Wrap.SCALE;
+		this.stops = new ArrayList<Stop>();
+	}
 
-    public Wrap getWrap() {
-        return wrap;
-    }
+	public Type getType() {
+		return type;
+	}
 
-    public int getNumStops() {
-        return stops.size();
-    }
+	public void setWrap(Wrap wrap) {
+		if (wrap == null) {
+			throw new NullPointerException("wrap");
+		}
+		this.wrap = wrap;
+	}
 
-    public Stop getStop(int index) {
-        return stops.get(index);
-    }
-    
-    public Stop[] getStops() {
-        return stops.toArray(new Stop[stops.size()]);
-    }
-    
-    public void addStop(float pos, Color color) {
-        if(color == null) {
-            throw new NullPointerException("color");
-        }
-        int numStops = stops.size();
-        if(numStops == 0) {
-            if(!(pos >= 0)) {
-                throw new IllegalArgumentException("first stop must be >= 0.0f");
-            }
-            if(pos > 0) {
-                stops.add(new Stop(0.0f, color));
-            }
-        }
-        if(numStops > 0 && !(pos > stops.get(numStops-1).pos)) {
-            throw new IllegalArgumentException("pos must be monotone increasing");
-        }
-        stops.add(new Stop(pos, color));
-    }
-    
-    public static class Stop {
-        final float pos;
-        final Color color;
+	public Wrap getWrap() {
+		return wrap;
+	}
 
-        public Stop(float pos, Color color) {
-            this.pos = pos;
-            this.color = color;
-        }
+	public int getNumStops() {
+		return stops.size();
+	}
 
-        public float getPos() {
-            return pos;
-        }
+	public Stop getStop(int index) {
+		return stops.get(index);
+	}
 
-        public Color getColor() {
-            return color;
-        }
-    }   
+	public Stop[] getStops() {
+		return stops.toArray(new Stop[stops.size()]);
+	}
+
+	public void addStop(float pos, Color color) {
+		if (color == null) {
+			throw new NullPointerException("color");
+		}
+		int numStops = stops.size();
+		if (numStops == 0) {
+			if (!(pos >= 0)) {
+				throw new IllegalArgumentException("first stop must be >= 0.0f");
+			}
+			if (pos > 0) {
+				stops.add(new Stop(0.0f, color));
+			}
+		}
+		if (numStops > 0 && !(pos > stops.get(numStops - 1).pos)) {
+			throw new IllegalArgumentException(
+					"pos must be monotone increasing");
+		}
+		stops.add(new Stop(pos, color));
+	}
+
+	public static class Stop {
+		final float pos;
+		final Color color;
+
+		public Stop(float pos, Color color) {
+			this.pos = pos;
+			this.color = color;
+		}
+
+		public float getPos() {
+			return pos;
+		}
+
+		public Color getColor() {
+			return color;
+		}
+	}
 }

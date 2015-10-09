@@ -37,9 +37,9 @@ import de.matthiasmann.twl.utils.WithRunnableCallback;
  * @author Matthias Mann
  */
 public interface StringModel extends WithRunnableCallback {
-    
-    String getValue();
 
-    void setValue(String value);
-    
+	String getValue();
+
+	void setValue(String value);
+
 }

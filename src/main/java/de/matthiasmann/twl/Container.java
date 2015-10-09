@@ -30,37 +30,42 @@
 package de.matthiasmann.twl;
 
 /**
- * Can contain a single Widget and uses {@link Widget#layoutChildrenFullInnerArea() }
+ * Can contain a single Widget and uses
+ * {@link Widget#layoutChildrenFullInnerArea() }
  * 
  * @author Matthias Mann
  */
 public class Container extends Widget {
-    
-    @Override
-    public int getMinWidth() {
-        return Math.max(super.getMinWidth(), getBorderHorizontal() +
-                BoxLayout.computeMinWidthVertical(this));
-    }
 
-    @Override
-    public int getMinHeight() {
-        return Math.max(super.getMinHeight(), getBorderVertical() +
-                BoxLayout.computeMinHeightHorizontal(this));
-    }
+	@Override
+	public int getMinWidth() {
+		return Math
+				.max(super.getMinWidth(),
+						getBorderHorizontal()
+								+ BoxLayout.computeMinWidthVertical(this));
+	}
 
-    @Override
-    public int getPreferredInnerWidth() {
-        return BoxLayout.computePreferredWidthVertical(this);
-    }
+	@Override
+	public int getMinHeight() {
+		return Math.max(
+				super.getMinHeight(),
+				getBorderVertical()
+						+ BoxLayout.computeMinHeightHorizontal(this));
+	}
 
-    @Override
-    public int getPreferredInnerHeight() {
-        return BoxLayout.computePreferredHeightHorizontal(this);
-    }
+	@Override
+	public int getPreferredInnerWidth() {
+		return BoxLayout.computePreferredWidthVertical(this);
+	}
 
-    @Override
-    protected void layout() {
-        layoutChildrenFullInnerArea();
-    }
-    
+	@Override
+	public int getPreferredInnerHeight() {
+		return BoxLayout.computePreferredHeightHorizontal(this);
+	}
+
+	@Override
+	protected void layout() {
+		layoutChildrenFullInnerArea();
+	}
+
 }

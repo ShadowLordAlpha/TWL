@@ -35,87 +35,89 @@ import de.matthiasmann.twl.utils.CallbackSupport;
  *
  * @author Matthias Mann
  */
-public abstract class AbstractTableModel extends AbstractTableColumnHeaderModel implements TableModel {
+public abstract class AbstractTableModel extends AbstractTableColumnHeaderModel
+		implements TableModel {
 
-    private ChangeListener[] callbacks;
+	private ChangeListener[] callbacks;
 
-    public Object getTooltipContent(int row, int column) {
-        return null;
-    }
+	public Object getTooltipContent(int row, int column) {
+		return null;
+	}
 
-    public void addChangeListener(ChangeListener listener) {
-        callbacks = CallbackSupport.addCallbackToList(callbacks, listener, ChangeListener.class);
-    }
+	public void addChangeListener(ChangeListener listener) {
+		callbacks = CallbackSupport.addCallbackToList(callbacks, listener,
+				ChangeListener.class);
+	}
 
-    public void removeChangeListener(ChangeListener listener) {
-        callbacks = CallbackSupport.removeCallbackFromList(callbacks, listener);
-    }
+	public void removeChangeListener(ChangeListener listener) {
+		callbacks = CallbackSupport.removeCallbackFromList(callbacks, listener);
+	}
 
-    protected boolean hasCallbacks() {
-        return callbacks != null;
-    }
-    
-    protected void fireRowsInserted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.rowsInserted(idx, count);
-            }
-        }
-    }
+	protected boolean hasCallbacks() {
+		return callbacks != null;
+	}
 
-    protected void fireRowsDeleted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.rowsDeleted(idx, count);
-            }
-        }
-    }
+	protected void fireRowsInserted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.rowsInserted(idx, count);
+			}
+		}
+	}
 
-    protected void fireRowsChanged(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.rowsChanged(idx, count);
-            }
-        }
-    }
+	protected void fireRowsDeleted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.rowsDeleted(idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnInserted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnInserted(idx, count);
-            }
-        }
-    }
+	protected void fireRowsChanged(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.rowsChanged(idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnDeleted(int idx, int count) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnDeleted(idx, count);
-            }
-        }
-    }
+	protected void fireColumnInserted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnInserted(idx, count);
+			}
+		}
+	}
 
-    protected void fireColumnHeaderChanged(int column) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.columnHeaderChanged(column);
-            }
-        }
-    }
+	protected void fireColumnDeleted(int idx, int count) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnDeleted(idx, count);
+			}
+		}
+	}
 
-    protected void fireCellChanged(int row, int column) {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.cellChanged(row, column);
-            }
-        }
-    }
+	protected void fireColumnHeaderChanged(int column) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.columnHeaderChanged(column);
+			}
+		}
+	}
 
-    protected void fireAllChanged() {
-        if(callbacks != null) {
-            for(ChangeListener cl : callbacks) {
-                cl.allChanged();
-            }
-        }
-    }
+	protected void fireCellChanged(int row, int column) {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.cellChanged(row, column);
+			}
+		}
+	}
+
+	protected void fireAllChanged() {
+		if (callbacks != null) {
+			for (ChangeListener cl : callbacks) {
+				cl.allChanged();
+			}
+		}
+	}
 }

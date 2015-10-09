@@ -38,172 +38,172 @@ import java.util.BitSet;
  */
 public class DefaultTableSelectionModel extends AbstractTableSelectionModel {
 
-    private final BitSet value;
-    private int minIndex;
-    private int maxIndex;
-    
-    public DefaultTableSelectionModel() {
-        this.value = new BitSet();
-        this.minIndex = Integer.MAX_VALUE;
-        this.maxIndex = Integer.MIN_VALUE;
-    }
+	private final BitSet value;
+	private int minIndex;
+	private int maxIndex;
 
-    public int getFirstSelected() {
-        return minIndex;
-    }
+	public DefaultTableSelectionModel() {
+		this.value = new BitSet();
+		this.minIndex = Integer.MAX_VALUE;
+		this.maxIndex = Integer.MIN_VALUE;
+	}
 
-    public int getLastSelected() {
-        return maxIndex;
-    }
+	public int getFirstSelected() {
+		return minIndex;
+	}
 
-    public boolean hasSelection() {
-        return maxIndex >= minIndex;
-    }
+	public int getLastSelected() {
+		return maxIndex;
+	}
 
-    public boolean isSelected(int index) {
-        return value.get(index);
-    }
+	public boolean hasSelection() {
+		return maxIndex >= minIndex;
+	}
 
-    private void clearBit(int idx) {
-        if(value.get(idx)) {
-            value.clear(idx);
+	public boolean isSelected(int index) {
+		return value.get(index);
+	}
 
-            if(idx == minIndex) {
-                minIndex = value.nextSetBit(minIndex+1);
-                if(minIndex < 0) {
-                    minIndex = Integer.MAX_VALUE;
-                    maxIndex = Integer.MIN_VALUE;
-                    return;
-                }
-            }
+	private void clearBit(int idx) {
+		if (value.get(idx)) {
+			value.clear(idx);
 
-            if(idx == maxIndex) {
-                do {
-                    maxIndex--;
-                }while(maxIndex >= minIndex && !value.get(maxIndex));
-            }
-        }
-    }
+			if (idx == minIndex) {
+				minIndex = value.nextSetBit(minIndex + 1);
+				if (minIndex < 0) {
+					minIndex = Integer.MAX_VALUE;
+					maxIndex = Integer.MIN_VALUE;
+					return;
+				}
+			}
 
-    private void setBit(int idx) {
-        if(!value.get(idx)) {
-            value.set(idx);
+			if (idx == maxIndex) {
+				do {
+					maxIndex--;
+				} while (maxIndex >= minIndex && !value.get(maxIndex));
+			}
+		}
+	}
 
-            if(idx < minIndex) {
-                minIndex = idx;
-            }
-            if(idx > maxIndex) {
-                maxIndex = idx;
-            }
-        }
-    }
+	private void setBit(int idx) {
+		if (!value.get(idx)) {
+			value.set(idx);
 
-    private void toggleBit(int idx) {
-        if(value.get(idx)) {
-            clearBit(idx);
-        } else {
-            setBit(idx);
-        }
-    }
+			if (idx < minIndex) {
+				minIndex = idx;
+			}
+			if (idx > maxIndex) {
+				maxIndex = idx;
+			}
+		}
+	}
 
-    public void clearSelection() {
-        if(hasSelection()) {
-            minIndex = Integer.MAX_VALUE;
-            maxIndex = Integer.MIN_VALUE;
-            value.clear();
-            fireSelectionChange();
-        }
-    }
+	private void toggleBit(int idx) {
+		if (value.get(idx)) {
+			clearBit(idx);
+		} else {
+			setBit(idx);
+		}
+	}
 
-    public void setSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        minIndex = Math.min(index0, index1);
-        maxIndex = Math.max(index0, index1);
-        value.clear();
-        value.set(minIndex, maxIndex+1);
-        fireSelectionChange();
-    }
+	public void clearSelection() {
+		if (hasSelection()) {
+			minIndex = Integer.MAX_VALUE;
+			maxIndex = Integer.MIN_VALUE;
+			value.clear();
+			fireSelectionChange();
+		}
+	}
 
-    public void addSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        int min = Math.min(index0, index1);
-        int max = Math.max(index0, index1);
-        for(int i=min ; i<=max ; i++) {
-            setBit(i);
-        }
-        fireSelectionChange();
-    }
+	public void setSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		minIndex = Math.min(index0, index1);
+		maxIndex = Math.max(index0, index1);
+		value.clear();
+		value.set(minIndex, maxIndex + 1);
+		fireSelectionChange();
+	}
 
-    public void invertSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        int min = Math.min(index0, index1);
-        int max = Math.max(index0, index1);
-        for(int i=min ; i<=max ; i++) {
-            toggleBit(i);
-        }
-        fireSelectionChange();
-    }
+	public void addSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		int min = Math.min(index0, index1);
+		int max = Math.max(index0, index1);
+		for (int i = min; i <= max; i++) {
+			setBit(i);
+		}
+		fireSelectionChange();
+	}
 
-    public void removeSelection(int index0, int index1) {
-        updateLeadAndAnchor(index0, index1);
-        if(hasSelection()) {
-            int min = Math.min(index0, index1);
-            int max = Math.max(index0, index1);
-            for(int i=min ; i<=max ; i++) {
-                clearBit(i);
-            }
-            fireSelectionChange();
-        }
-    }
+	public void invertSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		int min = Math.min(index0, index1);
+		int max = Math.max(index0, index1);
+		for (int i = min; i <= max; i++) {
+			toggleBit(i);
+		}
+		fireSelectionChange();
+	}
 
-    public int[] getSelection() {
-        int result[] = new int[value.cardinality()];
-        int idx=-1;
-        for(int i=0 ; (idx=value.nextSetBit(idx+1)) >= 0 ; i++) {
-            result[i] = idx;
-        }
-        return result;
-    }
+	public void removeSelection(int index0, int index1) {
+		updateLeadAndAnchor(index0, index1);
+		if (hasSelection()) {
+			int min = Math.min(index0, index1);
+			int max = Math.max(index0, index1);
+			for (int i = min; i <= max; i++) {
+				clearBit(i);
+			}
+			fireSelectionChange();
+		}
+	}
 
-    @Override
-    public void rowsInserted(int index, int count) {
-        if(index <= maxIndex) {
-            for(int i=maxIndex ; i>=index ; i--) {
-                if(value.get(i)) {
-                    value.set(i+count);
-                } else {
-                    value.clear(i+count);
-                }
-            }
-            value.clear(index, index+count);
-            maxIndex += count;
-            if(index <= minIndex) {
-                minIndex += count;
-            }
-        }
-        super.rowsInserted(index, count);
-    }
+	public int[] getSelection() {
+		int result[] = new int[value.cardinality()];
+		int idx = -1;
+		for (int i = 0; (idx = value.nextSetBit(idx + 1)) >= 0; i++) {
+			result[i] = idx;
+		}
+		return result;
+	}
 
-    @Override
-    public void rowsDeleted(int index, int count) {
-        if(index <= maxIndex) {
-            for(int i=index ; i<=maxIndex ; i++) {
-                if(value.get(i+count)) {
-                    value.set(i);
-                } else {
-                    value.clear(i);
-                }
-            }
-            minIndex = value.nextSetBit(0);
-            if(minIndex < 0) {
-                minIndex = Integer.MAX_VALUE;
-                maxIndex = Integer.MIN_VALUE;
-            } else {
-                while(maxIndex >= minIndex && !value.get(maxIndex)) {
-                    maxIndex--;
-                }
-            }
-        }
-        super.rowsDeleted(index, count);
-    }
+	@Override
+	public void rowsInserted(int index, int count) {
+		if (index <= maxIndex) {
+			for (int i = maxIndex; i >= index; i--) {
+				if (value.get(i)) {
+					value.set(i + count);
+				} else {
+					value.clear(i + count);
+				}
+			}
+			value.clear(index, index + count);
+			maxIndex += count;
+			if (index <= minIndex) {
+				minIndex += count;
+			}
+		}
+		super.rowsInserted(index, count);
+	}
+
+	@Override
+	public void rowsDeleted(int index, int count) {
+		if (index <= maxIndex) {
+			for (int i = index; i <= maxIndex; i++) {
+				if (value.get(i + count)) {
+					value.set(i);
+				} else {
+					value.clear(i);
+				}
+			}
+			minIndex = value.nextSetBit(0);
+			if (minIndex < 0) {
+				minIndex = Integer.MAX_VALUE;
+				maxIndex = Integer.MIN_VALUE;
+			} else {
+				while (maxIndex >= minIndex && !value.get(maxIndex)) {
+					maxIndex--;
+				}
+			}
+		}
+		super.rowsDeleted(index, count);
+	}
 }

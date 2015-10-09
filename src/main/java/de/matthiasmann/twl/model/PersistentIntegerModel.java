@@ -37,70 +37,71 @@ import java.util.prefs.Preferences;
  */
 public class PersistentIntegerModel extends AbstractIntegerModel {
 
-    private final Preferences prefs;
-    private final String prefKey;
-    private final int minValue;
-    private final int maxValue;
+	private final Preferences prefs;
+	private final String prefKey;
+	private final int minValue;
+	private final int maxValue;
 
-    private int value;
-    
-    public PersistentIntegerModel(Preferences prefs, String prefKey, int minValue, int maxValue, int defaultValue) {
-        if(maxValue < minValue) {
-            throw new IllegalArgumentException("maxValue < minValue");
-        }
-        if(prefs == null) {
-            throw new NullPointerException("prefs");
-        }
-        if(prefKey == null) {
-            throw new NullPointerException("prefKey");
-        }
-        this.prefs = prefs;
-        this.prefKey = prefKey;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        setValue(prefs.getInt(prefKey, defaultValue));
-    }
+	private int value;
 
-    public PersistentIntegerModel(int minValue, int maxValue, int value) {
-        if(maxValue < minValue) {
-            throw new IllegalArgumentException("maxValue < minValue");
-        }
-        this.prefs = null;
-        this.prefKey = null;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        setValue(value);
-    }
+	public PersistentIntegerModel(Preferences prefs, String prefKey,
+			int minValue, int maxValue, int defaultValue) {
+		if (maxValue < minValue) {
+			throw new IllegalArgumentException("maxValue < minValue");
+		}
+		if (prefs == null) {
+			throw new NullPointerException("prefs");
+		}
+		if (prefKey == null) {
+			throw new NullPointerException("prefKey");
+		}
+		this.prefs = prefs;
+		this.prefKey = prefKey;
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		setValue(prefs.getInt(prefKey, defaultValue));
+	}
 
-    public int getValue() {
-        return value;
-    }
+	public PersistentIntegerModel(int minValue, int maxValue, int value) {
+		if (maxValue < minValue) {
+			throw new IllegalArgumentException("maxValue < minValue");
+		}
+		this.prefs = null;
+		this.prefKey = null;
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		setValue(value);
+	}
 
-    public int getMinValue() {
-        return minValue;
-    }
+	public int getValue() {
+		return value;
+	}
 
-    public int getMaxValue() {
-        return maxValue;
-    }
+	public int getMinValue() {
+		return minValue;
+	}
 
-    public void setValue(int value) {
-        if(value > maxValue) {
-            value = maxValue;
-        } else if(value < minValue) {
-            value = minValue;
-        }
-        if(this.value != value) {
-            this.value = value;
-            storeSetting();
-            doCallback();
-        }
-    }
+	public int getMaxValue() {
+		return maxValue;
+	}
 
-    private void storeSetting() {
-        if(prefs != null) {
-            prefs.putInt(prefKey, value);
-        }
-    }
-    
+	public void setValue(int value) {
+		if (value > maxValue) {
+			value = maxValue;
+		} else if (value < minValue) {
+			value = minValue;
+		}
+		if (this.value != value) {
+			this.value = value;
+			storeSetting();
+			doCallback();
+		}
+	}
+
+	private void storeSetting() {
+		if (prefs != null) {
+			prefs.putInt(prefKey, value);
+		}
+	}
+
 }

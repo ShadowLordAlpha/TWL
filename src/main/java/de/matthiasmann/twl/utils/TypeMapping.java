@@ -37,135 +37,137 @@ import java.util.Set;
 /**
  * Maps a data type to a value. Searches for interface and subclass mappings.
  * 
- * @param <V> the type of the values in this mapping
+ * @param <V>
+ *            the type of the values in this mapping
  * @author Matthias Mann
  */
 public class TypeMapping<V> {
 
-    Entry<V>[] table;
-    int size;
+	Entry<V>[] table;
+	int size;
 
-    @SuppressWarnings("unchecked")
-    public TypeMapping() {
-        table = new Entry[16];
-    }
+	@SuppressWarnings("unchecked")
+	public TypeMapping() {
+		table = new Entry[16];
+	}
 
-    public void put(Class<?> clazz, V value) {
-        if(value == null) {
-            throw new NullPointerException("value");
-        }
-        removeCached();
-        Entry<V> entry = HashEntry.get(table, clazz);
-        if(entry != null) {
-            HashEntry.remove(table, entry);
-            size--;
-        }
-        insert(new Entry<V>(clazz, value, false));
-    }
+	public void put(Class<?> clazz, V value) {
+		if (value == null) {
+			throw new NullPointerException("value");
+		}
+		removeCached();
+		Entry<V> entry = HashEntry.get(table, clazz);
+		if (entry != null) {
+			HashEntry.remove(table, entry);
+			size--;
+		}
+		insert(new Entry<V>(clazz, value, false));
+	}
 
-    public V get(Class<?> clazz) {
-        Entry<V> entry = HashEntry.get(table, clazz);
-        if(entry != null) {
-            return entry.value;
-        }
-        return slowGet(clazz);
-    }
-    
-    public boolean remove(Class<?> clazz) {
-        if(HashEntry.remove(table, clazz) != null) {
-            removeCached();
-            size--;
-            return true;
-        }
-        return false;
-    }
+	public V get(Class<?> clazz) {
+		Entry<V> entry = HashEntry.get(table, clazz);
+		if (entry != null) {
+			return entry.value;
+		}
+		return slowGet(clazz);
+	}
 
-    public Set<V> getUniqueValues() {
-        HashSet<V> result = new HashSet<V>();
-        for(Entry<V> e : table) {
-            while(e != null) {
-                if(!e.isCache) {
-                    result.add(e.value);
-                }
-                e = e.next();
-            }
-        }
-        return result;
-    }
+	public boolean remove(Class<?> clazz) {
+		if (HashEntry.remove(table, clazz) != null) {
+			removeCached();
+			size--;
+			return true;
+		}
+		return false;
+	}
 
-    public Map<Class<?>, V> getEntries() {
-        HashMap<Class<?>, V> result = new HashMap<Class<?>, V>();
-        for(Entry<V> e : table) {
-            while(e != null) {
-                if(!e.isCache) {
-                    result.put(e.key, e.value);
-                }
-                e = e.next();
-            }
-        }
-        return result;
-    }
+	public Set<V> getUniqueValues() {
+		HashSet<V> result = new HashSet<V>();
+		for (Entry<V> e : table) {
+			while (e != null) {
+				if (!e.isCache) {
+					result.add(e.value);
+				}
+				e = e.next();
+			}
+		}
+		return result;
+	}
 
-    /**
-     * Searches the class hierarchy for a regsitered type.
-     * The match is cached in the hash table to speed up future lookups.
-     * If no match was found then a null mapping is created.
-     *
-     * @param clazz the clazz which was requested.
-     * @return the found mapping or null.
-     */
-    private V slowGet(final Class<?> clazz) {
-        Entry<V> entry = null;
-        Class<?> baseClass = clazz;
-        outer: do {
-            for(Class<?> ifClass : baseClass.getInterfaces()) {
-                entry = HashEntry.get(table, ifClass);
-                if(entry != null) {
-                    break outer;
-                }
-            }
+	public Map<Class<?>, V> getEntries() {
+		HashMap<Class<?>, V> result = new HashMap<Class<?>, V>();
+		for (Entry<V> e : table) {
+			while (e != null) {
+				if (!e.isCache) {
+					result.put(e.key, e.value);
+				}
+				e = e.next();
+			}
+		}
+		return result;
+	}
 
-            baseClass = baseClass.getSuperclass();
-            if(baseClass == null) {
-                break;
-            }
+	/**
+	 * Searches the class hierarchy for a regsitered type. The match is cached
+	 * in the hash table to speed up future lookups. If no match was found then
+	 * a null mapping is created.
+	 *
+	 * @param clazz
+	 *            the clazz which was requested.
+	 * @return the found mapping or null.
+	 */
+	private V slowGet(final Class<?> clazz) {
+		Entry<V> entry = null;
+		Class<?> baseClass = clazz;
+		outer: do {
+			for (Class<?> ifClass : baseClass.getInterfaces()) {
+				entry = HashEntry.get(table, ifClass);
+				if (entry != null) {
+					break outer;
+				}
+			}
 
-            entry = HashEntry.get(table, baseClass);
-        } while(entry == null);
+			baseClass = baseClass.getSuperclass();
+			if (baseClass == null) {
+				break;
+			}
 
-        V value = (entry != null) ? entry.value : null;
-        insert(new Entry<V>(clazz, value, true));
-        
-        return value;
-    }
+			entry = HashEntry.get(table, baseClass);
+		} while (entry == null);
 
-    private void insert(Entry<V> newEntry) {
-        table = HashEntry.maybeResizeTable(table, size);
-        HashEntry.insertEntry(table, newEntry);
-        size++;
-    }
+		V value = (entry != null) ? entry.value : null;
+		insert(new Entry<V>(clazz, value, true));
 
-    private void removeCached() {
-        for(Entry<V> e : table) {
-            while(e != null) {
-                Entry<V> n = e.next();
-                if(e.isCache) {
-                    HashEntry.remove(table, e);
-                    size--;
-                }
-                e = n;
-            }
-        }
-    }
-    
-    static class Entry<V> extends HashEntry<Class<?>, Entry<V>> {
-        final V value;
-        final boolean isCache;
+		return value;
+	}
 
-        public Entry(Class<?> key, V value, boolean isCache) {
-            super(key);
-            this.value = value;
-            this.isCache = isCache;
-        }
-    }
+	private void insert(Entry<V> newEntry) {
+		table = HashEntry.maybeResizeTable(table, size);
+		HashEntry.insertEntry(table, newEntry);
+		size++;
+	}
+
+	private void removeCached() {
+		for (Entry<V> e : table) {
+			while (e != null) {
+				Entry<V> n = e.next();
+				if (e.isCache) {
+					HashEntry.remove(table, e);
+					size--;
+				}
+				e = n;
+			}
+		}
+	}
+
+	static class Entry<V> extends HashEntry<Class<?>, Entry<V>> {
+		final V value;
+		final boolean isCache;
+
+		public Entry(Class<?> key, V value, boolean isCache) {
+			super(key);
+			this.value = value;
+			this.isCache = isCache;
+		}
+	}
 }

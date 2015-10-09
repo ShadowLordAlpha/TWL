@@ -39,84 +39,96 @@ import java.util.Collection;
  */
 public class SimpleGraphModel implements GraphModel {
 
-    private final ArrayList<GraphLineModel> lines;
-    private boolean scaleLinesIndependant;
+	private final ArrayList<GraphLineModel> lines;
+	private boolean scaleLinesIndependant;
 
-    public SimpleGraphModel() {
-        lines = new ArrayList<GraphLineModel>();
-    }
+	public SimpleGraphModel() {
+		lines = new ArrayList<GraphLineModel>();
+	}
 
-    public SimpleGraphModel(GraphLineModel ... lines) {
-        this(Arrays.asList(lines));
-    }
+	public SimpleGraphModel(GraphLineModel... lines) {
+		this(Arrays.asList(lines));
+	}
 
-    public SimpleGraphModel(Collection<GraphLineModel> lines) {
-        this.lines = new ArrayList<GraphLineModel>(lines);
-    }
+	public SimpleGraphModel(Collection<GraphLineModel> lines) {
+		this.lines = new ArrayList<GraphLineModel>(lines);
+	}
 
-    public GraphLineModel getLine(int idx) {
-        return lines.get(idx);
-    }
+	public GraphLineModel getLine(int idx) {
+		return lines.get(idx);
+	}
 
-    public int getNumLines() {
-        return lines.size();
-    }
+	public int getNumLines() {
+		return lines.size();
+	}
 
-    public boolean getScaleLinesIndependant() {
-        return scaleLinesIndependant;
-    }
+	public boolean getScaleLinesIndependant() {
+		return scaleLinesIndependant;
+	}
 
-    public void setScaleLinesIndependant(boolean scaleLinesIndependant) {
-        this.scaleLinesIndependant = scaleLinesIndependant;
-    }
+	public void setScaleLinesIndependant(boolean scaleLinesIndependant) {
+		this.scaleLinesIndependant = scaleLinesIndependant;
+	}
 
-    /**
-     * Adds a new line at the end of the list
-     * @param line the new line
-     */
-    public void addLine(GraphLineModel line) {
-        insertLine(lines.size(), line);
-    }
+	/**
+	 * Adds a new line at the end of the list
+	 * 
+	 * @param line
+	 *            the new line
+	 */
+	public void addLine(GraphLineModel line) {
+		insertLine(lines.size(), line);
+	}
 
-    /**
-     * Inserts a new line before the specified index in the list
-     * @param idx the index before which the new line will be inserted
-     * @param line the new line
-     * @throws NullPointerException if line is null
-     * @throws IllegalArgumentException if the line is already part of this model
-     */
-    public void insertLine(int idx, GraphLineModel line) {
-        if(line == null) {
-            throw new NullPointerException("line");
-        }
-        if(indexOfLine(line) >= 0) {
-            throw new IllegalArgumentException("line already added");
-        }
-        lines.add(idx, line);
-    }
+	/**
+	 * Inserts a new line before the specified index in the list
+	 * 
+	 * @param idx
+	 *            the index before which the new line will be inserted
+	 * @param line
+	 *            the new line
+	 * @throws NullPointerException
+	 *             if line is null
+	 * @throws IllegalArgumentException
+	 *             if the line is already part of this model
+	 */
+	public void insertLine(int idx, GraphLineModel line) {
+		if (line == null) {
+			throw new NullPointerException("line");
+		}
+		if (indexOfLine(line) >= 0) {
+			throw new IllegalArgumentException("line already added");
+		}
+		lines.add(idx, line);
+	}
 
-    /**
-     * Returns the index of the specified line in this list or -1 if not found.
-     * @param line the line to locate
-     * @return the index or -1 if not found
-     */
-    public int indexOfLine(GraphLineModel line) {
-        // do a manual search for object identity - not based on equals like lines.indexOf
-        for(int i=0,n=lines.size() ; i<n ; i++) {
-            if(lines.get(i) == line) {
-                return  i;
-            }
-        }
-        return -1;
-    }
+	/**
+	 * Returns the index of the specified line in this list or -1 if not found.
+	 * 
+	 * @param line
+	 *            the line to locate
+	 * @return the index or -1 if not found
+	 */
+	public int indexOfLine(GraphLineModel line) {
+		// do a manual search for object identity - not based on equals like
+		// lines.indexOf
+		for (int i = 0, n = lines.size(); i < n; i++) {
+			if (lines.get(i) == line) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
-    /**
-     * Removes the line at the specified index
-     * @param idx the index of the line to remove
-     * @return the line that was removed
-     */
-    public GraphLineModel removeLine(int idx) {
-        return lines.remove(idx);
-    }
+	/**
+	 * Removes the line at the specified index
+	 * 
+	 * @param idx
+	 *            the index of the line to remove
+	 * @return the line that was removed
+	 */
+	public GraphLineModel removeLine(int idx) {
+		return lines.remove(idx);
+	}
 
 }

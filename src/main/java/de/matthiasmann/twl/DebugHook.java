@@ -32,118 +32,136 @@ package de.matthiasmann.twl;
 import java.util.Collection;
 
 /**
- * The debug hook class can be used to retrieve more detailed information
- * about missing themes or parameters.
+ * The debug hook class can be used to retrieve more detailed information about
+ * missing themes or parameters.
  *
  * @author Matthias Mann
  */
 public class DebugHook {
 
-    private static ThreadLocal<DebugHook> tls = new ThreadLocal<DebugHook>() {
-        @Override
-        protected DebugHook initialValue() {
-            return new DebugHook();
-        }
-    };
+	private static ThreadLocal<DebugHook> tls = new ThreadLocal<DebugHook>() {
+		@Override
+		protected DebugHook initialValue() {
+			return new DebugHook();
+		}
+	};
 
-    /**
-     * Returns the currently active debug hook for this thread.
-     * @return the debug hook. Never null.
-     */
-    public static DebugHook getDebugHook() {
-        return tls.get();
-    }
+	/**
+	 * Returns the currently active debug hook for this thread.
+	 * 
+	 * @return the debug hook. Never null.
+	 */
+	public static DebugHook getDebugHook() {
+		return tls.get();
+	}
 
-    /**
-     * Installs a new debug hook.
-     *
-     * @param hook the new debug hook
-     * @return the previous debug hook
-     * @throws NullPointerException if hook is null
-     */
-    public static DebugHook installHook(DebugHook hook) {
-        if(hook == null) {
-            throw new NullPointerException("hook");
-        }
-        DebugHook old = tls.get();
-        tls.set(hook);
-        return old;
-    }
+	/**
+	 * Installs a new debug hook.
+	 *
+	 * @param hook
+	 *            the new debug hook
+	 * @return the previous debug hook
+	 * @throws NullPointerException
+	 *             if hook is null
+	 */
+	public static DebugHook installHook(DebugHook hook) {
+		if (hook == null) {
+			throw new NullPointerException("hook");
+		}
+		DebugHook old = tls.get();
+		tls.set(hook);
+		return old;
+	}
 
-    public void beforeApplyTheme(Widget widget) {
-    }
+	public void beforeApplyTheme(Widget widget) {
+	}
 
-    public void afterApplyTheme(Widget widget) {
-    }
+	public void afterApplyTheme(Widget widget) {
+	}
 
-    public void missingTheme(String themePath) {
-        System.err.println("Could not find theme: " + themePath);
-    }
-    
-    public void missingChildTheme(ThemeInfo parent, String theme) {
-        System.err.println("Missing child theme \"" + theme + "\" for \"" + parent.getThemePath() + "\"");
-    }
+	public void missingTheme(String themePath) {
+		System.err.println("Could not find theme: " + themePath);
+	}
 
-    public void missingParameter(ParameterMap map, String paramName, String parentDescription, Class<?> dataType) {
-        StringBuilder sb = new StringBuilder("Parameter \"").append(paramName).append("\" ");
-        if(dataType != null) {
-            sb.append("of type ");
-            if(dataType.isEnum()) {
-                sb.append("enum ");
-            }
-            sb.append('"').append(dataType.getSimpleName()).append('"');
-        }
-        sb.append(" not set");
-        if(map instanceof ThemeInfo) {
-            sb.append(" for \"").append(((ThemeInfo)map).getThemePath()).append("\"");
-        } else {
-            sb.append(parentDescription);
-        }
-        System.err.println(sb.toString());
-    }
+	public void missingChildTheme(ThemeInfo parent, String theme) {
+		System.err.println("Missing child theme \"" + theme + "\" for \""
+				+ parent.getThemePath() + "\"");
+	}
 
-    public void wrongParameterType(ParameterMap map, String paramName, Class<?> expectedType, Class<?> foundType, String parentDescription) {
-        System.err.println("Parameter \"" + paramName + "\" is a " +
-                foundType.getSimpleName() + " expected a " +
-                expectedType.getSimpleName() + parentDescription);
-    }
+	public void missingParameter(ParameterMap map, String paramName,
+			String parentDescription, Class<?> dataType) {
+		StringBuilder sb = new StringBuilder("Parameter \"").append(paramName)
+				.append("\" ");
+		if (dataType != null) {
+			sb.append("of type ");
+			if (dataType.isEnum()) {
+				sb.append("enum ");
+			}
+			sb.append('"').append(dataType.getSimpleName()).append('"');
+		}
+		sb.append(" not set");
+		if (map instanceof ThemeInfo) {
+			sb.append(" for \"").append(((ThemeInfo) map).getThemePath())
+					.append("\"");
+		} else {
+			sb.append(parentDescription);
+		}
+		System.err.println(sb.toString());
+	}
 
-    public void wrongParameterType(ParameterList map, int idx, Class<?> expectedType, Class<?> foundType, String parentDescription) {
-        System.err.println("Parameter at index " + idx + " is a " +
-                foundType.getSimpleName() + " expected a " +
-                expectedType.getSimpleName() + parentDescription);
-    }
+	public void wrongParameterType(ParameterMap map, String paramName,
+			Class<?> expectedType, Class<?> foundType, String parentDescription) {
+		System.err.println("Parameter \"" + paramName + "\" is a "
+				+ foundType.getSimpleName() + " expected a "
+				+ expectedType.getSimpleName() + parentDescription);
+	}
 
-    public void replacingWithDifferentType(ParameterMap map, String paramName, Class<?> oldType, Class<?> newType, String parentDescription) {
-        System.err.println("Paramter \"" + paramName + "\" of type " +
-                oldType + " is replaced with type " + newType + parentDescription);
-    }
+	public void wrongParameterType(ParameterList map, int idx,
+			Class<?> expectedType, Class<?> foundType, String parentDescription) {
+		System.err.println("Parameter at index " + idx + " is a "
+				+ foundType.getSimpleName() + " expected a "
+				+ expectedType.getSimpleName() + parentDescription);
+	}
 
-    public void missingImage(String name) {
-        System.err.println("Could not find image: " + name);
-    }
+	public void replacingWithDifferentType(ParameterMap map, String paramName,
+			Class<?> oldType, Class<?> newType, String parentDescription) {
+		System.err.println("Paramter \"" + paramName + "\" of type " + oldType
+				+ " is replaced with type " + newType + parentDescription);
+	}
 
-    /**
-     * Called when GUI has validated the layout tree
-     * @param iterations the number of iterations required to solve layout
-     * @param loop the widgets involved in a layout loop if the layout could not be solved - is null if layout was solved
-     */
-    public void guiLayoutValidated(int iterations, Collection<Widget> loop) {
-        if(loop != null) {
-            System.err.println("WARNING: layout loop detected - printing");
-            int index = 1;
-            for(Widget w : loop) {
-                System.err.println(index+": "+w);
-                index++;
-            }
-        }
-    }
+	public void missingImage(String name) {
+		System.err.println("Could not find image: " + name);
+	}
 
-    /**
-     * Called when wildcard resolution failed to find a theme and the fallback theme was specified
-     * @param themePath the requested theme name
-     */
-    public void usingFallbackTheme(String themePath) {
-        System.err.println("Selected fallback theme for missing theme \"" + themePath + "\"");
-    }
+	/**
+	 * Called when GUI has validated the layout tree
+	 * 
+	 * @param iterations
+	 *            the number of iterations required to solve layout
+	 * @param loop
+	 *            the widgets involved in a layout loop if the layout could not
+	 *            be solved - is null if layout was solved
+	 */
+	public void guiLayoutValidated(int iterations, Collection<Widget> loop) {
+		if (loop != null) {
+			System.err.println("WARNING: layout loop detected - printing");
+			int index = 1;
+			for (Widget w : loop) {
+				System.err.println(index + ": " + w);
+				index++;
+			}
+		}
+	}
+
+	/**
+	 * Called when wildcard resolution failed to find a theme and the fallback
+	 * theme was specified
+	 * 
+	 * @param themePath
+	 *            the requested theme name
+	 */
+	public void usingFallbackTheme(String themePath) {
+		System.err.println("Selected fallback theme for missing theme \""
+				+ themePath + "\"");
+	}
 }

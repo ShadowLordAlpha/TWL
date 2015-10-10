@@ -12,7 +12,7 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 [x] Allow use with LWJGL 3
 
-[x] Fix all examples ... mostly ... they don't crash on start up but some are still a bit bugged
+[x] Fix all examples ... mostly ... they don't crash on start up but some are still a bit bugged ... when switching the window
 
 [x] Fix the test that broke when formatting and removing unneeded imports ... mostly done just need to fix some character sets and will be done
 
@@ -20,7 +20,7 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 ## Bugs
 
-only types in caps because reasons and I have not gotten around to fixing it (also prints strange characters when you press mod keys :D)
+
 
 ## Disclaimer
 

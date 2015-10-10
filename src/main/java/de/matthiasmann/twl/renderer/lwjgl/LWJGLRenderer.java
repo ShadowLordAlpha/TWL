@@ -140,10 +140,12 @@ public class LWJGLRenderer implements Renderer, LineRenderer {
 			// int minCursorSize = 0; // TODO fix????
 			// IntBuffer tmp = BufferUtils.createIntBuffer(minCursorSize *
 			// minCursorSize);
-			// TODO change this to blank maybe
-			emptyCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_CROSSHAIR_CURSOR);
+			// TODO it is recommended to now change the whole cursor instead of just hiding it and drawing a custom one
+			// So I need to do that
+			//GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+			emptyCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR);
 		} else {
-			emptyCursor = 0;
+			emptyCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR);
 		}
 
 		swCursorAnimState = new SWCursorAnimState();

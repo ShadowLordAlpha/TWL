@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.glfw.GLFW;
+
 import de.matthiasmann.twl.input.Input;
 import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 import de.matthiasmann.twl.renderer.MouseCursor;
@@ -759,6 +761,11 @@ public final class GUI extends Widget {
 		}
 		if (cursor == MouseCursor.OS_DEFAULT) {
 			cursor = null;
+		}
+		if(cursor == null) {
+			GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+		} else {
+			GLFW.glfwSetInputMode(GLFW.glfwGetCurrentContext(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 		}
 		renderer.setCursor(cursor);
 	}

@@ -16,8 +16,6 @@ As games have a high demand on visual identity, TWL provides a very flexible the
 
 [x] Fix the test that broke when formatting and removing unneeded imports ... mostly done just need to fix some character sets and will be done
 
-[ ] create renderer that uses 3.2+ OpenGL
-
 [ ] recode 90% of what was done to be better
 
 ## Bugs

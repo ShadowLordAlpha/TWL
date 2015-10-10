@@ -41,6 +41,7 @@ import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
+import test.TestUtils;
 
 /**
  * A small demo showing how to use keyboard actions
@@ -82,7 +83,7 @@ public class ActionDemo extends Widget {
 
 				gui.update();
 				GLFW.glfwSwapBuffers(window);
-				// TestUtils.reduceInputLag();
+				TestUtils.reduceInputLag();
 			}
 
 			gui.destroy();
